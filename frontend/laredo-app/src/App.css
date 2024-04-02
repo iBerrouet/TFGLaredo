@@ -1,0 +1,20 @@
+@tailwind base;
+
+@layer base {
+  html {
+    @apply bg-slate-950;
+    @apply text-cyan-400;
+  }
+  h1 {
+    @apply text-white;
+  }
+  table {
+    @apply bg-gray-800 text-center;
+  }
+  td, th {
+    @apply px-9 py-5 border-8 border-slate-950;
+  }
+}
+
+@tailwind components;
+@tailwind utilities;
