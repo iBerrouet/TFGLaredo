@@ -22,7 +22,10 @@ function ModelDetails() {
     const goModels = () => {
         navigate('/models')
     }
-    
+
+    const goModelCreation = () => {
+        navigate('/model-creation')
+    }
 
     useEffect(() => {
         fetchData()
@@ -51,7 +54,7 @@ function ModelDetails() {
                 </>
                 <div className='ml-auto mr-10'>  
                     <CustomButton className='mr-10' onClick={goModels}>Mostrar modelos disponibles</CustomButton>
-                    <CustomButton className=''>Crear un modelo</CustomButton>
+                    <CustomButton className='' onClick={goModelCreation}>Crear un modelo</CustomButton>
                 </div>
             </header>
 
