@@ -37,12 +37,15 @@ function Models() {
         navigate(`/models/${modelName}`)
     };
 
+    const goModelCreation = () => {
+        navigate('/model-creation')
+    }
 
     return (
         <>
             <header className='bg-gray-800 h-20 flex items-center'>
                 <strong className='text-3xl font-bold italic text-white ml-10 cursor-pointer' onClick={goHome}>LAREDO</strong>
-                <CustomButton className='ml-auto mr-10'>Crear un modelo</CustomButton>
+                <CustomButton className='ml-auto mr-10' onClick={goModelCreation}>Crear un modelo</CustomButton>
             </header>
             
             <h1 className='text-7xl font-bold text-center mt-24'>Modelos Disponibles</h1>

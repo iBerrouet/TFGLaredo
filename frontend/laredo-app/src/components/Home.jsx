@@ -5,7 +5,11 @@ import robot from '../assets/robot.png'
 function Home() {
 
   const navigate = useNavigate()
- 
+  
+  const goModelCreation = () => {
+    navigate('/model-creation')
+  }
+
   const goModels = () => {
       navigate('/models')
   }
@@ -17,7 +21,7 @@ function Home() {
         <h1 className='text-[200px] font-bold italic text-white -mt-24'>LAREDO</h1>
         <p className='text-[40px] text-cyan-400 -mt-4'>Predice el futuro con confianza: <br/>
         Crea y Aplica Modelos Predictivos de forma Intuitiva.</p>
-        <CustomButton className='mt-8'>Crear un modelo</CustomButton>
+        <CustomButton className='mt-8' onClick={goModelCreation}>Crear un modelo</CustomButton>
         <CustomButton className='ml-4' onClick={goModels}>Mostrar modelos disponibles</CustomButton>
       </div>
       <div>
