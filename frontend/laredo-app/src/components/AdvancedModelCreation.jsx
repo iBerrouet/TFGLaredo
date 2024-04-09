@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import algorithmData from '../assets/algorithmParameters.json'
 
 function AdvancedModelCreation() {
 
@@ -15,8 +16,12 @@ function AdvancedModelCreation() {
                     <div className='flex justify-center items-center mt-12'>
                         <strong className='mr-4'>Algoritmo:</strong>
                         <select className='text-white rounded border border-white bg-gray-800 w-60 h-6' value={selectedAlgorithm} onChange={handleSelectAlgorithm}>
-                            <option className='text-cyan-400 bg-gray-800 hover:text-white hover:bg-slate-950'>SVM</option>
-                            <option className='text-cyan-400 bg-gray-800 hover:text-white hover:bg-slate-950'>KNN</option>
+                            <option value="">Selecciona un algoritmo...</option>
+                            {Object.keys(algorithmData).map((algorithmName) => (
+                            <option key={algorithmName} value={algorithmName}>
+                                {algorithmName}
+                            </option>
+                            ))}
                         </select>
                             
                     </div>
