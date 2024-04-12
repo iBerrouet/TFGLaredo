@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import CustomButton from './CustomButton'
-import AdvancedModelCreation from './AdvancedModelCreation'
-import BasicModelCreation from './BasicModelCreation'
+import AdvancedModelSelection from './AdvancedModelSelection'
+import BasicModelSelection from './BasicModelSelection'
 import { useNavigate } from 'react-router-dom'
 
 
@@ -39,7 +39,7 @@ function ModelCreation() {
 
             </div>
 
-            {showAdvance ? <AdvancedModelCreation /> : <BasicModelCreation />}
+            {showAdvance ? <AdvancedModelSelection /> : <BasicModelSelection />}
         </>
     )
 }
