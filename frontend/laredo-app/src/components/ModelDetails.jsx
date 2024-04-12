@@ -53,12 +53,12 @@ function ModelDetails() {
                     <strong className='text-3xl font-bold italic text-white ml-10 cursor-pointer' onClick={goHome}>LAREDO</strong>
                 </>
                 <div className='ml-auto mr-10'>  
-                    <CustomButton className='mr-10' onClick={goModels}>Mostrar modelos disponibles</CustomButton>
-                    <CustomButton className='' onClick={goModelCreation}>Crear un modelo</CustomButton>
+                    <CustomButton className='mr-10' onClick={goModels}>Show available models</CustomButton>
+                    <CustomButton className='' onClick={goModelCreation}>Create a model</CustomButton>
                 </div>
             </header>
 
-            <h1 className='text-7xl font-bold text-center mt-12'>Detalles del modelo</h1>
+            <h1 className='text-7xl font-bold text-center mt-12'>Model Details</h1>
             <h2 className='text-5xl font-bold text-center mt-1'>{modelName}</h2>
 
             <div className='flex justify-center items-center mt-12'>
@@ -67,12 +67,12 @@ function ModelDetails() {
 
             <div className='flex justify-between mt-12'>
                 <div className='flex flex-col items-center w-1/2'>
-                    <h2 className='text-white text-3xl font-bold mb-2'>Medidas</h2>
+                    <h2 className='text-white text-3xl font-bold mb-2'>Metrics</h2>
                     <table className='mt-2'>
                         <thead>
                             <tr>
-                                <th className='text-white'>Medida</th>
-                                <th className='text-white'>Valor</th>
+                                <th className='text-white'>Metric</th>
+                                <th className='text-white'>Value</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -91,9 +91,9 @@ function ModelDetails() {
                     <table className='mt-2'>
                         <thead>
                             <tr>
-                                <th className='text-white'>Nombre</th>
-                                <th className='text-white'>Tipo de dato</th>
-                                <th className='text-white'>Requerido</th>
+                                <th className='text-white'>Name</th>
+                                <th className='text-white'>Type</th>
+                                <th className='text-white'>Required</th>
                             </tr>
                         </thead>
                         <tbody>
