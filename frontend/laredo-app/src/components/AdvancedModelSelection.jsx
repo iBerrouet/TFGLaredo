@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import algorithmData from '../assets/algorithmParameters.json'
 import CustomButton from './CustomButton'
 
-function AdvancedModelCreation() {
+function AdvancedModelSelection() {
 
     const [selectedAlgorithm, setSelectedAlgorithm] = useState("")
 
@@ -71,5 +71,4 @@ function AdvancedModelCreation() {
         </>
     )
 }
-
-export default AdvancedModelCreation
+export default AdvancedModelSelection
