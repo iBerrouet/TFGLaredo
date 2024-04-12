@@ -45,19 +45,19 @@ function Models() {
         <>
             <header className='bg-gray-800 h-20 flex items-center'>
                 <strong className='text-3xl font-bold italic text-white ml-10 cursor-pointer' onClick={goHome}>LAREDO</strong>
-                <CustomButton className='ml-auto mr-10' onClick={goModelCreation}>Crear un modelo</CustomButton>
+                <CustomButton className='ml-auto mr-10' onClick={goModelCreation}>Create a model</CustomButton>
             </header>
             
-            <h1 className='text-7xl font-bold text-center mt-24'>Modelos Disponibles</h1>
+            <h1 className='text-7xl font-bold text-center mt-24'>Available Models</h1>
 
-            <p className='text-lg text-center mt-14'>Actualmente, el repositorio tiene estos modelos disponibles. Si desea obtener más información pulse en el icono.</p>
+            <p className='text-lg text-center mt-14'>Currently, the repository has these models available. If you want more information click on the icon.</p>
 
             <table className='mx-auto mt-7'>
                 <thead>
                     <tr>
-                        <th className='text-white px-24'>Modelo</th>
-                        <th className='text-white'>Fecha de creación</th>
-                        <th className='text-white'>Etapa de desarrollo</th>
+                        <th className='text-white px-24'>Model</th>
+                        <th className='text-white'>Creation date</th>
+                        <th className='text-white'>Development stage</th>
                         <th className='text-white'></th>
                     </tr>
                 </thead>
@@ -70,7 +70,7 @@ function Models() {
                             <td>
                                 <div className='flex flex-col items-center group relative'>
                                     <p className='hidden absolute text-white text-xs whitespace-nowrap -top-5 group-hover:block'>
-                                        Mostrar detalles
+                                        Show details
                                     </p>
                                     <img src={eyeIcon} className='w-6 h-5 cursor-pointer' alt='An eye to link to details' onClick={() => goDetails(model.model_name)} />
                                 </div>
