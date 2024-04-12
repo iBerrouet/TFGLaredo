@@ -64,6 +64,10 @@ function ModelCreation() {
                     </button>
                 </div>
             </div>
+            {activeButton === Steps.Dataset && <DatasetUploading />}
+            {activeButton === Steps.Preprocessing && <DatasetPreprocessing />}
+            {activeButton === Steps.Algorithm && <ModelSelection />}
+            {activeButton === Steps.Evaluation && <ModelEvaluation />}
         </>
     )
 }
