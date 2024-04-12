@@ -1,6 +1,6 @@
 import React from 'react'
 
-function AdvancedModelCreation() {
+function AdvancedModelSelection() {
     return(
         <>
             <p>Creacion de modelos avanzada</p>
@@ -8,4 +8,4 @@ function AdvancedModelCreation() {
     )
 }
 
-export default AdvancedModelCreation
+export default AdvancedModelSelection
