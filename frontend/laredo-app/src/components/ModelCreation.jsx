@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Route, Routes } from 'react-router-dom'
 import CustomButton from './CustomButton'
+import DatasetPreprocessing from './DatasetPreprocessing'
+import DatasetUploading from './DatasetUploading'
+import ModelSelection from './ModelSelection'
+import ModelEvaluation from './ModelEvaluation'
 
 const Steps = {
     Dataset: 'Dataset',
@@ -11,7 +15,7 @@ const Steps = {
 
 
 function ModelCreation() {
-    const [activeButton, setActiveButton] = useState("Dataset")
+    const [activeButton, setActiveButton] = useState('')
     const navigate = useNavigate()
 
     const goHome = () => {
