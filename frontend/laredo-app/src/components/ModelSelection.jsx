@@ -5,7 +5,7 @@ import BasicModelSelection from './BasicModelSelection'
 import { useNavigate } from 'react-router-dom'
 
 
-function ModelCreation() {
+function ModelSelection() {
 
     const [showAdvance, setShowAdvance] = useState(false)
     const navigate = useNavigate()
@@ -44,4 +44,4 @@ function ModelCreation() {
     )
 }
 
-export default ModelCreation
+export default ModelSelection
