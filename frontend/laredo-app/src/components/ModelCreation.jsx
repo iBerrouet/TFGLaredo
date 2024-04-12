@@ -34,7 +34,7 @@ function ModelCreation() {
         <>
             <header className='bg-gray-800 h-20 flex items-center'>
                 <strong className='text-3xl font-bold italic text-white ml-10 cursor-pointer' onClick={goHome}>LAREDO</strong>
-                <CustomButton className='ml-auto mr-10' onClick={goModels}>Mostrar modelos disponibles</CustomButton>
+                <CustomButton className='ml-auto mr-10' onClick={goModels}>Show available models</CustomButton>
             </header>
             <div className='flex justify-center mt-3'>
                 <div className='inline-flex w-3/4'>
