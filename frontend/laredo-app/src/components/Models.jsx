@@ -52,22 +52,22 @@ function Models() {
 
             <p className='text-lg text-center mt-14'>Currently, the repository has these models available. If you want more information click on the icon.</p>
 
-            <table className='mx-auto mt-7'>
+            <table className='mx-auto mt-7 bg-gray-800 text-center'>
                 <thead>
                     <tr>
-                        <th className='text-white px-24'>Model</th>
-                        <th className='text-white'>Creation date</th>
-                        <th className='text-white'>Development stage</th>
-                        <th className='text-white'></th>
+                        <th className='text-white px-24 py-5 border-8 border-slate-950'>Model</th>
+                        <th className='text-white px-9 py-5 border-8 border-slate-950'>Creation date</th>
+                        <th className='text-white px-9 py-5 border-8 border-slate-950'>Development stage</th>
+                        <th className='text-white px-9 py-5 border-8 border-slate-950'></th>
                     </tr>
                 </thead>
                 <tbody>
                     {models.map((model) => (
                         <tr key={model.model_name}>
-                            <td className='font-bold'>{model.model_name}</td>
-                            <td>{model.creation_date}</td>
-                            <td>{model.development_stage}</td>
-                            <td>
+                            <td className='font-bold px-9 py-5 border-8 border-slate-950'>{model.model_name}</td>
+                            <td className='px-9 py-5 border-8 border-slate-950'>{model.creation_date}</td>
+                            <td className='px-9 py-5 border-8 border-slate-950'>{model.development_stage}</td>
+                            <td className='px-9 py-5 border-8 border-slate-950'>
                                 <div className='flex flex-col items-center group relative'>
                                     <p className='hidden absolute text-white text-xs whitespace-nowrap -top-5 group-hover:block'>
                                         Show details

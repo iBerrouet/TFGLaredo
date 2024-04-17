@@ -68,18 +68,18 @@ function ModelDetails() {
             <div className='flex justify-between mt-12'>
                 <div className='flex flex-col items-center w-1/2'>
                     <h2 className='text-white text-3xl font-bold mb-2'>Metrics</h2>
-                    <table className='mt-2'>
+                    <table className='mt-2 bg-gray-800 text-center'>
                         <thead>
                             <tr>
-                                <th className='text-white'>Metric</th>
-                                <th className='text-white'>Value</th>
+                                <th className='text-white px-9 py-5 border-8 border-slate-950'>Metric</th>
+                                <th className='text-white px-9 py-5 border-8 border-slate-950'>Value</th>
                             </tr>
                         </thead>
                         <tbody>
                             {metrics && Object.entries(metrics).map(([key, value], index) => (
                                 <tr key={key}>
-                                    <td className='font-bold'>{key.replace(/_/g, " ")}</td>
-                                    <td>{value.toFixed(5)}</td>
+                                    <td className='font-bold px-9 py-5 border-8 border-slate-950'>{key.replace(/_/g, " ")}</td>
+                                    <td className='px-9 py-5 border-8 border-slate-950'>{value.toFixed(5)}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -88,20 +88,20 @@ function ModelDetails() {
 
                 <div className='flex flex-col items-center w-1/2'>
                     <h2 className='text-white text-3xl font-bold mb-2'>Dataset</h2>
-                    <table className='mt-2'>
+                    <table className='mt-2 bg-gray-800 text-center'>
                         <thead>
                             <tr>
-                                <th className='text-white'>Name</th>
-                                <th className='text-white'>Type</th>
-                                <th className='text-white'>Required</th>
+                                <th className='text-white px-9 py-5 border-8 border-slate-950'>Name</th>
+                                <th className='text-white px-9 py-5 border-8 border-slate-950'>Type</th>
+                                <th className='text-white px-9 py-5 border-8 border-slate-950'>Required</th>
                             </tr>
                         </thead>
                         <tbody>
                             {dataset && dataset.mlflow_colspec.map((col, index) => (
                                 <tr key={index}>
-                                    <td className='font-bold'>{col.name}</td>
-                                    <td>{col.type}</td>
-                                    <td>{col.required.toString()}</td>
+                                    <td className='font-bold px-9 py-5 border-8 border-slate-950'>{col.name}</td>
+                                    <td className='px-9 py-5 border-8 border-slate-950'>{col.type}</td>
+                                    <td className='px-9 py-5 border-8 border-slate-950'>{col.required.toString()}</td>
                                 </tr>
                             ))}
                         </tbody>
