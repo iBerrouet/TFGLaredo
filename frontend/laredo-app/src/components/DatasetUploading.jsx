@@ -21,20 +21,17 @@ function DatasetUploading() {
         
     }
 
-    
-
-
     return(
         <>
             <div className='grid grid-cols-2 h-[66vh] w-full mt-12'>
                 {datasetFile ? (
                     <>
                         <div className='max-w-full overflow-x-auto ml-12 -mr-12'>
-                            <table className='w-full'>
+                            <table className='w-full text-center bg-gray-800'>
                                 <thead className='text-white font-bold border-t border-white'>
                                     <tr>
                                         {preview.length > 0 && Object.keys(preview[0]).map((column, index) => (
-                                            <th key={index} className='border-l border-r border-white'>{column}</th>
+                                            <th key={index} className='border-l border-r border-white px-4 py-2'>{column}</th>
                                         ))}
                                     </tr>
                                 </thead>
@@ -42,7 +39,7 @@ function DatasetUploading() {
                                     {preview.map((row, rowIndex) => (
                                         <tr key={rowIndex}>
                                             {Object.values(row).map((value, columnIndex) => (
-                                                <td key={columnIndex} className='border-l border-r border-white'>{value}</td>
+                                                <td key={columnIndex} className='border-l border-r border-white px-4 py-2'>{value}</td>
                                             ))}
                                         </tr>
                                     ))}
