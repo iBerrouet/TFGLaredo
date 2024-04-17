@@ -1,12 +1,14 @@
-import React, { useState } from "react"
-import { FileUploader } from "react-drag-drop-files"
+import React, { useState } from 'react'
+import { FileUploader } from 'react-drag-drop-files'
 import Papa from 'papaparse'
-import CustomButton from "./CustomButton"
+import DatasetChecking from './DatasetChecking'
+import ColumnTypeIndicator from './ColumnTypeIndicator'
 
 function DatasetUploading() {
 
     const [datasetFile, setDatasetFile] = useState(null)
     const [preview, setPreview] = useState([])
+    const [datasetUploaded, setDatasetUploaded] = useState(false)
 
     const handleChange = (file) => {
         setDatasetFile(file);
@@ -17,59 +19,38 @@ function DatasetUploading() {
             complete: function (results) {
                 setPreview(results.data);
             },
-        });
-        
+        });   
+    }
+
+    const onConfirm = () => {
+        setDatasetUploaded(true)
+    }
+
+    const onReject = () => {
+        setDatasetFile(null)
     }
 
     return(
         <>
             <div className='grid grid-cols-2 h-[66vh] w-full mt-12'>
-                {datasetFile ? (
-                    <>
-                        <div className='max-w-full overflow-x-auto ml-12 -mr-12'>
-                            <table className='w-full text-center bg-gray-800'>
-                                <thead className='text-white font-bold border-t border-white'>
-                                    <tr>
-                                        {preview.length > 0 && Object.keys(preview[0]).map((column, index) => (
-                                            <th key={index} className='border-l border-r border-white px-4 py-2'>{column}</th>
-                                        ))}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {preview.map((row, rowIndex) => (
-                                        <tr key={rowIndex}>
-                                            {Object.values(row).map((value, columnIndex) => (
-                                                <td key={columnIndex} className='border-l border-r border-white px-4 py-2'>{value}</td>
-                                            ))}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div className='flex flex-col justify-center mr-12 text-right'>
-                            <h1 className='text-5xl font-bold'>Check uploaded dataset</h1>
-                            <strong className='text mt-5'>
-                                Check that this is the dataset you want to use.<br/>
-                                Is this the right one?
-                            </strong>
-                            <div className='flex justify-end mt-5'>
-                                <CustomButton className=' text-xl w-36 mr-6'>Yes</CustomButton>
-                                <CustomButton className='text-xl w-36'>No</CustomButton>
-                            </div>
-                        </div>
-                    </>
+                {datasetUploaded ? (
+                    <ColumnTypeIndicator/>
                 ) : (
-                    <>
-                        <FileUploader handleChange={handleChange} name="file" types={['csv']} dropMessageStyle={{ marginRight: '-3rem', marginLeft: '3rem' }} hoverTitle={" "}>
-                            <div className='flex items-center border-2 border-cyan-400 border-dashed cursor-pointer h-full ml-12 -mr-12'>
-                                <p className='text-cyan-400 mx-auto text-center text-4xl'>Upload or drop <br/>your dataset here</p>    
-                            </div>
-                        </FileUploader>
+                    datasetFile ? (
+                        <DatasetChecking preview={preview} onConfirm={onConfirm} onReject={onReject}/>
+                    ) : (
+                        <>
+                            <FileUploader handleChange={handleChange} name="file" types={['csv']} dropMessageStyle={{ marginRight: '-3rem', marginLeft: '3rem' }} hoverTitle={" "}>
+                                <div className='flex items-center border-2 border-cyan-400 border-dashed cursor-pointer h-full ml-12 -mr-12'>
+                                    <p className='text-cyan-400 mx-auto text-center text-4xl'>Upload or drop <br/>your dataset here</p>    
+                                </div>
+                            </FileUploader>
 
-                        <div className='flex flex-col justify-center mr-12 text-right'>
-                            <h1 className='text-5xl font-bold'>Upload your dataset</h1>
-                        </div>
-                    </>
+                            <div className='flex flex-col justify-center mr-12 text-right'>
+                                <h1 className='text-5xl font-bold'>Upload your dataset</h1>
+                            </div>
+                        </>
+                    )
                 )}
             </div>
         </>
