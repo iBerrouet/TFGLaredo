@@ -9,15 +9,17 @@ function DatasetUploading() {
     const [datasetFile, setDatasetFile] = useState(null)
     const [preview, setPreview] = useState([])
     const [datasetUploaded, setDatasetUploaded] = useState(false)
+    const [columns, setColumns] = useState([])
 
     const handleChange = (file) => {
-        setDatasetFile(file);
+        setDatasetFile(file)
         Papa.parse(file, {
             header: true,
             skipEmptyLines: true,
             preview: 6,
             complete: function (results) {
-                setPreview(results.data);
+                setPreview(results.data)
+                setColumns(results.meta.fields)
             },
         });   
     }
@@ -34,7 +36,7 @@ function DatasetUploading() {
         <>
             <div className='grid grid-cols-2 h-[66vh] w-full mt-12'>
                 {datasetUploaded ? (
-                    <ColumnTypeIndicator/>
+                    <ColumnTypeIndicator columns={columns}/>
                 ) : (
                     datasetFile ? (
                         <DatasetChecking preview={preview} onConfirm={onConfirm} onReject={onReject}/>
