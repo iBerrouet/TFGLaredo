@@ -42,13 +42,13 @@ function DatasetUploading() {
                         <DatasetChecking preview={preview} onConfirm={onConfirm} onReject={onReject}/>
                     ) : (
                         <>
-                            <FileUploader handleChange={handleChange} name="file" types={['csv']} dropMessageStyle={{ marginRight: '-3rem', marginLeft: '3rem' }} hoverTitle={" "}>
-                                <div className='flex items-center border-2 border-cyan-400 border-dashed cursor-pointer h-full ml-12 -mr-12'>
+                            <FileUploader handleChange={handleChange} name="file" types={['csv']} dropMessageStyle={{ marginRight: 'auto', marginLeft: 'auto', width: '91.666667%' }} hoverTitle={" "}>
+                                <div className='flex items-center border-2 border-cyan-400 border-dashed cursor-pointer h-full w-11/12 mx-auto'>
                                     <p className='text-cyan-400 mx-auto text-center text-4xl'>Upload or drop <br/>your dataset here</p>    
                                 </div>
                             </FileUploader>
 
-                            <div className='flex flex-col justify-center mr-12 text-right'>
+                            <div className='flex flex-col justify-center mx-auto text-right'>
                                 <h1 className='text-5xl font-bold'>Upload your dataset</h1>
                             </div>
                         </>

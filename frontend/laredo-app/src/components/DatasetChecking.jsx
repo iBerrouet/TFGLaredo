@@ -6,7 +6,7 @@ function DatasetChecking({preview, onConfirm, onReject}) {
 
     return(
         <>
-            <div className='max-w-full overflow-x-auto ml-12 -mr-12'>
+            <div className='max-w-full overflow-x-auto mx-auto w-11/12'>
                 <table className='w-full text-center bg-gray-800'>
                     <thead className='text-white font-bold border-t border-white'>
                         <tr>
@@ -26,7 +26,7 @@ function DatasetChecking({preview, onConfirm, onReject}) {
                     </tbody>
                 </table>
             </div>
-            <div className='flex flex-col justify-center mr-12 text-right'>
+            <div className='flex flex-col justify-center mx-auto text-right'>
                 <h1 className='text-5xl font-bold'>Check uploaded dataset</h1>
                 <strong className='mt-5'>
                     Check that this is the dataset you want to use.<br/>

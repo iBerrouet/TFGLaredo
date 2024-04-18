@@ -7,7 +7,7 @@ function ColumnTypeIndicator({columns}) {
 
     return(
         <>
-            <div className='max-w-full ml-12 -mr-12 flex justify-center'>
+            <div className='max-w-full mx-auto flex justify-center'>
                 <table className='w-fit text-center'>
                     <tbody>
                         {columns.map((column, index) => (
@@ -29,7 +29,7 @@ function ColumnTypeIndicator({columns}) {
                     </tbody>
                 </table>
             </div>
-            <div className='fixed mt-40 justify-center right-12 flex flex-col text-right'>
+            <div className='fixed top-1/2 left-1/2 translate-x-1/4 justify-center flex flex-col text-right'>
                 <h1 className='text-5xl font-bold'>Set column data type</h1>
                 <strong className='mt-5'>
                     Select the data type for each column of your dataset.
