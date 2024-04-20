@@ -1,9 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import CustomButton from './CustomButton'
 
-function ColumnTypeIndicator({columns}) {
+function ColumnTypeIndicator({columns, columnsDataType, setColumnsDataType}) {
 
-    console.log('Columns Indicator:', columns)
+    const handleDataTypeChange = (index, event) => {
+        const newColumnsDataType = [...columnsDataType]
+        newColumnsDataType[index] = event.target.value
+        setColumnsDataType(newColumnsDataType)
+    }
 
     return(
         <>
@@ -14,7 +18,11 @@ function ColumnTypeIndicator({columns}) {
                             <tr key={index}>
                                 <td className='border-b border-gray-800 py-2 px-14'>{column}</td>
                                 <td className='border-b border-gray-800 py-2 px-14'>
-                                    <select className='text-white rounded border border-white bg-gray-800 py-1 w-fit'>
+                                    <select className='text-white rounded border border-white bg-gray-800 py-1 w-fit'
+                                        value={columnsDataType[index]}
+                                        onChange={(event) => handleDataTypeChange(index, event)}
+                                    >
+
                                         <option value="">Select a data type...</option>
 
                                         <option value="integer">Integer</option>
