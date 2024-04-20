@@ -1,14 +1,37 @@
-import React, { useState } from 'react'
+import React, { useState , useEffect } from 'react'
 import algorithmData from '../assets/algorithmParameters.json'
 import CustomButton from './CustomButton'
 
 function AdvancedModelSelection() {
 
     const [selectedAlgorithm, setSelectedAlgorithm] = useState("")
+    const [parametersValue, setParametersValue] = useState({})
+
+    useEffect(() => {
+        if (selectedAlgorithm) {
+            const defaultValues = {}
+            const parameters = algorithmData[selectedAlgorithm].parameters
+            Object.keys(parameters).forEach(parameterName => {
+                defaultValues[parameterName] = parameters[parameterName].default
+            });
+            setParametersValue(defaultValues)
+        }
+    }, [selectedAlgorithm])
 
     const handleSelectAlgorithm = (event) => {
-        setSelectedAlgorithm(event.target.value);
+        setSelectedAlgorithm(event.target.value)
     }
+
+
+    const handleParameterChange = (parameterName, event) => {
+        const value = event.target.value;
+        setParametersValue(prevState => ({
+            ...prevState,
+            [parameterName]: value
+        }))
+        console.log(parametersValue)
+    }
+
 
     return(
         <>
@@ -38,7 +61,7 @@ function AdvancedModelSelection() {
                             <table className='mt-5 bg-transparent border-white w-full'>
                                 <tbody>
                                     {Object.keys(algorithmData[selectedAlgorithm].parameters).map((parameterName) => {
-                                        const defaultValue = algorithmData[selectedAlgorithm].parameters[parameterName].default;
+                                        const defaultValue = algorithmData[selectedAlgorithm].parameters[parameterName].default
                                         return (
                                             <tr key={parameterName}>
                                                 <td  className='text-left border-0 border-b-2 border-gray-800 py-2'>{parameterName}</td>
@@ -46,11 +69,12 @@ function AdvancedModelSelection() {
                                                     <input 
                                                         className='border border-white rounded bg-transparent text-white'
                                                         type="text" 
-                                                        value={defaultValue} 
+                                                        value={parametersValue[parameterName] || defaultValue} 
+                                                        onChange={(event) => handleParameterChange(parameterName, event)}
                                                     />
                                                 </td>
                                             </tr>
-                                        );
+                                        )
                                     })}
                                 </tbody>
                             </table>
