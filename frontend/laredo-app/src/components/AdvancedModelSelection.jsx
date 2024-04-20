@@ -58,14 +58,13 @@ function AdvancedModelSelection() {
                         )}
                     </div>
                 </div>
-                <div className='sticky top-0 h-fit'>
-                    <div className='flex flex-col text-right mt-40 mr-28 self-end'>
-                        <h2 className='text-5xl font-bold'>Model creation</h2>
-                        <h1 className='text-6xl font-bold'>Advanced</h1>
-                        <strong className='mt-5'>Set the model parameters once the algorithm is chosen.</strong>
-                        <div className="ml-auto mt-6">
-                            <CustomButton className='w-fit text-lg mr-1'>Train your model</CustomButton>
-                        </div>
+
+                <div className='fixed top-1/2 left-1/2 translate-x-1/4 text-right'>
+                    <h2 className='text-5xl font-bold'>Model creation</h2>
+                    <h1 className='text-6xl font-bold'>Advanced</h1>
+                    <strong className='mt-5'>Set the model parameters once the algorithm is chosen.</strong>
+                    <div className="ml-auto mt-6">
+                        <CustomButton className='w-fit text-lg'>Train your model</CustomButton>
                     </div>
                 </div>
             </div>
