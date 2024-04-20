@@ -1,6 +1,6 @@
 import React from 'react'
 
-function BasicModelCreation() {
+function BasicModelSelection() {
     return(
         <>
             <p>Creacion de modelos basica</p>
@@ -8,4 +8,4 @@ function BasicModelCreation() {
     )
 }
 
-export default BasicModelCreation
+export default BasicModelSelection
