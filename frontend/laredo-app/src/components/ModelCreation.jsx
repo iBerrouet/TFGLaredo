@@ -16,6 +16,11 @@ const Steps = {
 
 function ModelCreation() {
     const [activeButton, setActiveButton] = useState(Steps.Dataset)
+    const [datasetFile, setDatasetFile] = useState(null)
+    const [columnsDataType, setColumnsDataType] = useState({})
+    const [algorithm, setAlgorithm] = useState("")
+    const [parametersValue, setParametersValue] = useState({})
+
     const navigate = useNavigate()
 
     const goHome = () => {
@@ -64,9 +69,23 @@ function ModelCreation() {
                     </button>
                 </div>
             </div>
-            {activeButton === Steps.Dataset && <DatasetUploading />}
+            {activeButton === Steps.Dataset && 
+                <DatasetUploading 
+                    datasetFile={datasetFile}
+                    setDatasetFile={setDatasetFile}
+                    columnsDataType={columnsDataType}
+                    setColumnsDataType={setColumnsDataType}
+                />
+            }
             {activeButton === Steps.Preprocessing && <DatasetPreprocessing />}
-            {activeButton === Steps.Algorithm && <ModelSelection />}
+            {activeButton === Steps.Algorithm && 
+                <ModelSelection 
+                    algorithm={algorithm}
+                    setAlgorithm={setAlgorithm}
+                    parametersValue={parametersValue}
+                    setParametersValue={setParametersValue}    
+                />
+            }
             {activeButton === Steps.Evaluation && <ModelEvaluation />}
         </>
     )

@@ -4,13 +4,11 @@ import Papa from 'papaparse'
 import DatasetChecking from './DatasetChecking'
 import ColumnTypeIndicator from './ColumnTypeIndicator'
 
-function DatasetUploading() {
+function DatasetUploading({datasetFile, setDatasetFile, columnsDataType, setColumnsDataType}) {
 
-    const [datasetFile, setDatasetFile] = useState(null)
     const [preview, setPreview] = useState([])
     const [datasetUploaded, setDatasetUploaded] = useState(false)
     const [columns, setColumns] = useState([])
-    const [columnsDataType, setColumnsDataType] = useState({})
 
 
     const handleChange = (file) => {

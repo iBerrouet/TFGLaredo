@@ -2,24 +2,21 @@ import React, { useState , useEffect } from 'react'
 import algorithmData from '../assets/algorithmParameters.json'
 import CustomButton from './CustomButton'
 
-function AdvancedModelSelection() {
-
-    const [selectedAlgorithm, setSelectedAlgorithm] = useState("")
-    const [parametersValue, setParametersValue] = useState({})
+function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue}) {
 
     useEffect(() => {
-        if (selectedAlgorithm) {
+        if (algorithm) {
             const defaultValues = {}
-            const parameters = algorithmData[selectedAlgorithm].parameters
+            const parameters = algorithmData[algorithm].parameters
             Object.keys(parameters).forEach(parameterName => {
                 defaultValues[parameterName] = parameters[parameterName].default
             });
             setParametersValue(defaultValues)
         }
-    }, [selectedAlgorithm])
+    }, [algorithm])
 
     const handleSelectAlgorithm = (event) => {
-        setSelectedAlgorithm(event.target.value)
+        setAlgorithm(event.target.value)
     }
 
 
@@ -41,7 +38,7 @@ function AdvancedModelSelection() {
 
                         <strong className='mr-4 text-2xl'>Algorithm:</strong>
                         <select className='text-white rounded border border-white bg-gray-800 py-1 text-xl w-fit' 
-                            value={selectedAlgorithm} onChange={handleSelectAlgorithm}>
+                            value={algorithm} onChange={handleSelectAlgorithm}>
 
                             <option value="">Select an algorithm...</option>
 
@@ -55,13 +52,13 @@ function AdvancedModelSelection() {
                             
                     </div>
                     <div className="flex justify-center items-center mt-6">
-                        {selectedAlgorithm && (
+                        {algorithm && (
                             <div>
                             <h2 className='mt-5 text-xl'>Parameters:</h2>
                             <table className='mt-5 bg-transparent border-white w-full'>
                                 <tbody>
-                                    {Object.keys(algorithmData[selectedAlgorithm].parameters).map((parameterName) => {
-                                        const defaultValue = algorithmData[selectedAlgorithm].parameters[parameterName].default
+                                    {Object.keys(algorithmData[algorithm].parameters).map((parameterName) => {
+                                        const defaultValue = algorithmData[algorithm].parameters[parameterName].default
                                         return (
                                             <tr key={parameterName}>
                                                 <td  className='text-left border-0 border-b-2 border-gray-800 py-2'>{parameterName}</td>

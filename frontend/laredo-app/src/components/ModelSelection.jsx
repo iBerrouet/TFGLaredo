@@ -3,7 +3,7 @@ import AdvancedModelSelection from './AdvancedModelSelection'
 import BasicModelSelection from './BasicModelSelection'
 
 
-function ModelSelection() {
+function ModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue}) {
 
     const [showAdvance, setShowAdvance] = useState(false)
 
@@ -23,7 +23,16 @@ function ModelSelection() {
 
             </div>
 
-            {showAdvance ? <AdvancedModelSelection /> : <BasicModelSelection />}
+            {showAdvance ? 
+                <AdvancedModelSelection 
+                    algorithm={algorithm}
+                    setAlgorithm={setAlgorithm}
+                    parametersValue={parametersValue}
+                    setParametersValue={setParametersValue}
+                /> 
+                : 
+                <BasicModelSelection />
+            }
         </>
     )
 }
