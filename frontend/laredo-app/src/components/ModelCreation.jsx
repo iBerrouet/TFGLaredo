@@ -27,6 +27,9 @@ function ModelCreation() {
 
     const navigate = useNavigate()
 
+    const activeButtonStyle = 'bg-transparent text-cyan-400 font-bold text-lg py-2 w-40'
+    const inactiveButtonStyle = 'bg-gray-900 hover:bg-transparent hover:text-cyan-400 text-white text-lg  py-2 w-40'
+
     const goHome = () => {
         navigate('/')
     }
@@ -66,27 +69,27 @@ function ModelCreation() {
             </header>
             <div className='flex justify-center mt-3'>
                 <div className='inline-flex w-3/4'>
-                    <button className={`flex-1 ${activeButton == Steps.Dataset 
-                        ? 'bg-transparent text-cyan-400 text-lg py-2 w-40 border-2 border-r rounded-l' 
-                        : 'bg-gray-900 hover:bg-transparent hover:text-cyan-400 text-white text-lg font-bold py-2 w-40 border-2 rounded-l-lg border-r'}`}
+                <button className={`flex-1 border-2 rounded-l-lg ${activeButton === Steps.Dataset 
+                        ? activeButtonStyle 
+                        : inactiveButtonStyle}`}
                         onClick={() => handleActive(Steps.Dataset)}>
                         {Steps.Dataset}
                     </button>
-                    <button className={`flex-1 ${activeButton == Steps.Preprocessing 
-                        ? 'bg-transparent text-cyan-400 text-lg py-2 w-40 border-2 border-l border-r' 
-                        : 'bg-gray-900 hover:bg-transparent hover:text-cyan-400 text-white text-lg font-bold py-2 w-40 border-2 border-l border-r'}`}
+                    <button className={`flex-1 border-2 border-l-0 ${activeButton === Steps.Preprocessing 
+                        ? activeButtonStyle 
+                        : inactiveButtonStyle}`}
                         onClick={() => handleActive(Steps.Preprocessing)}>
                         {Steps.Preprocessing}
                     </button>
-                    <button className={`flex-1 ${activeButton == Steps.Algorithm 
-                        ? 'bg-transparent text-cyan-400 text-lg py-2 w-40 border-2 border-l border-r' 
-                        : 'bg-gray-900 hover:bg-transparent hover:text-cyan-400 text-white text-lg font-bold py-2 w-40 border-2 border-l border-r'}`}
+                    <button className={`flex-1 border-2 border-l-0 ${activeButton === Steps.Algorithm 
+                        ? activeButtonStyle 
+                        : inactiveButtonStyle}`}
                         onClick={() => handleActive(Steps.Algorithm)}>
                         {Steps.Algorithm}
                     </button>
-                    <button className={`flex-1 ${activeButton == Steps.Evaluation 
-                        ? 'bg-transparent text-cyan-400 text-lg py-2 w-40 border-2 rounded-r-lg border-l' 
-                        : 'bg-gray-900 hover:bg-transparent hover:text-cyan-400 text-white text-lg font-bold py-2 w-40 border-2 rounded-r-lg border-l'}`}
+                    <button className={`flex-1 border-2 border-l-0 rounded-r-lg ${activeButton === Steps.Evaluation 
+                        ? activeButtonStyle 
+                        : inactiveButtonStyle}`}
                         onClick={() => handleActive(Steps.Evaluation)}>
                         {Steps.Evaluation}
                     </button>
