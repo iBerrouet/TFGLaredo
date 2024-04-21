@@ -19,14 +19,12 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
         setAlgorithm(event.target.value)
     }
 
-
     const handleParameterChange = (parameterName, event) => {
         const value = event.target.value;
         setParametersValue(prevState => ({
             ...prevState,
             [parameterName]: value
         }))
-        console.log(parametersValue)
     }
 
 
@@ -61,12 +59,12 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                                         const defaultValue = algorithmData[algorithm].parameters[parameterName].default
                                         return (
                                             <tr key={parameterName}>
-                                                <td  className='text-left border-0 border-b-2 border-gray-800 py-2'>{parameterName}</td>
+                                                <td  className='text-left border-0 border-b-2 border-gray-800 px-2 py-2'>{parameterName}</td>
                                                 <td className='border-0 border-b-2 border-gray-800 py-2'>
                                                     <input 
-                                                        className='border border-white rounded bg-transparent text-white'
+                                                        className='border border-white rounded bg-transparent text-white px-1'
                                                         type="text" 
-                                                        value={parametersValue[parameterName] || defaultValue} 
+                                                        value={parametersValue[parameterName] !== undefined ? parametersValue[parameterName] : defaultValue}
                                                         onChange={(event) => handleParameterChange(parameterName, event)}
                                                     />
                                                 </td>
