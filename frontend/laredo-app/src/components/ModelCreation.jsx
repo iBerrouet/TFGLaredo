@@ -6,6 +6,7 @@ import DatasetUploading from './DatasetUploading'
 import ModelSelection from './ModelSelection'
 import ModelEvaluation from './ModelEvaluation'
 import Papa from 'papaparse'
+import axios from 'axios'
 
 const Steps = {
     Dataset: 'Dataset',
@@ -43,7 +44,7 @@ function ModelCreation() {
         setActiveButton(step)
     }
 
-    const handleNextStep = () => {
+    const handleNextStep = async () => {
         switch (activeButton) {
             case Steps.Dataset:
                 setActiveButton(Steps.Preprocessing);
@@ -52,8 +53,12 @@ function ModelCreation() {
                 setActiveButton(Steps.Algorithm);
                 break;
             case Steps.Algorithm:
-                setActiveButton(Steps.Evaluation);
-                const datasetJSON = convertDatasetToJSON(datasetFile)
+                try {
+                    await callAPI();
+                    setActiveButton(Steps.Evaluation);
+                } catch (error) {
+                    console.error('Incorrect API call:', error);
+                }
                 break;
             case Steps.Evaluation:
                 break;
@@ -62,6 +67,15 @@ function ModelCreation() {
         }
     }
     
+    const callAPI = async() => {
+        const datasetJSON = await convertDatasetToJSON(datasetFile)
+        await axios.post('http://localhost:5050/train_model', {
+            datasetJSON,
+            columnsDataType,
+            algorithm,
+            parametersValue
+        })
+    }
     
     const convertDatasetToJSON = (file) => {
         return new Promise((resolve, reject) => {
