@@ -37,6 +37,7 @@ function DatasetUploading() {
     }
 
     const onReject = () => {
+        setDatasetUploaded(false)
         setDatasetFile(null)
         setColumnsDataType({});
     }
@@ -45,7 +46,7 @@ function DatasetUploading() {
         <>
             <div className='grid grid-cols-2 h-[66vh] w-full mt-12'>
                 {datasetUploaded ? (
-                    <ColumnTypeIndicator columns={columns} columnsDataType={columnsDataType} setColumnsDataType={setColumnsDataType}/>
+                    <ColumnTypeIndicator columns={columns} columnsDataType={columnsDataType} setColumnsDataType={setColumnsDataType} onReject={onReject}/>
                 ) : (
                     datasetFile ? (
                         <DatasetChecking preview={preview} onConfirm={onConfirm} onReject={onReject}/>
