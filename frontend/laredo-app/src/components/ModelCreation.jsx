@@ -18,6 +18,10 @@ function ModelCreation() {
     const [activeButton, setActiveButton] = useState(Steps.Dataset)
     const [datasetFile, setDatasetFile] = useState(null)
     const [columnsDataType, setColumnsDataType] = useState({})
+    const [preview, setPreview] = useState([])
+    const [datasetUploaded, setDatasetUploaded] = useState(false)
+    const [columns, setColumns] = useState([])
+
     const [algorithm, setAlgorithm] = useState("")
     const [parametersValue, setParametersValue] = useState({})
 
@@ -75,6 +79,12 @@ function ModelCreation() {
                     setDatasetFile={setDatasetFile}
                     columnsDataType={columnsDataType}
                     setColumnsDataType={setColumnsDataType}
+                    preview={preview}
+                    setPreview={setPreview}
+                    datasetUploaded={datasetUploaded}
+                    setDatasetUploaded={setDatasetUploaded}
+                    columns={columns}
+                    setColumns={setColumns}
                 />
             }
             {activeButton === Steps.Preprocessing && <DatasetPreprocessing />}
