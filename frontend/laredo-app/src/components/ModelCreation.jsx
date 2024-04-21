@@ -15,7 +15,7 @@ const Steps = {
 
 
 function ModelCreation() {
-    const [activeButton, setActiveButton] = useState('')
+    const [activeButton, setActiveButton] = useState(Steps.Dataset)
     const navigate = useNavigate()
 
     const goHome = () => {

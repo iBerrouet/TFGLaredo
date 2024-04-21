@@ -8,12 +8,6 @@
   h1 {
     @apply text-white;
   }
-  table {
-    @apply bg-gray-800 text-center;
-  }
-  td, th {
-    @apply px-9 py-5 border-8 border-slate-950;
-  }
 }
 
 @tailwind components;
