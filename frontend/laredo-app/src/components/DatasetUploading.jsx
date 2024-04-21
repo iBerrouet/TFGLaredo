@@ -3,6 +3,7 @@ import { FileUploader } from 'react-drag-drop-files'
 import Papa from 'papaparse'
 import DatasetChecking from './DatasetChecking'
 import ColumnTypeIndicator from './ColumnTypeIndicator'
+import uploadIcon from '../assets/uploadIcon.svg' 
 
 function DatasetUploading() {
 
@@ -53,13 +54,16 @@ function DatasetUploading() {
                     ) : (
                         <>
                             <FileUploader handleChange={handleChange} name="file" types={['csv']} dropMessageStyle={{ marginRight: 'auto', marginLeft: 'auto', width: '91.666667%' }} hoverTitle={" "}>
-                                <div className='flex items-center border-2 border-cyan-400 border-dashed cursor-pointer h-full w-11/12 mx-auto'>
-                                    <p className='text-cyan-400 mx-auto text-center text-4xl'>Upload or drop <br/>your dataset here</p>    
+                                <div className='flex flex-col justify-center items-center border-2 border-dashed rounded-md border-cyan-400 cursor-pointer h-full w-11/12 mx-auto bg-gray-800'>
+                                    <img src={uploadIcon} alt='Upload file icon' className='w-20 h-20'/>
+                                    <strong className='text-white mx-auto text-center text-4xl mt-12'>Drop your dataset here <br/>or click to upload</strong>  
+                                    <p className='mt-3'>Support: *.csv</p>  
                                 </div>
                             </FileUploader>
 
                             <div className='flex flex-col justify-center mx-auto text-right'>
-                                <h1 className='text-5xl font-bold'>Upload your dataset</h1>
+                                <h1 className='text-5xl font-bold'>Choose your dataset</h1>
+                                <strong className='mt-5'>Upload your dataset to start building your model.</strong>
                             </div>
                         </>
                     )
