@@ -64,7 +64,7 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                                                     <input 
                                                         className='border border-white rounded bg-transparent text-white px-1'
                                                         type="text" 
-                                                        value={parametersValue[parameterName] !== undefined ? parametersValue[parameterName] : defaultValue}
+                                                        value={parametersValue[parameterName] !== undefined ? parametersValue[parameterName] : defaultValue || ''}
                                                         onChange={(event) => handleParameterChange(parameterName, event)}
                                                     />
                                                 </td>
