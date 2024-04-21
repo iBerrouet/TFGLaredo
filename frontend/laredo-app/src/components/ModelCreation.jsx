@@ -5,6 +5,7 @@ import DatasetPreprocessing from './DatasetPreprocessing'
 import DatasetUploading from './DatasetUploading'
 import ModelSelection from './ModelSelection'
 import ModelEvaluation from './ModelEvaluation'
+import Papa from 'papaparse'
 
 const Steps = {
     Dataset: 'Dataset',
@@ -52,6 +53,7 @@ function ModelCreation() {
                 break;
             case Steps.Algorithm:
                 setActiveButton(Steps.Evaluation);
+                const datasetJSON = convertDatasetToJSON(datasetFile)
                 break;
             case Steps.Evaluation:
                 break;
@@ -60,6 +62,21 @@ function ModelCreation() {
         }
     }
     
+    
+    const convertDatasetToJSON = (file) => {
+        return new Promise((resolve, reject) => {
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: (results) => {
+                    resolve(results.data)
+                },
+                error: (error) => {
+                    reject(error)
+                }
+            })
+        })    
+    }
 
     return(
         <>
