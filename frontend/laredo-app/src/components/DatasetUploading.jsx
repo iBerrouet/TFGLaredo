@@ -10,7 +10,7 @@ function DatasetUploading() {
     const [preview, setPreview] = useState([])
     const [datasetUploaded, setDatasetUploaded] = useState(false)
     const [columns, setColumns] = useState([])
-    const [columnsDataType, setColumnsDataType] = useState(new Array(columns.length))
+    const [columnsDataType, setColumnsDataType] = useState({})
 
 
     const handleChange = (file) => {
@@ -21,9 +21,15 @@ function DatasetUploading() {
             preview: 6,
             complete: function (results) {
                 setPreview(results.data)
-                setColumns(results.meta.fields)
+                const columns = results.meta.fields
+                setColumns(columns)
+                const initialColumnsDataType = {};
+                columns.forEach(column => {
+                    initialColumnsDataType[column] = ''
+                })
+                setColumnsDataType(initialColumnsDataType)
             },
-        });   
+        })
     }
 
     const onConfirm = () => {
@@ -32,7 +38,7 @@ function DatasetUploading() {
 
     const onReject = () => {
         setDatasetFile(null)
-        setColumnsDataType([]);
+        setColumnsDataType({});
     }
 
     return(

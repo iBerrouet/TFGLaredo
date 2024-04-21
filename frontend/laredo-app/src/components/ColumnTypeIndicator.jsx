@@ -3,10 +3,11 @@ import CustomButton from './CustomButton'
 
 function ColumnTypeIndicator({columns, columnsDataType, setColumnsDataType}) {
 
-    const handleDataTypeChange = (index, event) => {
-        const newColumnsDataType = [...columnsDataType]
-        newColumnsDataType[index] = event.target.value
-        setColumnsDataType(newColumnsDataType)
+    const handleDataTypeChange = (column, event) => {
+        setColumnsDataType(prevState => ({
+            ...prevState,
+            [column]: event.target.value
+        }))
     }
 
     return(
