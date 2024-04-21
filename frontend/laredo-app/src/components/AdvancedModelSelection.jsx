@@ -2,7 +2,7 @@ import React, { useState , useEffect } from 'react'
 import algorithmData from '../assets/algorithmParameters.json'
 import CustomButton from './CustomButton'
 
-function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue}) {
+function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue, onNextStep}) {
 
     useEffect(() => {
         if (algorithm) {
@@ -83,7 +83,7 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                     <h1 className='text-6xl font-bold'>Advanced</h1>
                     <strong className='mt-5'>Set the model parameters once the algorithm is chosen.</strong>
                     <div className="ml-auto mt-6">
-                        <CustomButton className='w-fit text-lg'>Train your model</CustomButton>
+                        <CustomButton className='w-fit text-lg' onClick={onNextStep}>Train your model</CustomButton>
                     </div>
                 </div>
             </div>

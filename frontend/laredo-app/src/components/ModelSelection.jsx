@@ -3,7 +3,7 @@ import AdvancedModelSelection from './AdvancedModelSelection'
 import BasicModelSelection from './BasicModelSelection'
 
 
-function ModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue}) {
+function ModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue, onNextStep}) {
 
     const [showAdvance, setShowAdvance] = useState(false)
 
@@ -29,6 +29,7 @@ function ModelSelection({algorithm, setAlgorithm, parametersValue, setParameters
                     setAlgorithm={setAlgorithm}
                     parametersValue={parametersValue}
                     setParametersValue={setParametersValue}
+                    onNextStep={onNextStep}
                 /> 
                 : 
                 <BasicModelSelection />

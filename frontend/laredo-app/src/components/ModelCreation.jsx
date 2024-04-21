@@ -39,6 +39,25 @@ function ModelCreation() {
         setActiveButton(step)
     }
 
+    const handleNextStep = () => {
+        switch (activeButton) {
+            case Steps.Dataset:
+                setActiveButton(Steps.Preprocessing);
+                break;
+            case Steps.Preprocessing:
+                setActiveButton(Steps.Algorithm);
+                break;
+            case Steps.Algorithm:
+                setActiveButton(Steps.Evaluation);
+                break;
+            case Steps.Evaluation:
+                break;
+            default:
+                break;
+        }
+    }
+    
+
     return(
         <>
             <header className='bg-gray-800 h-20 flex items-center'>
@@ -85,6 +104,7 @@ function ModelCreation() {
                     setDatasetUploaded={setDatasetUploaded}
                     columns={columns}
                     setColumns={setColumns}
+                    onNextStep={handleNextStep}
                 />
             }
             {activeButton === Steps.Preprocessing && <DatasetPreprocessing />}
@@ -93,7 +113,8 @@ function ModelCreation() {
                     algorithm={algorithm}
                     setAlgorithm={setAlgorithm}
                     parametersValue={parametersValue}
-                    setParametersValue={setParametersValue}    
+                    setParametersValue={setParametersValue}  
+                    onNextStep={handleNextStep}  
                 />
             }
             {activeButton === Steps.Evaluation && <ModelEvaluation />}

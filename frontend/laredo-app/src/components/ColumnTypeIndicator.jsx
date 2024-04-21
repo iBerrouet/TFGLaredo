@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import CustomButton from './CustomButton'
 
-function ColumnTypeIndicator({columns, columnsDataType, setColumnsDataType, onReject}) {
+function ColumnTypeIndicator({columns, columnsDataType, setColumnsDataType, onReject, onNextStep}) {
 
     const handleDataTypeChange = (column, event) => {
         setColumnsDataType(prevState => ({
@@ -44,7 +44,7 @@ function ColumnTypeIndicator({columns, columnsDataType, setColumnsDataType, onRe
                     Select the data type for each column of your dataset.
                 </strong>
                 <div className='flex justify-end mt-5'>
-                    <CustomButton className='mr-6'>Preprocess</CustomButton>
+                    <CustomButton className='mr-6' onClick={onNextStep}>Preprocess</CustomButton>
                     <CustomButton onClick={onReject}>Cancel</CustomButton>
                 </div>
             </div>

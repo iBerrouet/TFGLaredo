@@ -6,7 +6,7 @@ import ColumnTypeIndicator from './ColumnTypeIndicator'
 import uploadIcon from '../assets/uploadIcon.svg' 
 
 function DatasetUploading({datasetFile, setDatasetFile, columnsDataType, setColumnsDataType, preview, setPreview,
-                            datasetUploaded, setDatasetUploaded, columns, setColumns}) {
+                            datasetUploaded, setDatasetUploaded, columns, setColumns, onNextStep}) {
 
     const handleChange = (file) => {
         setDatasetFile(file)
@@ -41,7 +41,7 @@ function DatasetUploading({datasetFile, setDatasetFile, columnsDataType, setColu
         <>
             <div className='grid grid-cols-2 h-[66vh] w-full mt-12'>
                 {datasetUploaded ? (
-                    <ColumnTypeIndicator columns={columns} columnsDataType={columnsDataType} setColumnsDataType={setColumnsDataType} onReject={onReject}/>
+                    <ColumnTypeIndicator columns={columns} columnsDataType={columnsDataType} setColumnsDataType={setColumnsDataType} onReject={onReject} onNextStep={onNextStep}/>
                 ) : (
                     datasetFile ? (
                         <DatasetChecking preview={preview} onConfirm={onConfirm} onReject={onReject}/>
