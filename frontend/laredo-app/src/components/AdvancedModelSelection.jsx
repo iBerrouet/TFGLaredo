@@ -1,6 +1,7 @@
 import React, { useState , useEffect } from 'react'
 import algorithmData from '../assets/algorithmParameters.json'
 import CustomButton from './CustomButton'
+import infoIcon from '../assets/infoIcon.svg'
 
 function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue, onNextStep}) {
 
@@ -27,7 +28,25 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
         }))
     }
 
-
+    function getTypeLabel(type, enumValues) {
+        if (Array.isArray(type)) {
+            let typeLabel = type.map(type => {
+                if (type === 'string' && enumValues && enumValues.length > 0) {
+                    return `${type} [${enumValues.map(value => `'${value}'`).join(', ')}]`;
+                } else {
+                    return type;
+                }
+            });
+            return typeLabel.join(', ');
+        } else {
+            if (type === 'string' && enumValues && enumValues.length > 0) {
+                return `${type} [${enumValues.map(value => `'${value}'`).join(', ')}]`;
+            } else {
+                return type;
+            }
+        }
+    }
+    
     return(
         <>
             <div className='grid grid-cols-2'>
@@ -56,17 +75,29 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                             <table className='mt-5 bg-transparent border-white w-full'>
                                 <tbody>
                                     {Object.keys(algorithmData[algorithm].parameters).map((parameterName) => {
-                                        const defaultValue = algorithmData[algorithm].parameters[parameterName].default
+                                        const parameterData = algorithmData[algorithm].parameters[parameterName]
+                                        const defaultValue = parameterData.default
+                                        const description = parameterData.description
+                                        const type = parameterData.type
+                                        const enumValues = parameterData.enum
                                         return (
                                             <tr key={parameterName}>
                                                 <td  className='text-left border-0 border-b-2 border-gray-800 px-2 py-2'>{parameterName}</td>
-                                                <td className='border-0 border-b-2 border-gray-800 py-2'>
+                                                <td className='flex border-0 border-b-2 border-gray-800 py-2'>
                                                     <input 
                                                         className='border border-white rounded bg-transparent text-white px-1'
                                                         type="text" 
                                                         value={parametersValue[parameterName] !== undefined ? parametersValue[parameterName] : defaultValue || ''}
                                                         onChange={(event) => handleParameterChange(parameterName, event)}
                                                     />
+                                                    <div className='flex flex-col items-center group relative'>
+                                                        <p className='hidden absolute text-white text-xs whitespace-nowrap -top-8 group-hover:block
+                                                                        bg-gray-800 p-1 rounded border border-white text-center'>
+                                                            {description}<br/>
+                                                            Data type: {getTypeLabel(type, enumValues)}
+                                                        </p>
+                                                        <img src={infoIcon} className='ml-1 cursor-pointer' alt='Information icon' />
+                                                    </div>
                                                 </td>
                                             </tr>
                                         )
