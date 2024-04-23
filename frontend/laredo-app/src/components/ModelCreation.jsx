@@ -53,9 +53,9 @@ function ModelCreation() {
                 setActiveButton(Steps.Algorithm);
                 break;
             case Steps.Algorithm:
+                setActiveButton(Steps.Evaluation);
                 try {
                     await callAPI();
-                    setActiveButton(Steps.Evaluation);
                 } catch (error) {
                     console.error('Incorrect API call:', error);
                 }

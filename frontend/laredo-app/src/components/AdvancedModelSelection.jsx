@@ -5,6 +5,8 @@ import infoIcon from '../assets/infoIcon.svg'
 
 function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue, onNextStep}) {
 
+    const [errors, setErrors] = useState({})
+
     useEffect(() => {
         if (algorithm) {
             const defaultValues = {}
@@ -18,6 +20,7 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
 
     const handleSelectAlgorithm = (event) => {
         setAlgorithm(event.target.value)
+        setErrors({})
     }
 
     const handleParameterChange = (parameterName, event) => {
@@ -26,27 +29,124 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
             ...prevState,
             [parameterName]: value
         }))
+
+        setErrors(prevErrors => ({
+            ...prevErrors,
+            [parameterName]: ''
+        }))
     }
 
     function getTypeLabel(type, enumValues) {
         if (Array.isArray(type)) {
             let typeLabel = type.map(type => {
                 if (type === 'string' && enumValues && enumValues.length > 0) {
-                    return `${type} [${enumValues.map(value => `'${value}'`).join(', ')}]`;
+                    return `${type} [${enumValues.map(value => `'${value}'`).join(', ')}]`
                 } else {
-                    return type;
+                    return type
                 }
-            });
-            return typeLabel.join(', ');
+            })
+            return typeLabel.join(', ')
         } else {
             if (type === 'string' && enumValues && enumValues.length > 0) {
-                return `${type} [${enumValues.map(value => `'${value}'`).join(', ')}]`;
+                return `${type} [${enumValues.map(value => `'${value}'`).join(', ')}]`
             } else {
-                return type;
+                return type
             }
         }
     }
+
+    const handleNextStep = () => {
+        const isValid = validateParameters()
+
+        if (isValid) {
+            onNextStep()
+        } 
+    }
     
+    const validateParameters = () => {
+        const parameters = algorithmData[algorithm].parameters
+        let isValid = true
+
+        Object.keys(parameters).forEach(parameterName => {
+            const value = parametersValue[parameterName];
+            const isValidParameter = validateParameter(parameterName, value)
+            if (!isValidParameter) {
+                isValid = false
+                setErrors(prevErrors => ({
+                    ...prevErrors,
+                    [parameterName]: 'Invalid value'
+                }))
+            }
+        })
+
+        return isValid
+    }
+
+    const validateParameter = (parameterName, value) => {
+        let isValid = false
+        const parameterData = algorithmData[algorithm].parameters[parameterName]
+        let types = parameterData.type
+        const enumValues = parameterData.enum
+        const defaultValue = parameterData.default
+
+        if (value === defaultValue) {
+            return true
+        }
+
+        if (!Array.isArray(types)) {
+            types = [types]
+        }    
+
+        for (let i = 0; i < types.length; i++) {
+            const type = types[i]
+            switch(type) {
+                case "integer":
+                    if (Number.isInteger(Number(value))) {
+                        isValid = true
+                    }
+                    break
+                case "float":
+                    if (!isNaN(parseFloat(value))) {
+                        isValid = true
+                    }
+                    break
+                case "string":
+                    if (enumValues && Array.isArray(enumValues) && enumValues.length > 0) {
+                        if (enumValues.includes(value)) {
+                            isValid = true
+                        }
+                    }
+                    break
+                case "boolean":
+                    if (value === "true" || value === "false" || value === true || value === false) {
+                        isValid = true
+                    }
+                    break
+                case "object":
+                    if (/^\s*\{.*\}\s*$/.test(value)) {
+                        isValid = true
+                    }
+                    break
+                case "array":
+                    if (/^\s*\[.*\]\s*$/.test(value)) {
+                        isValid = true
+                    }
+                    break
+                case "null":
+                    if (value === '' || value === null) {
+                        isValid = true
+                    }
+                default:
+                    break
+            }
+            if (isValid === true) {
+                break
+            }
+        }
+
+        return isValid
+    }
+
     return(
         <>
             <div className='grid grid-cols-2'>
@@ -99,6 +199,7 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                                                         <img src={infoIcon} className='ml-1 cursor-pointer' alt='Information icon' />
                                                     </div>
                                                 </td>
+                                                <td className='text-red-500'>{errors[parameterName]}</td>
                                             </tr>
                                         )
                                     })}
@@ -114,7 +215,7 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                     <h1 className='text-6xl font-bold'>Advanced</h1>
                     <strong className='mt-5'>Set the model parameters once the algorithm is chosen.</strong>
                     <div className="ml-auto mt-6">
-                        <CustomButton className='w-fit text-lg' onClick={onNextStep}>Train your model</CustomButton>
+                        <CustomButton className='w-fit text-lg' onClick={handleNextStep}>Train your model</CustomButton>
                     </div>
                 </div>
             </div>
