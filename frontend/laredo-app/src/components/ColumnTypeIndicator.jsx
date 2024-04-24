@@ -2,13 +2,36 @@ import React, { useState } from 'react'
 import CustomButton from './CustomButton'
 
 function ColumnTypeIndicator({columns, columnsDataType, setColumnsDataType, onReject, onNextStep}) {
+    const [errors, setErrors] = useState({})
 
     const handleDataTypeChange = (column, event) => {
         setColumnsDataType(prevState => ({
             ...prevState,
             [column]: event.target.value
         }))
+
+        setErrors(errors => ({
+            ...errors,
+            [column]: ''
+        }))
     }
+
+    const handleNextStep = () => {
+        const newErrors = {};
+
+        for (let i = 0; i < columns.length; i++) {
+            if (!columnsDataType[i]) {
+                newErrors[i] = 'Please select a data type.';
+            }
+        }
+
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length === 0) {
+            onNextStep(); 
+        }
+    }
+
 
     return(
         <>
@@ -32,6 +55,9 @@ function ColumnTypeIndicator({columns, columnsDataType, setColumnsDataType, onRe
                                         <option value="date">Date</option>
                                         <option value="datetime">DateTime</option>
                                     </select>
+                                    {errors[index] && (
+                                        <p className='text-red-500'>{errors[index]}</p>
+                                    )}
                                 </td>
                             </tr>
                         ))}
@@ -44,7 +70,7 @@ function ColumnTypeIndicator({columns, columnsDataType, setColumnsDataType, onRe
                     Select the data type for each column of your dataset.
                 </strong>
                 <div className='flex justify-end mt-5'>
-                    <CustomButton className='mr-6' onClick={onNextStep}>Preprocess</CustomButton>
+                    <CustomButton className='mr-6' onClick={handleNextStep}>Preprocess</CustomButton>
                     <CustomButton onClick={onReject}>Cancel</CustomButton>
                 </div>
             </div>
