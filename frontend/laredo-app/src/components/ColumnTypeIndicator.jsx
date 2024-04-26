@@ -50,7 +50,7 @@ function ColumnTypeIndicator({columns, columnsDataType, setColumnsDataType, onRe
                                         <option value="">Select a data type...</option>
 
                                         <option value="integer">Integer</option>
-                                        <option value="double">Double</option>
+                                        <option value="float">Float</option>
                                         <option value="string">String</option>
                                         <option value="date">Date</option>
                                         <option value="datetime">DateTime</option>
