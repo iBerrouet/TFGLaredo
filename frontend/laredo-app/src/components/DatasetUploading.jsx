@@ -12,23 +12,37 @@ function DatasetUploading() {
     const [datasetUploaded, setDatasetUploaded] = useState(false)
     const [columns, setColumns] = useState([])
     const [columnsDataType, setColumnsDataType] = useState({})
+    const [hasHeader, setHasHeader] = useState(true)
 
 
     const handleChange = (file) => {
         setDatasetFile(file)
         Papa.parse(file, {
-            header: true,
+            header: hasHeader,
             skipEmptyLines: true,
             preview: 6,
             complete: function (results) {
                 setPreview(results.data)
-                const columns = results.meta.fields
-                setColumns(columns)
-                const initialColumnsDataType = {};
-                columns.forEach(column => {
-                    initialColumnsDataType[column] = ''
-                })
-                setColumnsDataType(initialColumnsDataType)
+                if (hasHeader) {
+                    const columns = results.meta.fields
+                    setColumns(columns);
+                    const initialColumnsDataType = {};
+                    columns.forEach(column => {
+                        initialColumnsDataType[column] = ''
+                    })
+                    setColumnsDataType(initialColumnsDataType)
+                } else {
+                    const columns = [];
+                    for (let i = 0; i < results.data[0].length; i++) {
+                        columns.push(`column${i + 1}`)
+                    }
+                    setColumns(columns)
+                    const initialColumnsDataType = {};
+                    columns.forEach(column => {
+                        initialColumnsDataType[column] = ''
+                    })
+                    setColumnsDataType(initialColumnsDataType)
+                }
             },
         })
     }
@@ -45,21 +59,37 @@ function DatasetUploading() {
 
     return(
         <>
-            <div className='grid grid-cols-2 h-[66vh] w-full mt-12'>
+            <div className='grid grid-cols-2 h-[70vh] w-full mt-12'>
                 {datasetUploaded ? (
                     <ColumnTypeIndicator columns={columns} columnsDataType={columnsDataType} setColumnsDataType={setColumnsDataType} onReject={onReject}/>
                 ) : (
                     datasetFile ? (
-                        <DatasetChecking preview={preview} onConfirm={onConfirm} onReject={onReject}/>
+                        <DatasetChecking preview={preview} columns={columns} onConfirm={onConfirm} onReject={onReject}/>
                     ) : (
                         <>
-                            <FileUploader handleChange={handleChange} name="file" types={['csv']} dropMessageStyle={{ marginRight: 'auto', marginLeft: 'auto', width: '91.666667%' }} hoverTitle={" "}>
-                                <div className='flex flex-col justify-center items-center border-2 border-dashed rounded-md border-cyan-400 cursor-pointer h-full w-11/12 mx-auto bg-gray-800'>
-                                    <img src={uploadIcon} alt='Upload file icon' className='w-20 h-20'/>
-                                    <strong className='text-white mx-auto text-center text-4xl mt-12'>Drop your dataset here <br/>or click to upload</strong>  
-                                    <p className='mt-3'>Support: *.csv</p>  
+                            <div className='flex flex-col'>
+                                <div className='flex justify-center'>
+                                    <input 
+                                        className='h-6 w-6 mr-2'
+                                        type='checkbox' 
+                                        id='checkbox' 
+                                        checked={hasHeader} 
+                                        onChange={() => setHasHeader(!hasHeader)}
+                                    />
+                                    <label htmlFor='checkbox' className='text-white text-lg'>Header included</label>
                                 </div>
-                            </FileUploader>
+
+                                <div className='flex-grow mt-6'>
+                                    <FileUploader handleChange={handleChange} name="file" types={['csv']} dropMessageStyle={{ marginRight: 'auto', marginLeft: 'auto', width: '91.666667%' }} hoverTitle={" "}>
+                                        <div className='flex flex-col justify-center items-center border-2 border-dashed rounded-md border-cyan-400 cursor-pointer h-full w-11/12 mx-auto bg-gray-800'>
+                                            <img src={uploadIcon} alt='Upload file icon' className='w-20 h-20'/>
+                                            <strong className='text-white mx-auto text-center text-4xl mt-12'>Drop your dataset here <br/>or click to upload</strong>  
+                                            <p className='mt-3'>Support: *.csv</p>  
+                                        </div>
+                                    </FileUploader>
+                                </div>
+                            </div>
+
 
                             <div className='flex flex-col justify-center mx-auto text-right'>
                                 <h1 className='text-5xl font-bold'>Choose your dataset</h1>

@@ -2,7 +2,7 @@ import React from 'react'
 import CustomButton from './CustomButton'
 
 
-function DatasetChecking({preview, onConfirm, onReject}) {
+function DatasetChecking({preview, columns, onConfirm, onReject}) {
 
     return(
         <>
@@ -10,7 +10,7 @@ function DatasetChecking({preview, onConfirm, onReject}) {
                 <table className='w-full text-center bg-gray-800'>
                     <thead className='text-white font-bold border-t border-white'>
                         <tr>
-                            {preview.length > 0 && Object.keys(preview[0]).map((column, index) => (
+                            {columns.map((column, index) => (
                                 <th key={index} className='border-l border-r border-white px-4 py-2'>{column}</th>
                             ))}
                         </tr>
