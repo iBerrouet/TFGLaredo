@@ -23,6 +23,7 @@ function ModelCreation() {
     const [preview, setPreview] = useState([])
     const [datasetUploaded, setDatasetUploaded] = useState(false)
     const [columns, setColumns] = useState([])
+    const [hasHeader, setHasHeader] = useState(true)
 
     const [algorithm, setAlgorithm] = useState("")
     const [parametersValue, setParametersValue] = useState({})
@@ -80,7 +81,7 @@ function ModelCreation() {
     const convertDatasetToJSON = (file) => {
         return new Promise((resolve, reject) => {
             Papa.parse(file, {
-                header: true,
+                header: hasHeader,
                 skipEmptyLines: true,
                 complete: (results) => {
                     resolve(results.data)
@@ -138,6 +139,8 @@ function ModelCreation() {
                     setDatasetUploaded={setDatasetUploaded}
                     columns={columns}
                     setColumns={setColumns}
+                    hasHeader={hasHeader}
+                    setHasHeader={setHasHeader}
                     onNextStep={handleNextStep}
                 />
             }

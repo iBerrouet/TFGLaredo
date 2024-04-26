@@ -6,9 +6,7 @@ import ColumnTypeIndicator from './ColumnTypeIndicator'
 import uploadIcon from '../assets/uploadIcon.svg' 
 
 function DatasetUploading({datasetFile, setDatasetFile, columnsDataType, setColumnsDataType, preview, setPreview,
-    datasetUploaded, setDatasetUploaded, columns, setColumns, onNextStep}) {
-
-    const [hasHeader, setHasHeader] = useState(true)
+    datasetUploaded, setDatasetUploaded, columns, setColumns, hasHeader, setHasHeader, onNextStep}) {
 
     const handleChange = (file) => {
         setDatasetFile(file)
