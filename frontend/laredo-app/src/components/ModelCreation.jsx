@@ -70,6 +70,7 @@ function ModelCreation() {
     
     const callAPI = async() => {
         const datasetJSON = await convertDatasetToJSON(datasetFile)
+
         await axios.post('http://localhost:5050/train_model', {
             datasetJSON,
             columnsDataType,

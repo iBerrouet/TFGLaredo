@@ -34,7 +34,6 @@ def get_model(model_name):
     run = mlflow.get_run(run_id)
     estimator_uri = run.info.artifact_uri + "/estimator.html"
 
-    mlflow.artifacts.download_artifacts(artifact_uri=estimator_uri, dst_path="C:\\Users\\isaac\\Downloads")
     html = mlflow.artifacts.load_text(estimator_uri)
     dataset = run.inputs.dataset_inputs[0].dataset.schema
 

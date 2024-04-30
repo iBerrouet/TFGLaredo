@@ -55,43 +55,13 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
         }
     }
 
-    const handleNextStep = () => {
-        const isValid = validateParameters()
-
-        if (isValid) {
-            onNextStep()
-        } 
-    }
-    
-    const validateParameters = () => {
-        const parameters = algorithmData[algorithm].parameters
-        let isValid = true
-
-        Object.keys(parameters).forEach(parameterName => {
-            const value = parametersValue[parameterName];
-            const isValidParameter = validateParameter(parameterName, value)
-            if (!isValidParameter) {
-                isValid = false
-                setErrors(prevErrors => ({
-                    ...prevErrors,
-                    [parameterName]: 'Invalid value'
-                }))
-            }
-        })
-
-        return isValid
-    }
-
     const validateParameter = (parameterName, value) => {
-        let isValid = false
+        let isValidParameter = false
+        let parsedValue = value
         const parameterData = algorithmData[algorithm].parameters[parameterName]
         let types = parameterData.type
         const enumValues = parameterData.enum
         const defaultValue = parameterData.default
-
-        if (value === defaultValue) {
-            return true
-        }
 
         if (!Array.isArray(types)) {
             types = [types]
@@ -102,49 +72,84 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
             switch(type) {
                 case "integer":
                     if (Number.isInteger(Number(value))) {
-                        isValid = true
+                        parsedValue = parseInt(value, 10)
+                        isValidParameter = true
                     }
                     break
                 case "float":
                     if (!isNaN(parseFloat(value))) {
-                        isValid = true
+                        parsedValue = parseFloat(value)
+                        isValidParameter = true
                     }
                     break
                 case "string":
                     if (enumValues && Array.isArray(enumValues) && enumValues.length > 0) {
                         if (enumValues.includes(value)) {
-                            isValid = true
+                            isValidParameter = true
                         }
                     }
                     break
                 case "boolean":
                     if (value === "true" || value === "false" || value === true || value === false) {
-                        isValid = true
+                        parsedValue = value === "true" || value === true
+                        isValidParameter = true
                     }
                     break
                 case "object":
                     if (/^\s*\{.*\}\s*$/.test(value)) {
-                        isValid = true
+                        isValidParameter = true
                     }
                     break
                 case "array":
                     if (/^\s*\[.*\]\s*$/.test(value)) {
-                        isValid = true
+                        isValidParameter = true
                     }
                     break
                 case "null":
                     if (value === '' || value === null) {
-                        isValid = true
+                        parsedValue = null
+                        isValidParameter = true
                     }
                 default:
                     break
             }
-            if (isValid === true) {
+            if (isValidParameter === true) {
                 break
             }
         }
 
-        return isValid
+        return {isValidParameter, parsedValue}
+    }
+
+    const validateParameters = () => {
+        const parameters = algorithmData[algorithm].parameters
+        let isValid = true
+        const parsedParametersValue = {}
+
+        Object.keys(parameters).forEach(parameterName => {
+            const value = parametersValue[parameterName]
+            const {isValidParameter, parsedValue} = validateParameter(parameterName, value)
+            if (!isValidParameter) {
+                isValid = false
+                setErrors(prevErrors => ({
+                    ...prevErrors,
+                    [parameterName]: 'Invalid value'
+                }))
+            } else {
+                parsedParametersValue[parameterName] = parsedValue
+            }
+        })
+
+        return {isValid, parsedParametersValue}
+    }
+
+    const handleNextStep = () => {
+        const {isValid, parsedParametersValue} = validateParameters()
+
+        if (isValid) {
+            setParametersValue(parsedParametersValue)
+            onNextStep()
+        }
     }
 
     return(
