@@ -31,7 +31,9 @@ function ModelCreation() {
     const [parametersValue, setParametersValue] = useState({})
 
     const [modelName, setModelName] = useState("")
+    const [modelNameError, setModelNameError] = useState("")
     const [problemType, setProblemType] = useState("")
+    const [problemTypeError, setProblemTypeError] = useState("")
     const [hasStarted, setHasStarted] = useState(false)
     const [problemTypes, setProblemTypes] = useState([])
 
@@ -51,6 +53,20 @@ function ModelCreation() {
 
     const goModels = () => {
         navigate('/models')
+    }
+
+    const handleHasStarted = () => {
+        setModelNameError('')
+        setProblemTypeError('')
+        if (!modelName) {
+            setModelNameError('Please enter a model name');
+        }  
+        if (!problemType) {
+            setProblemTypeError('Please select a problem type');
+        }
+        if (modelName && problemType) {
+            setHasStarted(true);
+        }
     }
 
     const handleActive = (step) => {
@@ -128,6 +144,7 @@ function ModelCreation() {
                             value={modelName}
                             onChange={(event) => setModelName(event.target.value)}
                         />
+                        {modelNameError && <p className="text-red-500 mt-2">{modelNameError}</p>}
 
                         <label htmlFor="problemType" className="text-2xl text-white mb-1 mt-8">Problem type</label>
                         <select 
@@ -141,9 +158,11 @@ function ModelCreation() {
                                 <option className='text-lg' key={index} value={problemType}>{problemType}</option>
                             ))}
                         </select>
+                        {problemTypeError && <p className="text-red-500 mt-2">{problemTypeError}</p>}
+
                     </div>
 
-                    <CustomButton onClick={() => setHasStarted(true)} className='mt-16'>Start</CustomButton>
+                    <CustomButton onClick={handleHasStarted} className='mt-16'>Start</CustomButton>
                 </div>                    
             :
                 <div className='flex justify-center mt-3'>
