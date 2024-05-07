@@ -81,9 +81,6 @@ def train_model():
         #mlflow.log_input(training, "training")
 
 
-        for key, value in parameters_value.items():
-            print(key + ': ' + str(type(value)))
-
         if algorithm == "random_forest" :
             model = RandomForestClassifier(**parameters_value)
         elif algorithm == "decision_tree" :
@@ -112,11 +109,14 @@ def train_model():
         mlflow.log_metric('fpr', fpr)
         mlflow.log_metric('f1_score', f1)
 
-
         mlflow.sklearn.log_model(sk_model=model, artifact_path="model", registered_model_name="model_name")
-
-
-    return jsonify({"message": "Model trained successfully"}), 200
+   
+    model = mlflow.search_registered_models(filter_string=f"name='model_name'")
+    run_id = model[0].latest_versions[0].run_id
+    run = mlflow.get_run(run_id)
+    metrics = run.data.metrics
+    
+    return jsonify({"metrics": metrics}), 200
 
 
 if __name__ == "__main__":
