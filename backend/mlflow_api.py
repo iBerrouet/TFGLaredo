@@ -55,6 +55,7 @@ def train_model():
 
     data = request.json
 
+    model_name = data.get('modelName')
     dataset_json = data.get('datasetJSON')
     columns_data_type = data.get('columnsDataType')
     algorithm = data.get('algorithm')
@@ -79,10 +80,6 @@ def train_model():
     with mlflow.start_run():
 
         #mlflow.log_input(training, "training")
-
-
-        for key, value in parameters_value.items():
-            print(key + ': ' + str(type(value)))
 
         if algorithm == "random_forest" :
             model = RandomForestClassifier(**parameters_value)
@@ -113,7 +110,7 @@ def train_model():
         mlflow.log_metric('f1_score', f1)
 
 
-        mlflow.sklearn.log_model(sk_model=model, artifact_path="model", registered_model_name="model_name")
+        mlflow.sklearn.log_model(sk_model=model, artifact_path="model", registered_model_name=model_name)
 
 
     return jsonify({"message": "Model trained successfully"}), 200

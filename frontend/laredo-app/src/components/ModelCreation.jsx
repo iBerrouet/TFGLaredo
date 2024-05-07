@@ -19,7 +19,7 @@ const Steps = {
 
 
 function ModelCreation() {
-    const [activeButton, setActiveButton] = useState("")
+    const [activeButton, setActiveButton] = useState('')
     const [datasetFile, setDatasetFile] = useState(null)
     const [columnsDataType, setColumnsDataType] = useState({})
     const [preview, setPreview] = useState([])
@@ -59,13 +59,14 @@ function ModelCreation() {
         setModelNameError('')
         setProblemTypeError('')
         if (!modelName) {
-            setModelNameError('Please enter a model name');
+            setModelNameError('Please enter a model name')
         }  
         if (!problemType) {
-            setProblemTypeError('Please select a problem type');
+            setProblemTypeError('Please select a problem type')
         }
         if (modelName && problemType) {
-            setHasStarted(true);
+            setHasStarted(true)
+            setActiveButton(Steps.Dataset)
         }
     }
 
@@ -100,6 +101,7 @@ function ModelCreation() {
         const datasetJSON = await convertDatasetToJSON(datasetFile)
 
         await axios.post('http://localhost:5050/train_model', {
+            modelName,
             datasetJSON,
             columnsDataType,
             algorithm,
