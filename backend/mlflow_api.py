@@ -115,8 +115,8 @@ def train_model():
     run_id = model[0].latest_versions[0].run_id
     run = mlflow.get_run(run_id)
     metrics = run.data.metrics
-    
-    return jsonify({"metrics": metrics}), 200
+
+    return jsonify(metrics), 200
 
 
 if __name__ == "__main__":

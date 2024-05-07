@@ -2,7 +2,7 @@ import React from "react"
 import { useNavigate } from 'react-router-dom'
 import CustomButton from "./CustomButton"
 
-function ModelEvaluation() {
+function ModelEvaluation({metrics}) {
 
     const navigate = useNavigate()
 
@@ -14,15 +14,20 @@ function ModelEvaluation() {
         <>
             <div className='grid grid-cols-2 h-[70vh] w-full'>
                 <div className='flex flex-col justify-center items-center'>
-                    <table className='bg-gray-800 border-white'>
+                    <table className='bg-gray-800 border-white rounded-xl'>
                         <thead className='text-white'>
-                            <th className='border-b'>
-                                <td className='w-36'>Metric</td>
-                                <td className='w-36'>Value</td>
-                            </th>
+                            <tr className='border-b '>
+                                <th className='w-48 p-3 text-2xl border-r'>Metric</th>
+                                <th className='w-48 p-3 text-2xl'>Value</th>
+                            </tr>
                         </thead>
                         <tbody>
-                            
+                        {Object.entries(metrics).map(([metricName, metricValue]) => (
+                            <tr key={metricName} className='border-t'>
+                                <td className='w-48 p-3 text-xl border-r'>{metricName}</td>
+                                <td className='w-48 p-3 text-xl'>{metricValue}</td>
+                            </tr>
+                        ))}
                         </tbody>
                     </table>
                 </div>

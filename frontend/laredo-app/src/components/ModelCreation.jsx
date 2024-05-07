@@ -28,6 +28,8 @@ function ModelCreation() {
     const [algorithm, setAlgorithm] = useState("")
     const [parametersValue, setParametersValue] = useState({})
 
+    const [metrics, setMetrics] = useState({})
+
     const navigate = useNavigate()
 
     const activeButtonStyle = 'bg-transparent text-cyan-400 font-bold text-lg py-2 w-40'
@@ -56,9 +58,9 @@ function ModelCreation() {
             case Steps.Algorithm:
                 setActiveButton(Steps.Evaluation);
                 try {
-                    await callAPI();
+                    setMetrics(await callAPI())
                 } catch (error) {
-                    console.error('Incorrect API call:', error);
+                    console.error('Incorrect API call:', error)
                 }
                 break;
             case Steps.Evaluation:
@@ -71,12 +73,19 @@ function ModelCreation() {
     const callAPI = async() => {
         const datasetJSON = await convertDatasetToJSON(datasetFile)
 
-        await axios.post('http://localhost:5050/train_model', {
+        const response = await axios.post('http://localhost:5050/train_model', {
             datasetJSON,
             columnsDataType,
             algorithm,
             parametersValue
         })
+
+        if (response.status === 200) {
+            return response.data
+        } else {
+            throw new Error('Failed to fetch metrics')
+        }
+
     }
     
     const convertDatasetToJSON = (file) => {
@@ -155,7 +164,10 @@ function ModelCreation() {
                     onNextStep={handleNextStep}  
                 />
             }
-            {activeButton === Steps.Evaluation && <ModelEvaluation />}
+            {activeButton === Steps.Evaluation && 
+                <ModelEvaluation 
+                    metrics={metrics}
+                />}
         </>
     )
 }
