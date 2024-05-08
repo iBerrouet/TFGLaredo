@@ -25,6 +25,8 @@ function ModelCreation() {
     const [columns, setColumns] = useState([])
     const [hasHeader, setHasHeader] = useState(true)
 
+    const [selectedMethods, setSelectedMethods] = useState({})
+
     const [algorithm, setAlgorithm] = useState("")
     const [parametersValue, setParametersValue] = useState({})
 
@@ -145,7 +147,13 @@ function ModelCreation() {
                     onNextStep={handleNextStep}
                 />
             }
-            {activeButton === Steps.Preprocessing && <DatasetPreprocessing />}
+            {activeButton === Steps.Preprocessing && 
+                <DatasetPreprocessing 
+                    selectedMethods={selectedMethods}
+                    setSelectedMethods={setSelectedMethods}
+                    onNextStep={handleNextStep}
+                />
+            }
             {activeButton === Steps.Algorithm && 
                 <ModelSelection 
                     algorithm={algorithm}
