@@ -43,7 +43,7 @@ function ModelCreation() {
     const inactiveButtonStyle = 'bg-gray-900 hover:bg-transparent hover:text-cyan-400 text-white text-lg  py-2 w-40'
 
     useEffect(() => {
-        const uniqueProblemTypes = Array.from(new Set(Object.values(algorithmData).map(item => item.problem_type)))
+        const uniqueProblemTypes = Array.from(new Set(Object.keys(algorithmData)))
         setProblemTypes(uniqueProblemTypes)
     }, [])
 
@@ -60,8 +60,10 @@ function ModelCreation() {
         setProblemTypeError('')
         if (!modelName) {
             setModelNameError('Please enter a model name')
+            setModelNameError('Please enter a model name')
         }  
         if (!problemType) {
+            setProblemTypeError('Please select a problem type')
             setProblemTypeError('Please select a problem type')
         }
         if (modelName && problemType) {
@@ -219,7 +221,8 @@ function ModelCreation() {
                     algorithm={algorithm}
                     setAlgorithm={setAlgorithm}
                     parametersValue={parametersValue}
-                    setParametersValue={setParametersValue}  
+                    setParametersValue={setParametersValue}
+                    problemType={problemType}  
                     onNextStep={handleNextStep}  
                 />
             }

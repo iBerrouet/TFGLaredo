@@ -3,14 +3,14 @@ import algorithmData from '../assets/algorithmParameters.json'
 import CustomButton from './CustomButton'
 import infoIcon from '../assets/infoIcon.svg'
 
-function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue, onNextStep}) {
+function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue, problemType, onNextStep}) {
 
     const [errors, setErrors] = useState({})
 
     useEffect(() => {
         if (algorithm) {
             const defaultValues = {}
-            const parameters = algorithmData[algorithm].parameters
+            const parameters = algorithmData[problemType][algorithm].parameters
             Object.keys(parameters).forEach(parameterName => {
                 defaultValues[parameterName] = parameters[parameterName].default
             });
@@ -58,10 +58,9 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
     const validateParameter = (parameterName, value) => {
         let isValidParameter = false
         let parsedValue = value
-        const parameterData = algorithmData[algorithm].parameters[parameterName]
+        const parameterData = algorithmData[problemType][algorithm].parameters[parameterName]
         let types = parameterData.type
         const enumValues = parameterData.enum
-        const defaultValue = parameterData.default
 
         if (!Array.isArray(types)) {
             types = [types]
@@ -122,7 +121,7 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
     }
 
     const validateParameters = () => {
-        const parameters = algorithmData[algorithm].parameters
+        const parameters = algorithmData[problemType][algorithm].parameters
         let isValid = true
         const parsedParametersValue = {}
 
@@ -163,13 +162,13 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                             value={algorithm} onChange={handleSelectAlgorithm}>
 
                             <option value="">Select an algorithm...</option>
-
-                            {Object.keys(algorithmData).map((algorithmName) => (
+                                
+                            {Object.keys(algorithmData[problemType]).map((algorithmName) => (
                                 <option key={algorithmName} value={algorithmName}>
                                     {algorithmName}
                                 </option>
                             ))}
-
+                            
                         </select>
                             
                     </div>
@@ -179,8 +178,8 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                             <h2 className='mt-5 text-xl'>Parameters:</h2>
                             <table className='mt-5 bg-transparent border-white w-full'>
                                 <tbody>
-                                    {Object.keys(algorithmData[algorithm].parameters).map((parameterName) => {
-                                        const parameterData = algorithmData[algorithm].parameters[parameterName]
+                                    {Object.keys(algorithmData[problemType][algorithm].parameters).map((parameterName) => {
+                                        const parameterData = algorithmData[problemType][algorithm].parameters[parameterName]
                                         const defaultValue = parameterData.default
                                         const description = parameterData.description
                                         const type = parameterData.type
@@ -192,7 +191,7 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                                                     <input 
                                                         className='border border-white rounded bg-transparent text-white px-1'
                                                         type="text" 
-                                                        value={parametersValue[parameterName] !== undefined ? parametersValue[parameterName] : defaultValue || ''}
+                                                        value={parametersValue[parameterName] ?? defaultValue ?? ''}
                                                         onChange={(event) => handleParameterChange(parameterName, event)}
                                                     />
                                                     <div className='flex flex-col items-center group relative'>
