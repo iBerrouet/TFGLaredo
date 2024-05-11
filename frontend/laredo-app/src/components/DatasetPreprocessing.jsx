@@ -1,10 +1,36 @@
 import React, { useState } from "react"
 import CustomButton from "./CustomButton"
+import CustomModal from "./CustomModal"
 
 function DatasetPreprocessing({selectedMethods, setSelectedMethods, onNextStep}) {
 
+    const [showModal, setShowModal] = useState(false)
+    const [selectedParams, setSelectedParams] = useState({ param1: "", param2: "" })
+
+    const openModal = () => {
+        setShowModal(true)
+    }
+
+    const closeModal = () => {
+        setShowModal(false)
+    }
+
     const handleCellClick = (method, params) => {
-        setSelectedMethods({ ...selectedMethods, [method]: params })
+        if (params) {
+            openModal()
+            setSelectedParams(params)
+        } else {
+            setSelectedMethods({ ...selectedMethods, [method]: {} })
+        }
+    }
+
+    const applyParams = () => {
+        setSelectedMethods({ ...selectedMethods, ['minmax scaler']: selectedParams })
+        closeModal()
+    }
+
+    const handleChange = (paramName, value) => {
+        setSelectedParams({ ...selectedParams, [paramName]: null });
     }
 
     return(
@@ -15,7 +41,7 @@ function DatasetPreprocessing({selectedMethods, setSelectedMethods, onNextStep})
                 <div className='grid grid-cols-2 w-3/4'>
                     <table className='border border-white mt-5 w-fit mx-auto'>
                         <tbody>
-                        <tr>
+                            <tr>
                                 <td className="bg-gray-800 text-white font-bold px-5 py-1" colSpan="2">Scale and Encode Features</td>
                             </tr>
                             <tr>
@@ -76,6 +102,36 @@ function DatasetPreprocessing({selectedMethods, setSelectedMethods, onNextStep})
 
                 </div>
             </div>
+
+            <CustomModal isOpen={showModal} onClose={closeModal}>
+                <h2 className="text-5xl text-white font-semibold">Select Parameters</h2>
+                <div className="flex flex-col mt-4">
+                    <label htmlFor="param1" className="text-2xl mb-1">
+                        Parameter 1:
+                    </label>
+                    <input
+                        type="text"
+                        id="param1"
+                        className="text-xl border border-white bg-gray-800 rounded-md p-2"
+                        value={selectedParams.param1}
+                        onChange={(e) => handleChange("param1", e.target.value)}
+                    />
+                </div>
+                <div className="flex flex-col mt-4">
+                    <label htmlFor="param2" className="text-2xl mb-1">
+                        Parameter 2:
+                    </label>
+                    <input
+                        type="text"
+                        id="param2"
+                        className="text-xl border border-white bg-gray-800 rounded-md p-2"
+                        value={selectedParams.param2}
+                        onChange={(e) => handleChange("param2", e.target.value)}
+                    />
+                </div>
+
+                <CustomButton className='mt-6' onClick={applyParams}>Apply</CustomButton>
+            </CustomModal>
         </>
     )
 }
