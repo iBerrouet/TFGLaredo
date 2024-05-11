@@ -1,0 +1,27 @@
+{
+    "Scale_and_Encode_Features": {
+      "minmax_scaler": {
+        "min": {
+            "type": "integer", 
+            "description": "Minimum value for scaling"
+        },
+        "max": {
+            "type": "integer", 
+            "description": "Maximum value for scaling"}
+        },
+      "target_encoder": {},
+      "normalizer": {},
+      "standard_scaler": {},
+      "one_hot_encoder": {}
+    },
+    "Reduce_Columns": {
+      "selectkbest": {},
+      "pca": {}
+    },
+    "Fill_Empty_Rows": {
+      "SimpleImputer": {},
+      "Ffill": {},
+      "Bfill": {}
+    }
+  }
+  
