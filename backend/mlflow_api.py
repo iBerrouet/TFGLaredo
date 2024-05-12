@@ -1,4 +1,3 @@
-import os
 from flask import Flask, jsonify, request
 import mlflow
 from flask_restful import Api
@@ -55,6 +54,7 @@ def train_model():
 
     data = request.json
 
+    model_name = data.get('modelName')
     dataset_json = data.get('datasetJSON')
     columns_data_type = data.get('columnsDataType')
     algorithm = data.get('algorithm')
@@ -79,8 +79,7 @@ def train_model():
     with mlflow.start_run():
 
         #mlflow.log_input(training, "training")
-
-
+        
         if algorithm == "random_forest" :
             model = RandomForestClassifier(**parameters_value)
         elif algorithm == "decision_tree" :
@@ -109,12 +108,13 @@ def train_model():
         mlflow.log_metric('fpr', fpr)
         mlflow.log_metric('f1_score', f1)
 
-        mlflow.sklearn.log_model(sk_model=model, artifact_path="model", registered_model_name="model_name")
    
-    model = mlflow.search_registered_models(filter_string=f"name='model_name'")
-    run_id = model[0].latest_versions[0].run_id
-    run = mlflow.get_run(run_id)
-    metrics = run.data.metrics
+        model = mlflow.search_registered_models(filter_string=f"name='model_name'")
+        run_id = model[0].latest_versions[0].run_id
+        run = mlflow.get_run(run_id)
+        metrics = run.data.metrics
+
+        mlflow.sklearn.log_model(sk_model=model, artifact_path="model", registered_model_name=model_name)
 
     return jsonify(metrics), 200
 
