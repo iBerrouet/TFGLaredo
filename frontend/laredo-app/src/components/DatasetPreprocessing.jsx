@@ -28,14 +28,21 @@ function DatasetPreprocessing({selectedMethods, setSelectedMethods, onNextStep})
             setSelectedMethod(method)
             setSelectedParams(params)
         } else {
-            setSelectedMethods({ ...selectedMethods, [method]: {} })
+            if (preprocessingMethods[category].multiple_selection == false) {
+                const prevMethod = Object.keys(selectedMethods).find(method => preprocessingMethods[category].methods[method])
+                const newSelectedMethods = { ...selectedMethods }
+                delete newSelectedMethods[prevMethod]
+                setSelectedMethods({ ...newSelectedMethods, [method]: {} })
+            } else {
+                setSelectedMethods({ ...selectedMethods, [method]: {} })
+            }
         }
     }
 
     const applyParams = () => {
         const validatedParams = {}
         let hasError = false
-        const methodParams = preprocessingMethods[selectedCategory][selectedMethod]
+        const methodParams = preprocessingMethods[selectedCategory].methods[selectedMethod]
 
         Object.entries(selectedParams).forEach(([paramName, value]) => {
             const param = methodParams[paramName]
@@ -43,7 +50,7 @@ function DatasetPreprocessing({selectedMethods, setSelectedMethods, onNextStep})
             if (!isValidParameter) {
                 setErrors(prevErrors => ({
                     ...prevErrors,
-                    [paramName]: 'Input value'
+                    [paramName]: 'Invalid value'
                 }))
                 hasError = true
             } else {
@@ -52,8 +59,17 @@ function DatasetPreprocessing({selectedMethods, setSelectedMethods, onNextStep})
         })
 
         if (!hasError) {
-            setSelectedMethods({ ...selectedMethods, [selectedMethod]: validatedParams })
-            closeModal()
+            if (!hasError) {
+                if (!preprocessingMethods[selectedCategory].multiple_selection) {
+                    const prevMethod = Object.keys(selectedMethods).find(method => preprocessingMethods[selectedCategory].methods[method])
+                    const newSelectedMethods = { ...selectedMethods }
+                    delete newSelectedMethods[prevMethod]
+                    setSelectedMethods({ ...newSelectedMethods, [selectedMethod]: validatedParams })
+                } else {
+                    setSelectedMethods({ ...selectedMethods, [selectedMethod]: validatedParams })
+                }
+                closeModal()
+            }
         }
     }
 
@@ -72,25 +88,25 @@ function DatasetPreprocessing({selectedMethods, setSelectedMethods, onNextStep})
                 <strong className='mt-5'>Click on the techniques you want to use and specify the parameters to construct your pipeline.</strong>
                 <div className='grid grid-cols-2 w-3/4'>
                     <table className='border border-white mt-5 w-fit mx-auto'>
-                        {Object.entries(preprocessingMethods).map(([category, methods]) => (
-                            <React.Fragment key={category}>
-                                <tbody>
-                                    <tr>
-                                        <td className='bg-gray-800 text-white font-bold px-5 py-1' colSpan='2'>{category.replace(/_/g, ' ')}</td>
+                    {Object.entries(preprocessingMethods).map(([category]) => (
+                        <React.Fragment key={category}>
+                            <tbody>
+                                <tr>
+                                    <td className='bg-gray-800 text-white font-bold px-5 py-1' colSpan='2'>{category.replace(/_/g, ' ')}</td>
+                                </tr>
+                                {Object.entries(preprocessingMethods[category].methods).map(([method, params]) => (
+                                    <tr key={method}>
+                                        <td
+                                            className='px-5 py-1 bg-gray-800 hover:bg-transparent cursor-pointer'
+                                            onClick={() => handleCellClick(category, method, params)}
+                                        >
+                                            {method}
+                                        </td>
                                     </tr>
-                                    {Object.entries(methods).map(([method, params]) => (
-                                        <tr key={method}>
-                                            <td
-                                                className='px-5 py-1 bg-gray-800 hover:bg-transparent cursor-pointer'
-                                                onClick={() => handleCellClick(category, method, params)}
-                                            >
-                                                {method}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </React.Fragment>
-                        ))}
+                                ))}
+                            </tbody>
+                        </React.Fragment>
+                    ))}
                     </table>
                     <div className='flex flex-col items-center'>
                         <table className='bg-gray-800 border border-white mt-5 w-96'>

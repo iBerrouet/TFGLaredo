@@ -1,5 +1,7 @@
 {
-    "Scale_and_Encode_Features": {
+  "Scale_and_Encode_Features": {
+    "multiple_selection": false,
+    "methods" : {
       "minmax_scaler": {
         "min": {
             "type": "integer", 
@@ -13,15 +15,21 @@
       "normalizer": {},
       "standard_scaler": {},
       "one_hot_encoder": {}
-    },
-    "Reduce_Columns": {
+    }
+  },
+  "Reduce_Columns": {
+    "multiple_selection": false,
+    "methods" : {
       "selectkbest": {},
       "pca": {}
-    },
-    "Fill_Empty_Rows": {
+    }
+  },
+  "Fill_Empty_Rows": {
+    "multiple_selection": false,
+    "methods" : {
       "SimpleImputer": {},
       "Ffill": {},
       "Bfill": {}
     }
   }
-  
+}
