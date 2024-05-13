@@ -105,6 +105,7 @@ function ModelCreation() {
 
         const response = await axios.post('http://localhost:5050/train_model', {
             modelName,
+            problemType,
             datasetJSON,
             columnsDataType,
             algorithm,

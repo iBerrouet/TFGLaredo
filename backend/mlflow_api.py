@@ -2,10 +2,12 @@ from flask import Flask, jsonify, request
 import mlflow
 from flask_restful import Api
 from flask_cors import CORS
+import numpy as np
 import pandas as pd
+from sklearn.neighbors import KNeighborsRegressor
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import f1_score, recall_score
+from sklearn.metrics import f1_score, mean_squared_error, recall_score, silhouette_score, r2_score
 from sklearn.model_selection import train_test_split
 
 
@@ -55,6 +57,7 @@ def train_model():
     data = request.json
 
     model_name = data.get('modelName')
+    problem_type = data.get('problemType')
     dataset_json = data.get('datasetJSON')
     columns_data_type = data.get('columnsDataType')
     algorithm = data.get('algorithm')
@@ -84,6 +87,9 @@ def train_model():
             model = RandomForestClassifier(**parameters_value)
         elif algorithm == "decision_tree" :
             model = tree.DecisionTreeClassifier(**parameters_value)
+        elif algorithm == "k-nearest_neighbors" :
+            if problem_type == "regressor":
+                model = KNeighborsRegressor(**parameters_value)
         else:
             return jsonify({"message": "Invalid algorithm"}), 400
 
@@ -91,32 +97,44 @@ def train_model():
 
         predictions = model.predict(x_test)
 
-        accuracy = model.score(x_test, y_test)
-
-        tpr = recall_score(y_test, predictions, pos_label='BROKEN')
-        fpr = 1 - recall_score(y_test, predictions, pos_label='NORMAL')
-        f1 = f1_score(y_test, predictions, pos_label='BROKEN')
-
         #sklearn.utils.estimator_html_repr
 
 
         #model_evaluation.html sklearn
         mlflow.log_param("algorithm", algorithm)
         mlflow.log_params(parameters_value)
-        mlflow.log_metric('accuracy', accuracy)
-        mlflow.log_metric('tpr', tpr)
-        mlflow.log_metric('fpr', fpr)
-        mlflow.log_metric('f1_score', f1)
+        metrics = get_metrics(problem_type, model, x_test, y_test, predictions)
+        mlflow.log_metrics(metrics)
 
-   
-        model = mlflow.search_registered_models(filter_string=f"name='model_name'")
-        run_id = model[0].latest_versions[0].run_id
-        run = mlflow.get_run(run_id)
-        metrics = run.data.metrics
 
         mlflow.sklearn.log_model(sk_model=model, artifact_path="model", registered_model_name=model_name)
 
     return jsonify(metrics), 200
+
+
+def get_metrics(problem_type, model, x_test, y_test, predictions):
+    metrics = {}
+    if problem_type == "classifier":
+        accuracy = model.score(x_test, y_test)
+        tpr = recall_score(y_test, predictions, pos_label='BROKEN')
+        fpr = 1 - recall_score(y_test, predictions, pos_label='NORMAL')
+        f1 = f1_score(y_test, predictions, pos_label='BROKEN')
+        metrics['accuracy'] = accuracy
+        metrics['tpr'] = tpr
+        metrics['fpr'] = fpr
+        metrics['f1_score'] = f1
+    elif problem_type == "cluster":
+        silhouette_score_value = silhouette_score(x_test, predictions)
+        metrics['silhouette_score'] = silhouette_score_value
+    elif problem_type == "regressor":
+        mse = mean_squared_error(y_test, predictions)
+        rmse = np.sqrt(mse)
+        r2 = r2_score(y_test, predictions)
+        metrics['mean_squared_error'] = mse
+        metrics['root_mean_squared_error'] = rmse
+        metrics['r2_score'] = r2
+        
+    return metrics
 
 
 if __name__ == "__main__":
