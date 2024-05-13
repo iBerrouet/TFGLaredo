@@ -5,8 +5,10 @@ from flask_cors import CORS
 import numpy as np
 import pandas as pd
 from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import f1_score, mean_squared_error, recall_score, silhouette_score, r2_score
 from sklearn.model_selection import train_test_split
 
@@ -68,10 +70,13 @@ def train_model():
 
     dataset = dataset.drop(columns=['sensor_15', '', 'timestamp'])
 
-    dataset = dataset[~dataset.map(lambda x: x == "").any(axis=1)]  
+    dataset = dataset[~dataset.map(lambda x: x == "").any(axis=1)] 
 
-    x = dataset.drop(columns=['machine_status'])
-    y = dataset['machine_status']
+    label_encoder = LabelEncoder()
+    dataset['machine_status_encoded'] = label_encoder.fit_transform(dataset['machine_status']) 
+
+    x = dataset.drop(columns=['machine_status', 'machine_status_encoded'])
+    y = dataset['machine_status_encoded']
 
     #kfold cross validation
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
@@ -90,17 +95,18 @@ def train_model():
         elif algorithm == "k-nearest_neighbors" :
             if problem_type == "regressor":
                 model = KNeighborsRegressor(**parameters_value)
+            if problem_type == "classifier":
+                model = KNeighborsClassifier(**parameters_value)
         else:
             return jsonify({"message": "Invalid algorithm"}), 400
 
         model.fit(x_train, y_train)
 
-        predictions = model.predict(x_test)
+        predictions = model.predict(x_test.values)
 
         #sklearn.utils.estimator_html_repr
 
 
-        #model_evaluation.html sklearn
         mlflow.log_param("algorithm", algorithm)
         mlflow.log_params(parameters_value)
         metrics = get_metrics(problem_type, model, x_test, y_test, predictions)
@@ -116,9 +122,9 @@ def get_metrics(problem_type, model, x_test, y_test, predictions):
     metrics = {}
     if problem_type == "classifier":
         accuracy = model.score(x_test, y_test)
-        tpr = recall_score(y_test, predictions, pos_label='BROKEN')
-        fpr = 1 - recall_score(y_test, predictions, pos_label='NORMAL')
-        f1 = f1_score(y_test, predictions, pos_label='BROKEN')
+        tpr = recall_score(y_test, predictions)
+        fpr = 1 - recall_score(y_test, predictions)
+        f1 = f1_score(y_test, predictions)
         metrics['accuracy'] = accuracy
         metrics['tpr'] = tpr
         metrics['fpr'] = fpr
