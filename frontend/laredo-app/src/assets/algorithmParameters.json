@@ -2,6 +2,7 @@
   "classifier" : {
     "random_forest": {
       "implementation": "sklearn",
+      "strategy" : "RandomForestClassifierSklearnStrategy",
       "parameters": {
         "n_estimators": {
           "description": "Number of trees in the forest.",
@@ -101,6 +102,7 @@
     },
     "decision_tree": {
       "implementation": "sklearn",
+      "strategy" : "DecisionTreeClassifierSklearnStrategy",
       "parameters": {
         "criterion": {
           "description": "Function to measure the quality of a split.",
@@ -171,6 +173,7 @@
     },
     "support_vector_machine": {
       "implementation": "sklearn",
+      "strategy" : "SupportVectorMachineClassifierSklearnStrategy",
       "parameters": {
         "C": {
           "description": "Regularization parameter.",
@@ -255,6 +258,7 @@
     },
     "k-nearest_neighbors" : {
       "implementation" : "sklearn",
+      "strategy" : "KNeighborsClassifierSklearnStrategy",
       "parameters" : {
         "n_neighbors": {
           "description": "Number of neighbors to use.",
@@ -267,6 +271,7 @@
   "regressor" : {
     "k-nearest_neighbors" : {
       "implementation" : "sklearn",
+      "strategy" : "KNeighborsRegressorSklearnStrategy",
       "parameters" : {
         "n_neighbors": {
           "description": "Number of neighbors to use.",

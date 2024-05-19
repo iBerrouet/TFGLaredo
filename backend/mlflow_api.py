@@ -102,7 +102,7 @@ def train_model():
 
         model.fit(x_train, y_train)
 
-        predictions = model.predict(x_test.values)
+        predictions = model.predict(x_test)
 
         #sklearn.utils.estimator_html_repr
 
