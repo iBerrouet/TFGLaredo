@@ -22,19 +22,20 @@ function DatasetPreprocessing({selectedMethods, setSelectedMethods, onNextStep})
     }
 
     const handleCellClick = (category, method, params) => {
-        if (Object.keys(params).length > 0) {
+        if (params != null && Object.keys(params).length > 0) {
             openModal()
             setSelectedCategory(category)
             setSelectedMethod(method)
             setSelectedParams(params)
         } else {
+            const methodCategory = preprocessingMethods[category].methods[method].strategy
             if (preprocessingMethods[category].multiple_selection == false) {
                 const prevMethod = Object.keys(selectedMethods).find(method => preprocessingMethods[category].methods[method])
                 const newSelectedMethods = { ...selectedMethods }
                 delete newSelectedMethods[prevMethod]
-                setSelectedMethods({ ...newSelectedMethods, [method]: {} })
+                setSelectedMethods({ ...newSelectedMethods, [method]: { strategy: methodCategory } })
             } else {
-                setSelectedMethods({ ...selectedMethods, [method]: {} })
+                setSelectedMethods({ ...selectedMethods, [method]: { strategy: methodCategory } })
             }
         }
     }
@@ -42,7 +43,8 @@ function DatasetPreprocessing({selectedMethods, setSelectedMethods, onNextStep})
     const applyParams = () => {
         const validatedParams = {}
         let hasError = false
-        const methodParams = preprocessingMethods[selectedCategory].methods[selectedMethod]
+        const methodParams = preprocessingMethods[selectedCategory].methods[selectedMethod].params
+        const methodCategory = preprocessingMethods[selectedCategory].methods[selectedMethod].strategy
 
         Object.entries(selectedParams).forEach(([paramName, value]) => {
             const param = methodParams[paramName]
@@ -59,17 +61,15 @@ function DatasetPreprocessing({selectedMethods, setSelectedMethods, onNextStep})
         })
 
         if (!hasError) {
-            if (!hasError) {
-                if (!preprocessingMethods[selectedCategory].multiple_selection) {
-                    const prevMethod = Object.keys(selectedMethods).find(method => preprocessingMethods[selectedCategory].methods[method])
-                    const newSelectedMethods = { ...selectedMethods }
-                    delete newSelectedMethods[prevMethod]
-                    setSelectedMethods({ ...newSelectedMethods, [selectedMethod]: validatedParams })
-                } else {
-                    setSelectedMethods({ ...selectedMethods, [selectedMethod]: validatedParams })
-                }
-                closeModal()
+            if (!preprocessingMethods[selectedCategory].multiple_selection) {
+                const prevMethod = Object.keys(selectedMethods).find(method => preprocessingMethods[selectedCategory].methods[method])
+                const newSelectedMethods = { ...selectedMethods }
+                delete newSelectedMethods[prevMethod]
+                setSelectedMethods({ ...newSelectedMethods, [selectedMethod]: {strategy: methodCategory, params : validatedParams} })
+            } else {
+                setSelectedMethods({ ...selectedMethods, [selectedMethod]: {strategy: methodCategory, params : validatedParams} })
             }
+            closeModal()
         }
     }
 
@@ -94,11 +94,11 @@ function DatasetPreprocessing({selectedMethods, setSelectedMethods, onNextStep})
                                 <tr>
                                     <td className='bg-gray-800 text-white font-bold px-5 py-1' colSpan='2'>{category.replace(/_/g, ' ')}</td>
                                 </tr>
-                                {Object.entries(preprocessingMethods[category].methods).map(([method, params]) => (
+                                {Object.entries(preprocessingMethods[category].methods).map(([method, methodData]) => (
                                     <tr key={method}>
                                         <td
                                             className='px-5 py-1 bg-gray-800 hover:bg-transparent cursor-pointer'
-                                            onClick={() => handleCellClick(category, method, params)}
+                                            onClick={() => handleCellClick(category, method, methodData.params)}
                                         >
                                             {method}
                                         </td>
@@ -116,11 +116,15 @@ function DatasetPreprocessing({selectedMethods, setSelectedMethods, onNextStep})
                                 </tr>
                             </thead>
                             <tbody>
-                            {Object.keys(selectedMethods).map((method, index) => (
-                                <tr key={index}>
-                                    <td className='px-5 py-1'>{method} {JSON.stringify(selectedMethods[method])}</td>
-                                </tr>
-                            ))}
+                            {Object.keys(selectedMethods).map((method, index) => {
+                                const paramsWithoutStrategy = { ...selectedMethods[method] }
+                                delete paramsWithoutStrategy.strategy
+                                return (
+                                    <tr key={index}>
+                                        <td className='px-5 py-1'>{method} {JSON.stringify(paramsWithoutStrategy)}</td>
+                                    </tr>
+                                )
+                            })}
                             </tbody>
                         </table>
                         <CustomButton className='mt-5 mb-5 w-fit' onClick={onNextStep}>Choose your algorithm</CustomButton>
