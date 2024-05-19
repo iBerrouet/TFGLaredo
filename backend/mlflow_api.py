@@ -1,3 +1,4 @@
+from model_strategies import *
 from flask import Flask, jsonify, request
 import mlflow
 from flask_restful import Api
@@ -63,6 +64,7 @@ def train_model():
     dataset_json = data.get('datasetJSON')
     columns_data_type = data.get('columnsDataType')
     algorithm = data.get('algorithm')
+    strategy = data.get('strategy')
     parameters_value = data.get('parametersValue')
 
     dataset = pd.DataFrame.from_dict(dataset_json)
@@ -83,29 +85,22 @@ def train_model():
 
     #training = mlflow.data.from_pandas(_,targets='label')
 
+    strategy_class = globals().get(strategy)
+    if strategy_class is None:
+        return jsonify({"message": "Invalid strategy"}), 400
+
 
     with mlflow.start_run():
 
         #mlflow.log_input(training, "training")
         
-        if algorithm == "random_forest" :
-            model = RandomForestClassifier(**parameters_value)
-        elif algorithm == "decision_tree" :
-            model = tree.DecisionTreeClassifier(**parameters_value)
-        elif algorithm == "k-nearest_neighbors" :
-            if problem_type == "regressor":
-                model = KNeighborsRegressor(**parameters_value)
-            if problem_type == "classifier":
-                model = KNeighborsClassifier(**parameters_value)
-        else:
-            return jsonify({"message": "Invalid algorithm"}), 400
+        model = strategy_class().create_model(parameters_value)
 
         model.fit(x_train, y_train)
 
         predictions = model.predict(x_test)
 
         #sklearn.utils.estimator_html_repr
-
 
         mlflow.log_param("algorithm", algorithm)
         mlflow.log_params(parameters_value)

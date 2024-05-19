@@ -102,13 +102,14 @@ function ModelCreation() {
     
     const callAPI = async() => {
         const datasetJSON = await convertDatasetToJSON(datasetFile)
-
+        const strategy = algorithmData[problemType][algorithm].strategy
         const response = await axios.post('http://localhost:5050/train_model', {
             modelName,
             problemType,
             datasetJSON,
             columnsDataType,
             algorithm,
+            strategy,
             parametersValue
         })
 
