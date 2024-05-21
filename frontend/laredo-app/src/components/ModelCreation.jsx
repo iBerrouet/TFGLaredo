@@ -25,7 +25,7 @@ function ModelCreation() {
     const [columns, setColumns] = useState([])
     const [hasHeader, setHasHeader] = useState(true)
 
-    const [selectedMethods, setSelectedMethods] = useState({})
+    const [preprocessingMethods, setPreprocessingMethods] = useState({})
 
     const [algorithm, setAlgorithm] = useState("")
     const [parametersValue, setParametersValue] = useState({})
@@ -73,9 +73,10 @@ function ModelCreation() {
     const callAPI = async() => {
         const datasetJSON = await convertDatasetToJSON(datasetFile)
 
-        await axios.post('http://localhost:5050/train_model', {
+        await axios.post('http://localhost:5050/models', {
             datasetJSON,
             columnsDataType,
+            preprocessingMethods,
             algorithm,
             parametersValue
         })
@@ -149,8 +150,8 @@ function ModelCreation() {
             }
             {activeButton === Steps.Preprocessing && 
                 <DatasetPreprocessing 
-                    selectedMethods={selectedMethods}
-                    setSelectedMethods={setSelectedMethods}
+                    selectedMethods={preprocessingMethods}
+                    setSelectedMethods={setPreprocessingMethods}
                     onNextStep={handleNextStep}
                 />
             }

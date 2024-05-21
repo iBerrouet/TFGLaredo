@@ -1,3 +1,5 @@
+from sklearn.pipeline import Pipeline
+from preprocessing_strategy import *
 import os
 from flask import Flask, jsonify, request
 import mlflow
@@ -50,21 +52,37 @@ def get_model(model_name):
 
     return jsonify(response_data), 200
     
-@app.route('/train_model', methods=['POST'])
+@app.route('/models', methods=['POST'])
 def train_model():
 
     data = request.json
 
     dataset_json = data.get('datasetJSON')
     columns_data_type = data.get('columnsDataType')
+    preprocessing_methods = data.get('preprocessingMethods')
     algorithm = data.get('algorithm')
     parameters_value = data.get('parametersValue')
 
     dataset = pd.DataFrame.from_dict(dataset_json)
+
     dataset.loc[((dataset.machine_status == 'BROKEN') | (dataset.machine_status == 'RECOVERING')), 'machine_status'] = 'BROKEN'
 
     dataset = dataset.drop(columns=['sensor_15', '', 'timestamp'])
 
+    steps = []
+
+    for method, method_data in preprocessing_methods.items():
+        strategy_name = preprocessing_methods[method]['strategy']
+        strategy_class = globals().get(strategy_name) 
+        if strategy_class != None:
+            if 'params' in method_data:
+                step = strategy_class().get_step(method_data['params'])
+            else:
+                step = strategy_class().get_step({})            
+            steps.append(step)
+        else:
+            return jsonify({"message": f"Invalid strategy {strategy_name}"}), 400
+        
     dataset = dataset[~dataset.map(lambda x: x == "").any(axis=1)]  
 
     x = dataset.drop(columns=['machine_status'])
@@ -80,22 +98,20 @@ def train_model():
 
         #mlflow.log_input(training, "training")
 
-
-        for key, value in parameters_value.items():
-            print(key + ': ' + str(type(value)))
-
         if algorithm == "random_forest" :
             model = RandomForestClassifier(**parameters_value)
         elif algorithm == "decision_tree" :
             model = tree.DecisionTreeClassifier(**parameters_value)
         else:
             return jsonify({"message": "Invalid algorithm"}), 400
+        
+        steps.append(("model", model))
+        pipeline = Pipeline(steps)
+        pipeline.fit(x_train, y_train)
 
-        model.fit(x_train, y_train)
+        predictions = pipeline.predict(x_test)
 
-        predictions = model.predict(x_test)
-
-        accuracy = model.score(x_test, y_test)
+        accuracy = pipeline.score(x_test, y_test)
 
         tpr = recall_score(y_test, predictions, pos_label='BROKEN')
         fpr = 1 - recall_score(y_test, predictions, pos_label='NORMAL')
@@ -113,7 +129,7 @@ def train_model():
         mlflow.log_metric('f1_score', f1)
 
 
-        mlflow.sklearn.log_model(sk_model=model, artifact_path="model", registered_model_name="model_name")
+        mlflow.sklearn.log_model(sk_model=pipeline, artifact_path="model", registered_model_name="model_name")
 
 
     return jsonify({"message": "Model trained successfully"}), 200

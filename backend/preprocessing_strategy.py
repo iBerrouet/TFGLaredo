@@ -1,57 +1,56 @@
+from preprocessing_transfomer import *
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler, Normalizer, StandardScaler, OneHotEncoder
 from sklearn.feature_selection import SelectKBest
 from sklearn.impute import SimpleImputer
 
 class PreprocessingStrategy:
-    def preprocess(self, dataset, params):
+    def get_step(self, params):
         pass
 
 class MinMaxScalerStrategy(PreprocessingStrategy):
-    def preprocess(self, dataset, params):
-        scaler = MinMaxScaler(**params)
-        return scaler.fit_transform(dataset)
+    def get_step(self, params):
+        scaler = MinMaxScaler(feature_range=(params['min'], params['max']))
+        return ("MinMaxScaler", scaler)
     
 class TargetEncoderStrategy(PreprocessingStrategy):
-    def preprocess(self, dataset, params):
+    def get_step(self, params):
         return
     
 class NormalizerStrategy(PreprocessingStrategy):
-    def preprocess(self, dataset, params):
+    def get_step(self, params):
         normalizer = Normalizer(**params)
-        return normalizer.fit_transform(dataset)
+        return ("normalizer", normalizer)
 
 class StandardScalerStrategy(PreprocessingStrategy):
-    def preprocess(self, dataset, params):
+    def get_step(self, params):
         scaler = StandardScaler(**params)
-        return scaler.fit_transform(dataset)
+        return ("StandardScaler", scaler)
 
 class OneHotEncoderStrategy(PreprocessingStrategy):
-    def preprocess(self, dataset, params):
+    def get_step(self, params):
         encoder = OneHotEncoder(**params)
-        return encoder.fit_transform(dataset)
+        return ("OneHotEncoder", encoder)
 
 class SelectKBestStrategy(PreprocessingStrategy):
-    def preprocess(self, dataset, params):
+    def get_step(self, params):
         selector = SelectKBest(**params)
-        return selector.fit_transform(dataset)
+        return ("SelectKBest", selector)
 
 class PCAStrategy(PreprocessingStrategy):
-    def preprocess(self, dataset, params):
+    def get_step(self, params):
         pca = PCA(**params)
-        return pca.fit_transform(dataset)
+        return ("PCA", pca)
     
 class SimpleImputerStrategy(PreprocessingStrategy):
-    def preprocess(self, dataset, params):
+    def get_step(self, params):
         imputer = SimpleImputer(**params)
-        return imputer.fit_transform(dataset)
+        return ("SimpleImputer", imputer)
     
 class FfillStrategy(PreprocessingStrategy):
-    def preprocess(self, dataset, params):
-        filled_dataset = dataset.fillna(method='ffill', **params)
-        return filled_dataset
+    def get_step(self, params):
+        return ("Ffill", FfillTransformer())
 
 class BfillStrategy(PreprocessingStrategy):
-    def preprocess(self, dataset, params):
-        filled_dataset = dataset.fillna(method='bfill', **params)
-        return filled_dataset
+    def get_step(self, params):
+        return ("Bfill", BfillTransformer())
