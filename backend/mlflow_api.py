@@ -1,5 +1,6 @@
 import os
-from flask import Flask, jsonify
+import pandas as pd
+from flask import Flask, jsonify, request
 import mlflow
 from flask_restful import Api
 from flask_cors import CORS
@@ -46,6 +47,17 @@ def get_model(model_name):
 
     return jsonify(response_data), 200
     
+@app.route("/column-types" , methods=["POST"])
+def get_column_types():
+    data = request.json
+
+    dataset_json = data.get('datasetJSON')
+    dataset = pd.DataFrame.from_dict(dataset_json)
+
+    column_types = dataset.dtypes.apply(lambda x: x.name).to_dict()
+    
+    return jsonify(column_types), 200
+
 
 if __name__ == "__main__":
     app.run(port=5050)

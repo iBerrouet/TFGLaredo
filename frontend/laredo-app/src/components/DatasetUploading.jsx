@@ -19,6 +19,7 @@ function DatasetUploading() {
         setDatasetFile(file)
         Papa.parse(file, {
             header: hasHeader,
+            dynamicTyping: true,
             skipEmptyLines: true,
             preview: 6,
             complete: function (results) {
@@ -61,7 +62,7 @@ function DatasetUploading() {
         <>
             <div className='grid grid-cols-2 h-[70vh] w-full mt-12'>
                 {datasetUploaded ? (
-                    <ColumnTypeIndicator columns={columns} columnsDataType={columnsDataType} setColumnsDataType={setColumnsDataType} onReject={onReject}/>
+                    <ColumnTypeIndicator preview={preview} columns={columns} columnsDataType={columnsDataType} setColumnsDataType={setColumnsDataType} onReject={onReject}/>
                 ) : (
                     datasetFile ? (
                         <DatasetChecking preview={preview} columns={columns} onConfirm={onConfirm} onReject={onReject}/>
