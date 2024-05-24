@@ -10,7 +10,6 @@ function ColumnTypeIndicator({preview, columns, columnsDataType, setColumnsDataT
 
     const fetchData = async () => {
         try {
-            console.log(preview)
             const datasetJSON = preview
             const response = await axios.post('http://localhost:5050/column-types', {
                 datasetJSON
@@ -35,11 +34,12 @@ function ColumnTypeIndicator({preview, columns, columnsDataType, setColumnsDataT
     }
 
     const handleOnConfirm = () => {
-        const newErrors = {};
+        const newErrors = {}
 
         for (let i = 0; i < columns.length; i++) {
-            if (!columnsDataType[i]) {
-                newErrors[i] = 'Please select a data type.';
+            console.log(columnsDataType)
+            if (columnsDataType[i] === '') {
+                newErrors[i] = 'Please select a data type.'
             }
         }
 
