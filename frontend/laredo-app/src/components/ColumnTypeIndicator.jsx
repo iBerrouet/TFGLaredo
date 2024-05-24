@@ -1,7 +1,25 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 import CustomButton from './CustomButton'
 
-function ColumnTypeIndicator({columns, columnsDataType, setColumnsDataType, onReject, onNextStep}) {
+function ColumnTypeIndicator({preview, columns, columnsDataType, setColumnsDataType, onConfirm, onReject}) {
+
+    useEffect(() => {
+        fetchData()
+    }, [])
+
+    const fetchData = async () => {
+        try {
+            console.log(preview)
+            const datasetJSON = preview
+            const response = await axios.post('http://localhost:5050/column-types', {
+                datasetJSON
+            })
+            setColumnsDataType(response.data)
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
     const [errors, setErrors] = useState({})
 
     const handleDataTypeChange = (column, event) => {
@@ -16,7 +34,7 @@ function ColumnTypeIndicator({columns, columnsDataType, setColumnsDataType, onRe
         }))
     }
 
-    const handleNextStep = () => {
+    const handleOnConfirm = () => {
         const newErrors = {};
 
         for (let i = 0; i < columns.length; i++) {
@@ -25,10 +43,10 @@ function ColumnTypeIndicator({columns, columnsDataType, setColumnsDataType, onRe
             }
         }
 
-        setErrors(newErrors);
+        setErrors(newErrors)
 
         if (Object.keys(newErrors).length === 0) {
-            onNextStep(); 
+            onConfirm()
         }
     }
 
@@ -43,17 +61,17 @@ function ColumnTypeIndicator({columns, columnsDataType, setColumnsDataType, onRe
                                 <td className='border-b border-gray-800 py-2 px-14'>{column}</td>
                                 <td className='border-b border-gray-800 py-2 px-14'>
                                     <select className='text-white rounded border border-white bg-gray-800 py-1 w-fit'
-                                        value={columnsDataType[index]}
-                                        onChange={(event) => handleDataTypeChange(index, event)}
+                                        value={columnsDataType[column]}
+                                        onChange={(event) => handleDataTypeChange(column, event)}
                                     >
 
-                                        <option value="">Select a data type...</option>
+                                        <option value=''>Select a data type...</option>
 
-                                        <option value="integer">Integer</option>
-                                        <option value="float">Float</option>
-                                        <option value="string">String</option>
-                                        <option value="date">Date</option>
-                                        <option value="datetime">DateTime</option>
+                                        <option value='int64'>Integer</option>
+                                        <option value='float64'>Float</option>
+                                        <option value='object'>String</option>
+                                        <option value='datetime64[ns]'>DateTime (ns)</option>
+                                        <option value='datetime64[s]'>DateTime (s)</option>
                                     </select>
                                     {errors[index] && (
                                         <p className='text-red-500'>{errors[index]}</p>
@@ -70,7 +88,7 @@ function ColumnTypeIndicator({columns, columnsDataType, setColumnsDataType, onRe
                     Select the data type for each column of your dataset.
                 </strong>
                 <div className='flex justify-end mt-5'>
-                    <CustomButton className='mr-6' onClick={handleNextStep}>Preprocess</CustomButton>
+                    <CustomButton className='mr-6' onClick={handleOnConfirm}>Choose target</CustomButton>
                     <CustomButton onClick={onReject}>Cancel</CustomButton>
                 </div>
             </div>
