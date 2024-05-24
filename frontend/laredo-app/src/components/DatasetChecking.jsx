@@ -6,7 +6,7 @@ function DatasetChecking({preview, columns, onConfirm, onReject}) {
 
     return(
         <>
-            <div className='max-w-full overflow-x-auto mx-auto w-11/12'>
+            <div className='max-w-full overflow-x-auto mx-auto my-auto w-11/12'>
                 <table className='w-full text-center bg-gray-800'>
                     <thead className='text-white font-bold border-t border-white'>
                         <tr>
