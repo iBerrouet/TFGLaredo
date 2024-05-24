@@ -9,7 +9,7 @@ function TargetIndicator({columns, target, setTarget, onNextStep, onReject}) {
         if (!target) {
             setError('Please choose a target column')
         } else {
-            onConfirm()
+            onNextStep()
         }
     }
 
@@ -38,13 +38,13 @@ function TargetIndicator({columns, target, setTarget, onNextStep, onReject}) {
                     </tbody>
                 </table>
             </div>
-            <div className='flex flex-col justify-center mx-auto text-right'>
-                <h1 className='text-5xl font-bold'>Choose your target</h1>
+            <div className='fixed top-1/2 left-1/2 translate-x-1/4 justify-center flex flex-col text-right'>
+                <h1 className='text-5xl font-bold'>Set column data type</h1>
                 <strong className='mt-5'>
-                    Select the target column you would like to use for model construction.
+                    Select the data type for each column of your dataset.
                 </strong>
                 <div className='flex justify-end mt-5'>
-                    <CustomButton className='mr-6' onClick={handleOnNextStep}>Preprocess</CustomButton>
+                    <CustomButton className='mr-6' onClick={handleOnNextStep}>Choose target</CustomButton>
                     <CustomButton onClick={onReject}>Cancel</CustomButton>
                 </div>
             </div>
