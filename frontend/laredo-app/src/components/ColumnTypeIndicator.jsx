@@ -2,21 +2,20 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import CustomButton from './CustomButton'
 
-function ColumnTypeIndicator({preview, columns, columnsDataType, setColumnsDataType, onReject}) {
-    
+function ColumnTypeIndicator({preview, columns, columnsDataType, setColumnsDataType, onConfirm, onReject}) {
+
     useEffect(() => {
         fetchData()
     }, [])
 
     const fetchData = async () => {
         try {
+            console.log(preview)
             const datasetJSON = preview
             const response = await axios.post('http://localhost:5050/column-types', {
                 datasetJSON
             })
-            console.log(response.data)
             setColumnsDataType(response.data)
-            console.log(columnsDataType)
         } catch (error) {
             console.error('Error fetching data:', error)
         }
@@ -27,7 +26,6 @@ function ColumnTypeIndicator({preview, columns, columnsDataType, setColumnsDataT
             ...prevState,
             [column]: event.target.value
         }))
-        console.log(columnsDataType)
     }
 
     return(
@@ -44,13 +42,13 @@ function ColumnTypeIndicator({preview, columns, columnsDataType, setColumnsDataT
                                         onChange={(event) => handleDataTypeChange(column, event)}
                                     >
 
-                                        <option value="">Select a data type...</option>
+                                        <option value=''>Select a data type...</option>
 
-                                        <option value="int64">Integer</option>
-                                        <option value="float64">Float</option>
-                                        <option value="object">String</option>
-                                        <option value="datetime64[ns]">DateTime (ns)</option>
-                                        <option value="datetime64[s]">DateTime (s)</option>
+                                        <option value='int64'>Integer</option>
+                                        <option value='float64'>Float</option>
+                                        <option value='object'>String</option>
+                                        <option value='datetime64[ns]'>DateTime (ns)</option>
+                                        <option value='datetime64[s]'>DateTime (s)</option>
                                     </select>
                                 </td>
                             </tr>
@@ -64,7 +62,7 @@ function ColumnTypeIndicator({preview, columns, columnsDataType, setColumnsDataT
                     Select the data type for each column of your dataset.
                 </strong>
                 <div className='flex justify-end mt-5'>
-                    <CustomButton className='mr-6'>Preprocess</CustomButton>
+                    <CustomButton className='mr-6' onClick={onConfirm}>Choose target</CustomButton>
                     <CustomButton onClick={onReject}>Cancel</CustomButton>
                 </div>
             </div>
