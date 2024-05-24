@@ -1,11 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import CustomButton from './CustomButton'
 
-function TargetIndicator({columns, setTarget, onNextStep, onReject}) {
+function TargetIndicator({columns, target, setTarget, onNextStep, onReject}) {
+
+    const [error, setError] = useState(null)
+
+    const handleOnNextStep = () => {
+        if (!target) {
+            setError('Please choose a target column')
+        } else {
+            onConfirm()
+        }
+    }
 
     return(
         <>
-            <div className='max-w-full mx-auto flex justify-center'>
+            <div className='max-w-full mx-auto flex flex-col items-center justify-center'>
+
+                {error && (<p className='text-red-500'>{error}</p>)}
                 <table className='w-fit text-center'>
                     <tbody>
                         {columns.map((column, index) => (
@@ -32,7 +44,7 @@ function TargetIndicator({columns, setTarget, onNextStep, onReject}) {
                     Select the target column you would like to use for model construction.
                 </strong>
                 <div className='flex justify-end mt-5'>
-                    <CustomButton className='mr-6' onClick={onNextStep}>Preprocess</CustomButton>
+                    <CustomButton className='mr-6' onClick={handleOnNextStep}>Preprocess</CustomButton>
                     <CustomButton onClick={onReject}>Cancel</CustomButton>
                 </div>
             </div>

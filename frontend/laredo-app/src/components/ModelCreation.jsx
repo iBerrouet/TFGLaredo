@@ -26,6 +26,8 @@ function ModelCreation() {
     const [datasetUploaded, setDatasetUploaded] = useState(false)
     const [columns, setColumns] = useState([])
     const [hasHeader, setHasHeader] = useState(true)
+    const [columnsTypeIndicated, setColumnsTypeIndicated] = useState(false)
+    const [target, setTarget] = useState(null)
 
     const [algorithm, setAlgorithm] = useState("")
     const [parametersValue, setParametersValue] = useState({})
@@ -222,6 +224,10 @@ function ModelCreation() {
                     setColumns={setColumns}
                     hasHeader={hasHeader}
                     setHasHeader={setHasHeader}
+                    columnsTypeIndicated={columnsTypeIndicated}
+                    setColumnsTypeIndicated={setColumnsTypeIndicated}
+                    target={target}
+                    setTarget={setTarget}
                     onNextStep={handleNextStep}
                 />
             }
