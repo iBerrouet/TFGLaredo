@@ -27,7 +27,7 @@ function ModelCreation() {
     const [columns, setColumns] = useState([])
     const [hasHeader, setHasHeader] = useState(true)
     const [columnsTypeIndicated, setColumnsTypeIndicated] = useState(false)
-    const [target, setTarget] = useState(null)
+    const [target, setTarget] = useState("")
 
     const [algorithm, setAlgorithm] = useState("")
     const [parametersValue, setParametersValue] = useState({})
@@ -110,6 +110,7 @@ function ModelCreation() {
             problemType,
             datasetJSON,
             columnsDataType,
+            target,
             algorithm,
             strategy,
             parametersValue
@@ -128,6 +129,7 @@ function ModelCreation() {
             Papa.parse(file, {
                 header: hasHeader,
                 skipEmptyLines: true,
+                dynamicTyping: true,
                 complete: (results) => {
                     resolve(results.data)
                 },

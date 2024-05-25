@@ -64,6 +64,7 @@ def train_model():
     problem_type = data.get('problemType')
     dataset_json = data.get('datasetJSON')
     columns_data_type = data.get('columnsDataType')
+    target = data.get('target')
     algorithm = data.get('algorithm')
     strategy = data.get('strategy')
     parameters_value = data.get('parametersValue')
@@ -75,11 +76,8 @@ def train_model():
 
     dataset = dataset[~dataset.map(lambda x: x == "").any(axis=1)] 
 
-    label_encoder = LabelEncoder()
-    dataset['machine_status_encoded'] = label_encoder.fit_transform(dataset['machine_status']) 
-
-    x = dataset.drop(columns=['machine_status', 'machine_status_encoded'])
-    y = dataset['machine_status_encoded']
+    x = dataset.drop(columns=[target])
+    y = dataset[target]
 
     #kfold cross validation
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
@@ -90,6 +88,7 @@ def train_model():
     if strategy_class is None:
         return jsonify({"message": "Invalid strategy"}), 400
 
+    mlflow.sklearn.autolog()
 
     with mlflow.start_run():
 
@@ -118,9 +117,9 @@ def get_metrics(problem_type, model, x_test, y_test, predictions):
     metrics = {}
     if problem_type == "classifier":
         accuracy = model.score(x_test, y_test)
-        tpr = recall_score(y_test, predictions)
-        fpr = 1 - recall_score(y_test, predictions)
-        f1 = f1_score(y_test, predictions)
+        tpr = recall_score(y_test, predictions, average='macro')
+        fpr = 1 - recall_score(y_test, predictions, average='macro')
+        f1 = f1_score(y_test, predictions, average='macro')
         metrics['accuracy'] = accuracy
         metrics['tpr'] = tpr
         metrics['fpr'] = fpr
