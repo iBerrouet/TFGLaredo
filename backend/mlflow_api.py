@@ -6,11 +6,6 @@ from flask_restful import Api
 from flask_cors import CORS
 import numpy as np
 import pandas as pd
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn import tree
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import f1_score, mean_squared_error, recall_score, silhouette_score, r2_score
 from sklearn.model_selection import train_test_split
 
@@ -70,6 +65,7 @@ def train_model():
     parameters_value = data.get('parametersValue')
 
     dataset = pd.DataFrame.from_dict(dataset_json)
+    dataset = dataset.astype(columns_data_type)
     dataset.loc[((dataset.machine_status == 'BROKEN') | (dataset.machine_status == 'RECOVERING')), 'machine_status'] = 'BROKEN'
 
     dataset = dataset.drop(columns=['sensor_15', '', 'timestamp'])
@@ -82,8 +78,6 @@ def train_model():
     #kfold cross validation
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 
-    #training = mlflow.data.from_pandas(_,targets='label')
-
     strategy_class = globals().get(strategy)
     if strategy_class is None:
         return jsonify({"message": "Invalid strategy"}), 400
@@ -91,8 +85,6 @@ def train_model():
     mlflow.sklearn.autolog()
 
     with mlflow.start_run():
-
-        #mlflow.log_input(training, "training")
         
         model = strategy_class().create_model(parameters_value)
 

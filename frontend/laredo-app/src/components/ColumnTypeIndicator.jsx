@@ -37,7 +37,6 @@ function ColumnTypeIndicator({preview, columns, columnsDataType, setColumnsDataT
         const newErrors = {}
 
         for (let i = 0; i < columns.length; i++) {
-            console.log(columnsDataType)
             if (columnsDataType[i] === '') {
                 newErrors[i] = 'Please select a data type.'
             }
