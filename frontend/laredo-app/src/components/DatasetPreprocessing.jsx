@@ -5,14 +5,16 @@ import preprocessingMethods from '../assets/preprocessingMethods.json'
 import { validateAndParseParam } from '../utils/paramsUtils'
 import DropColumnsSelection from './DropColumnsSelection'
 
-function DatasetPreprocessing({columns, selectedMethods, setSelectedMethods, onNextStep}) {
+function DatasetPreprocessing({columns, dropColumns, setDropColumns, selectedMethods, setSelectedMethods, 
+    columnsDropSelected, setColumnsDropSelected, onNextStep}) {
 
-    const [columnsDropSelected, setColumnsDropSelected] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const [selectedCategory, setSelectedCategory] = useState('')
     const [selectedMethod, setSelectedMethod] = useState('')
     const [selectedParams, setSelectedParams] = useState({})
     const [errors, setErrors] = useState({})
+
+    console.log(selectedMethods)
 
     const openModal = () => {
         setShowModal(true)
@@ -21,6 +23,11 @@ function DatasetPreprocessing({columns, selectedMethods, setSelectedMethods, onN
     const closeModal = () => {
         setErrors({})
         setShowModal(false)
+    }
+
+    const handleOnCancel = () => {
+        setSelectedMethods({})
+        setColumnsDropSelected(false)
     }
 
     const handleCellClick = (category, method, params) => {
@@ -132,14 +139,20 @@ function DatasetPreprocessing({columns, selectedMethods, setSelectedMethods, onN
                             </table>
                             <div className='flex flex-row mt-5 mb-5'>
                                 <CustomButton className='mr-3' onClick={onNextStep}>Choose your algorithm</CustomButton>
-                                <CustomButton onClick={() => setColumnsDropSelected(false)}>Cancel</CustomButton>
+                                <CustomButton onClick={handleOnCancel}>Cancel</CustomButton>
                             </div>
                         </div>
                     </div>
                 </div>
             ) : (
-                <DropColumnsSelection columns={columns} setColumnsDropSelected={setColumnsDropSelected}/>
-
+                <DropColumnsSelection 
+                    columns={columns} 
+                    selectedMethods={selectedMethods}
+                    setSelectedMethods={setSelectedMethods}
+                    setColumnsDropSelected={setColumnsDropSelected}
+                    dropColumns={dropColumns}
+                    setDropColumns={setDropColumns}
+                />
             )}
 
             <CustomModal isOpen={showModal} onClose={closeModal}>

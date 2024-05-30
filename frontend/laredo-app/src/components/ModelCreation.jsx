@@ -25,6 +25,8 @@ function ModelCreation() {
     const [columns, setColumns] = useState([])
     const [hasHeader, setHasHeader] = useState(true)
 
+    const [columnsDropSelected, setColumnsDropSelected] = useState(false)
+    const [dropColumns, setDropColumns] = useState([])
     const [preprocessingMethods, setPreprocessingMethods] = useState({})
 
     const [algorithm, setAlgorithm] = useState("")
@@ -151,6 +153,10 @@ function ModelCreation() {
             {activeButton === Steps.Preprocessing && 
                 <DatasetPreprocessing 
                     columns={columns}
+                    columnsDropSelected={columnsDropSelected}
+                    setColumnsDropSelected={setColumnsDropSelected}
+                    dropColumns={dropColumns}
+                    setDropColumns={setDropColumns}
                     selectedMethods={preprocessingMethods}
                     setSelectedMethods={setPreprocessingMethods}
                     onNextStep={handleNextStep}
