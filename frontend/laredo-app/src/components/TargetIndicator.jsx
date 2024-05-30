@@ -39,12 +39,12 @@ function TargetIndicator({columns, target, setTarget, onNextStep, onReject}) {
                 </table>
             </div>
             <div className='fixed top-1/2 left-1/2 translate-x-1/4 justify-center flex flex-col text-right'>
-                <h1 className='text-5xl font-bold'>Set column data type</h1>
+                <h1 className='text-5xl font-bold'>Select column target</h1>
                 <strong className='mt-5'>
-                    Select the data type for each column of your dataset.
+                    Choose the target column for yout dataset analysis.
                 </strong>
                 <div className='flex justify-end mt-5'>
-                    <CustomButton className='mr-6' onClick={handleOnNextStep}>Choose target</CustomButton>
+                    <CustomButton className='mr-6' onClick={handleOnNextStep}>Preprocess</CustomButton>
                     <CustomButton onClick={onReject}>Cancel</CustomButton>
                 </div>
             </div>
