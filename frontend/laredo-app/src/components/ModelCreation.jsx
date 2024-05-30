@@ -150,6 +150,7 @@ function ModelCreation() {
             }
             {activeButton === Steps.Preprocessing && 
                 <DatasetPreprocessing 
+                    columns={columns}
                     selectedMethods={preprocessingMethods}
                     setSelectedMethods={setPreprocessingMethods}
                     onNextStep={handleNextStep}
