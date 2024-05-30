@@ -1,3 +1,4 @@
+from sklearn.preprocessing import LabelEncoder
 from model_strategies import *
 import pandas as pd
 from flask import Flask, jsonify, request, request
@@ -66,7 +67,12 @@ def train_model():
 
     dataset = pd.DataFrame.from_dict(dataset_json)
     dataset = dataset.astype(columns_data_type)
+
     dataset.loc[((dataset.machine_status == 'BROKEN') | (dataset.machine_status == 'RECOVERING')), 'machine_status'] = 'BROKEN'
+
+    if dataset[target].dtype == "object":
+        label_encoder = LabelEncoder()
+        dataset[target] = label_encoder.fit_transform(dataset[target])
 
     dataset = dataset.drop(columns=['sensor_15', '', 'timestamp'])
 
