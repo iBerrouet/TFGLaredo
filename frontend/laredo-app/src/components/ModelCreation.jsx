@@ -88,6 +88,7 @@ function ModelCreation() {
         return new Promise((resolve, reject) => {
             Papa.parse(file, {
                 header: hasHeader,
+                dynamicTyping: true,
                 skipEmptyLines: true,
                 complete: (results) => {
                     resolve(results.data)

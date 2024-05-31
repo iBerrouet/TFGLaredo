@@ -67,8 +67,6 @@ def train_model():
 
     dataset.loc[((dataset.machine_status == 'BROKEN') | (dataset.machine_status == 'RECOVERING')), 'machine_status'] = 'BROKEN'
 
-    dataset = dataset.drop(columns=['sensor_15', '', 'timestamp'])
-
     steps = []
 
     for method, method_data in preprocessing_methods.items():
@@ -83,7 +81,6 @@ def train_model():
         else:
             return jsonify({"message": f"Invalid strategy {strategy_name}"}), 400
         
-    dataset = dataset[~dataset.map(lambda x: x == "").any(axis=1)]  
 
     x = dataset.drop(columns=['machine_status'])
     y = dataset['machine_status']

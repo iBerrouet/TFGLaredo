@@ -1,3 +1,4 @@
+from sklearn.compose import ColumnTransformer
 from preprocessing_transfomer import *
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler, Normalizer, StandardScaler, OneHotEncoder
@@ -7,6 +8,14 @@ from sklearn.impute import SimpleImputer
 class PreprocessingStrategy:
     def get_step(self, params):
         pass
+
+class DropStrategy(PreprocessingStrategy):
+    def get_step(self, params):
+        preprocessor = ColumnTransformer(
+            remainder='passthrough',
+            transformers=[('drop_col','drop',params['dropColumns'])]
+        )
+        return ("Preprocessor", preprocessor)
 
 class MinMaxScalerStrategy(PreprocessingStrategy):
     def get_step(self, params):
