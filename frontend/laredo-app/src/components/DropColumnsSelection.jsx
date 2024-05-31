@@ -12,9 +12,12 @@ function DropColumnsSelection({columns, selectedMethods, setSelectedMethods, dro
     }
 
     const handleOnContinue = () => {
-        const newSelectedMethods = { ...selectedMethods }
-        newSelectedMethods[`drop`] = { strategy: 'DropStrategy', params: { dropColumns } }
-        setSelectedMethods(newSelectedMethods)
+        if (dropColumns.length != 0) {
+            const newSelectedMethods = { ...selectedMethods }
+            newSelectedMethods[`drop`] = { strategy: 'DropStrategy', params: { dropColumns } }
+            setSelectedMethods(newSelectedMethods)
+        }
+
 
         setColumnsDropSelected(true)
     }

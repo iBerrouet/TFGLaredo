@@ -14,8 +14,6 @@ function DatasetPreprocessing({columns, dropColumns, setDropColumns, selectedMet
     const [selectedParams, setSelectedParams] = useState({})
     const [errors, setErrors] = useState({})
 
-    console.log(selectedMethods)
-
     const openModal = () => {
         setShowModal(true)
     }
