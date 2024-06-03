@@ -1,3 +1,4 @@
+from sklearn.base import estimator_html_repr
 from sklearn.pipeline import Pipeline
 from preprocessing_strategy import *
 import os
@@ -64,7 +65,6 @@ def train_model():
     parameters_value = data.get('parametersValue')
 
     dataset = pd.DataFrame.from_dict(dataset_json)
-
     dataset.loc[((dataset.machine_status == 'BROKEN') | (dataset.machine_status == 'RECOVERING')), 'machine_status'] = 'BROKEN'
 
     steps = []
@@ -88,12 +88,14 @@ def train_model():
     #kfold cross validation
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
 
-    #training = mlflow.data.from_pandas(_,targets='label')
-
-
     with mlflow.start_run():
 
-        #mlflow.log_input(training, "training")
+        x_train_mlflow = mlflow.data.from_pandas(x_train)
+        x_test_mlflow = mlflow.data.from_pandas(x_test)
+
+        mlflow.log_input(x_train_mlflow, context="train")
+        mlflow.log_input(x_test_mlflow, context="test")
+
 
         if algorithm == "random_forest" :
             model = RandomForestClassifier(**parameters_value)
@@ -103,9 +105,8 @@ def train_model():
             return jsonify({"message": "Invalid algorithm"}), 400
         
         steps.append(("model", model))
-        pipeline = Pipeline(steps)
+        pipeline = Pipeline(steps)        
         pipeline.fit(x_train, y_train)
-
         predictions = pipeline.predict(x_test)
 
         accuracy = pipeline.score(x_test, y_test)
@@ -113,9 +114,6 @@ def train_model():
         tpr = recall_score(y_test, predictions, pos_label='BROKEN')
         fpr = 1 - recall_score(y_test, predictions, pos_label='NORMAL')
         f1 = f1_score(y_test, predictions, pos_label='BROKEN')
-
-        #sklearn.utils.estimator_html_repr
-
 
         #model_evaluation.html sklearn
         mlflow.log_param("algorithm", algorithm)
@@ -128,9 +126,10 @@ def train_model():
 
         mlflow.sklearn.log_model(sk_model=pipeline, artifact_path="model", registered_model_name="model_name")
 
+        mlflow.log_text(estimator_html_repr(pipeline), "estimator.html")
 
     return jsonify({"message": "Model trained successfully"}), 200
 
 
 if __name__ == "__main__":
-    app.run(port=5050)
+    app.run(port=5050, debug=True)
