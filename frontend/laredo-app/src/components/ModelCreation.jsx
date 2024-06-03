@@ -29,6 +29,10 @@ function ModelCreation() {
     const [columnsTypeIndicated, setColumnsTypeIndicated] = useState(false)
     const [target, setTarget] = useState("")
 
+    const [columnsDropSelected, setColumnsDropSelected] = useState(false)
+    const [dropColumns, setDropColumns] = useState([])
+    const [preprocessingMethods, setPreprocessingMethods] = useState({})
+
     const [algorithm, setAlgorithm] = useState("")
     const [parametersValue, setParametersValue] = useState({})
 
@@ -105,12 +109,13 @@ function ModelCreation() {
     const callAPI = async() => {
         const datasetJSON = await convertDatasetToJSON(datasetFile)
         const strategy = algorithmData[problemType][algorithm].strategy
-        const response = await axios.post('http://localhost:5050/train_model', {
+        const response = await axios.post('http://localhost:5050/models', {
             modelName,
             problemType,
             datasetJSON,
             columnsDataType,
             target,
+            preprocessingMethods,
             algorithm,
             strategy,
             parametersValue
@@ -233,7 +238,18 @@ function ModelCreation() {
                     onNextStep={handleNextStep}
                 />
             }
-            {activeButton === Steps.Preprocessing && <DatasetPreprocessing />}
+            {activeButton === Steps.Preprocessing && 
+                <DatasetPreprocessing 
+                    columns={columns}
+                    columnsDropSelected={columnsDropSelected}
+                    setColumnsDropSelected={setColumnsDropSelected}
+                    dropColumns={dropColumns}
+                    setDropColumns={setDropColumns}
+                    selectedMethods={preprocessingMethods}
+                    setSelectedMethods={setPreprocessingMethods}
+                    onNextStep={handleNextStep}
+                />
+            }
             {activeButton === Steps.Algorithm && 
                 <ModelSelection 
                     algorithm={algorithm}

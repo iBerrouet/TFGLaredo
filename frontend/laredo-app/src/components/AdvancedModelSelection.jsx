@@ -2,6 +2,7 @@ import React, { useState , useEffect } from 'react'
 import algorithmData from '../assets/algorithmParameters.json'
 import CustomButton from './CustomButton'
 import infoIcon from '../assets/infoIcon.svg'
+import { validateAndParseParam } from '../utils/paramsUtils'
 
 function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue, problemType, onNextStep}) {
 
@@ -55,71 +56,6 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
         }
     }
 
-    const validateParameter = (parameterName, value) => {
-        let isValidParameter = false
-        let parsedValue = value
-        const parameterData = algorithmData[problemType][algorithm].parameters[parameterName]
-        let types = parameterData.type
-        const enumValues = parameterData.enum
-
-        if (!Array.isArray(types)) {
-            types = [types]
-        }    
-
-        for (let i = 0; i < types.length; i++) {
-            const type = types[i]
-            switch(type) {
-                case "integer":
-                    if (Number.isInteger(Number(value))) {
-                        parsedValue = parseInt(value, 10)
-                        isValidParameter = true
-                    }
-                    break
-                case "float":
-                    if (!isNaN(parseFloat(value))) {
-                        parsedValue = parseFloat(value)
-                        isValidParameter = true
-                    }
-                    break
-                case "string":
-                    if (enumValues && Array.isArray(enumValues) && enumValues.length > 0) {
-                        if (enumValues.includes(value)) {
-                            isValidParameter = true
-                        }
-                    }
-                    break
-                case "boolean":
-                    if (value === "true" || value === "false" || value === true || value === false) {
-                        parsedValue = value === "true" || value === true
-                        isValidParameter = true
-                    }
-                    break
-                case "object":
-                    if (/^\s*\{.*\}\s*$/.test(value)) {
-                        isValidParameter = true
-                    }
-                    break
-                case "array":
-                    if (/^\s*\[.*\]\s*$/.test(value)) {
-                        isValidParameter = true
-                    }
-                    break
-                case "null":
-                    if (value === '' || value === null) {
-                        parsedValue = null
-                        isValidParameter = true
-                    }
-                default:
-                    break
-            }
-            if (isValidParameter === true) {
-                break
-            }
-        }
-
-        return {isValidParameter, parsedValue}
-    }
-
     const validateParameters = () => {
         const parameters = algorithmData[problemType][algorithm].parameters
         let isValid = true
@@ -127,7 +63,8 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
 
         Object.keys(parameters).forEach(parameterName => {
             const value = parametersValue[parameterName]
-            const {isValidParameter, parsedValue} = validateParameter(parameterName, value)
+            const parameter = parameters[parameterName]
+            const {isValidParameter, parsedValue} = validateAndParseParam(parameterName, value, parameter.type, parameter.enum)
             if (!isValidParameter) {
                 isValid = false
                 setErrors(prevErrors => ({

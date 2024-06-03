@@ -1,0 +1,57 @@
+{
+  "Scale_and_Encode_Features": {
+    "multiple_selection": true,
+    "methods" : {
+      "minmax_scaler": {
+        "strategy" : "MinMaxScalerStrategy",
+        "params" : {
+          "min": {
+            "type": "integer", 
+            "description": "Minimum value for scaling"
+          },
+          "max": {
+              "type": "integer", 
+              "description": "Maximum value for scaling"
+          }
+        }
+      },
+      "target_encoder": {
+        "strategy" : "TargetEncoderStrategy"
+      },
+      "normalizer": {
+        "strategy" : "NormalizerStrategy"
+      },
+      "standard_scaler": {
+        "strategy" : "StandardScalerStrategy"
+      },
+      "one_hot_encoder": {
+        "strategy" : "OneHotEncoderStrategy"
+      }
+    }
+  },
+  "Reduce_Columns": {
+    "multiple_selection": false,
+    "methods" : {
+      "selectkbest": {
+        "strategy" : "SelectKBestStrategy"
+      },
+      "pca": {
+        "strategy" : "PCAStrategy"
+      }
+    }
+  },
+  "Fill_Empty_Rows": {
+    "multiple_selection": true,
+    "methods" : {
+      "SimpleImputer": {
+        "strategy" : "SimpleImputerStrategy"
+      },
+      "Ffill": {
+        "strategy" : "FfillStrategy"
+      },
+      "Bfill": {
+        "strategy" : "BfillStrategy"
+      }
+    }
+  }
+}

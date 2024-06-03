@@ -1,4 +1,7 @@
 from sklearn.preprocessing import LabelEncoder
+from sklearn.base import estimator_html_repr
+from sklearn.pipeline import Pipeline
+from preprocessing_strategy import *
 from model_strategies import *
 import pandas as pd
 from flask import Flask, jsonify, request, request
@@ -7,7 +10,7 @@ from flask_restful import Api
 from flask_cors import CORS
 import numpy as np
 import pandas as pd
-from sklearn.metrics import f1_score, mean_squared_error, recall_score, silhouette_score, r2_score
+from sklearn.metrics import f1_score, mean_squared_error, recall_score, silhouette_score, r2_score, accuracy_score
 from sklearn.model_selection import train_test_split
 
 
@@ -51,7 +54,7 @@ def get_model(model_name):
 
     return jsonify(response_data), 200
     
-@app.route('/train_model', methods=['POST'])
+@app.route('/models', methods=['POST'])
 def train_model():
 
     data = request.json
@@ -61,6 +64,7 @@ def train_model():
     dataset_json = data.get('datasetJSON')
     columns_data_type = data.get('columnsDataType')
     target = data.get('target')
+    preprocessing_methods = data.get('preprocessingMethods')
     algorithm = data.get('algorithm')
     strategy = data.get('strategy')
     parameters_value = data.get('parametersValue')
@@ -74,9 +78,21 @@ def train_model():
         label_encoder = LabelEncoder()
         dataset[target] = label_encoder.fit_transform(dataset[target])
 
-    dataset = dataset.drop(columns=['sensor_15', '', 'timestamp'])
 
-    dataset = dataset[~dataset.map(lambda x: x == "").any(axis=1)] 
+    steps = []
+
+    for method, method_data in preprocessing_methods.items():
+        strategy_name = preprocessing_methods[method]['strategy']
+        strategy_class = globals().get(strategy_name) 
+        if strategy_class != None:
+            if 'params' in method_data:
+                step = strategy_class().get_step(method_data['params'])
+            else:
+                step = strategy_class().get_step({})            
+            steps.append(step)
+        else:
+            return jsonify({"message": f"Invalid strategy {strategy_name}"}), 400
+        
 
     x = dataset.drop(columns=[target])
     y = dataset[target]
@@ -88,33 +104,38 @@ def train_model():
     if strategy_class is None:
         return jsonify({"message": "Invalid strategy"}), 400
 
-    mlflow.sklearn.autolog()
 
     with mlflow.start_run():
-        
+
+        x_train_mlflow = mlflow.data.from_pandas(x_train)
+        x_test_mlflow = mlflow.data.from_pandas(x_test)
+
+        mlflow.log_input(x_train_mlflow, context="train")
+        mlflow.log_input(x_test_mlflow, context="test")
+
+
         model = strategy_class().create_model(parameters_value)
 
-        model.fit(x_train, y_train)
-
-        predictions = model.predict(x_test)
-
-        #sklearn.utils.estimator_html_repr
+        
+        steps.append(("model", model))
+        pipeline = Pipeline(steps)        
+        pipeline.fit(x_train, y_train)
+        predictions = pipeline.predict(x_test)
 
         mlflow.log_param("algorithm", algorithm)
         mlflow.log_params(parameters_value)
-        metrics = get_metrics(problem_type, model, x_test, y_test, predictions)
+        metrics = get_metrics(problem_type, x_test, y_test, predictions)
         mlflow.log_metrics(metrics)
-
-
         mlflow.sklearn.log_model(sk_model=model, artifact_path="model", registered_model_name=model_name)
+        mlflow.log_text(estimator_html_repr(pipeline), "estimator.html")
 
     return jsonify(metrics), 200
 
 
-def get_metrics(problem_type, model, x_test, y_test, predictions):
+def get_metrics(problem_type, x_test, y_test, predictions):
     metrics = {}
     if problem_type == "classifier":
-        accuracy = model.score(x_test, y_test)
+        accuracy = accuracy_score(y_test, predictions)
         tpr = recall_score(y_test, predictions, average='macro')
         fpr = 1 - recall_score(y_test, predictions, average='macro')
         f1 = f1_score(y_test, predictions, average='macro')
@@ -148,4 +169,4 @@ def get_column_types():
     return jsonify(column_types), 200
 
 if __name__ == "__main__":
-    app.run(port=5050)
+    app.run(port=5050, debug=True)
