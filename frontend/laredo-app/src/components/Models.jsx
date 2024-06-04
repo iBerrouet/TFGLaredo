@@ -27,15 +27,15 @@ function Models() {
         } catch (error) {
             console.error('Error fetching data:', error)
         }
-    };
+    }
     
     const goHome = () => {
         navigate('/')
-    };
+    }
 
     const goDetails = (modelName) => {
         navigate(`/models/${modelName}`)
-    };
+    }
 
     const goModelCreation = () => {
         navigate('/model-creation')
@@ -48,11 +48,11 @@ function Models() {
                 <CustomButton className='ml-auto mr-10' onClick={goModelCreation}>Create a model</CustomButton>
             </header>
             
-            <h1 className='text-7xl font-bold text-center mt-24'>Available Models</h1>
+            <h1 className='text-7xl font-bold text-center mt-12'>Available Models</h1>
 
-            <p className='text-lg text-center mt-14'>Currently, the repository has these models available. If you want more information click on the icon.</p>
+            <p className='text-lg text-center mt-6'>Currently, the repository has these models available. If you want more information click on the icon.</p>
 
-            <table className='mx-auto mt-7 bg-gray-800 text-center'>
+            <table className='mx-auto mt-8 bg-gray-800 text-center'>
                 <thead>
                     <tr>
                         <th className='text-white px-24 py-5 border-8 border-slate-950'>Model</th>
@@ -80,7 +80,7 @@ function Models() {
                 </tbody>
             </table>
         </>
-    );
+    )
 
 }
 
