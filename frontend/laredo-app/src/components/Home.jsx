@@ -15,20 +15,23 @@ function Home() {
   }
 
   return (
-    <div className=''>
-      <div className='my-16 ps-12'>
-        <h2 className='text-[100px] font-bold text-cyan-400'>HERRAMIENTA</h2>
+    <div className='grid h-screen w-screen grid-cols-3'>
+      <div className='col-span-2 flex flex-col justify-center text-left mx-auto h-full'>
         <h1 className='text-[200px] font-bold italic text-white -mt-24'>LAREDO</h1>
-        <p className='text-[40px] text-cyan-400 -mt-4'>Predice el futuro con confianza: <br/>
-        Crea y Aplica Modelos Predictivos de forma Intuitiva.</p>
-        <CustomButton className='mt-8' onClick={goModelCreation}>Crear un modelo</CustomButton>
-        <CustomButton className='ml-4' onClick={goModels}>Mostrar modelos disponibles</CustomButton>
+        <p className='text-[40px] text-cyan-400 -mt-4'>
+          Predict the future with confidence: <br/>
+          Create and Apply Predictive Models intuitively.
+        </p>
+        <div className='flex mt-8'>
+          <CustomButton onClick={goModelCreation}>Create a model</CustomButton>
+          <CustomButton className='ml-4' onClick={goModels}>Show available models</CustomButton>
+        </div>
       </div>
-      <div>
-        <img src={robot} alt='A robot for home page' className='absolute right-0 top-0 h-screen '/>
+      <div className='flex items-center justify-end'>
+        <img src={robot} alt='A robot for home page' className='h-screen' />
       </div>
     </div>
-  );
+  )
 }
 
 export default Home
