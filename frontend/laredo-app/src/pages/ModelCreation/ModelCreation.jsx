@@ -43,6 +43,8 @@ function ModelCreation() {
     const [hasStarted, setHasStarted] = useState(false)
     const [problemTypes, setProblemTypes] = useState([])
 
+    const [isTraining, setIsTraining] = useState(false)
+
     const [metrics, setMetrics] = useState({})
 
 
@@ -92,12 +94,22 @@ function ModelCreation() {
                 setActiveButton(Steps.Algorithm);
                 break;
             case Steps.Algorithm:
-                setActiveButton(Steps.Evaluation);
+                setIsTraining(true)
+                setActiveButton(Steps.Evaluation)
                 try {
-                    setMetrics(await callAPI())
+                    const response = await callAPI()
+                    if (response.status == 200) {
+                        setMetrics(response.data)
+                    } else {
+                        setMetrics(null)
+                        setIsTraining(false)
+                    }
                 } catch (error) {
-                    console.error('Incorrect API call:', error)
+                    console.error('Error calling API:', error)
+                    setMetrics(null)
+                    setIsTraining(false)
                 }
+    
                 break;
             case Steps.Evaluation:
                 break;
@@ -121,12 +133,7 @@ function ModelCreation() {
             parametersValue
         })
 
-        if (response.status === 200) {
-            return response.data
-        } else {
-            throw new Error('Failed to fetch metrics')
-        }
-
+        return response
     }
     
     const convertDatasetToJSON = (file) => {
@@ -260,10 +267,42 @@ function ModelCreation() {
                     onNextStep={handleNextStep}  
                 />
             }
-            {activeButton === Steps.Evaluation && 
-                <ModelEvaluation 
-                    metrics={metrics}
-                />
+            {activeButton === Steps.Evaluation &&                 
+                <>
+                    {isTraining ? (
+                        <div className='flex flex-col items-center justify-center h-[66vh]'>
+                            <svg class="text-gray-300 animate-spin" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"
+                                width="100" height="100">
+                                <path
+                                    d="M32 3C35.8083 3 39.5794 3.75011 43.0978 5.20749C46.6163 6.66488 49.8132 8.80101 52.5061 11.4939C55.199 14.1868 57.3351 17.3837 58.7925 20.9022C60.2499 24.4206 61 28.1917 61 32C61 35.8083 60.2499 39.5794 58.7925 43.0978C57.3351 46.6163 55.199 49.8132 52.5061 52.5061C49.8132 55.199 46.6163 57.3351 43.0978 58.7925C39.5794 60.2499 35.8083 61 32 61C28.1917 61 24.4206 60.2499 20.9022 58.7925C17.3837 57.3351 14.1868 55.199 11.4939 52.5061C8.801 49.8132 6.66487 46.6163 5.20749 43.0978C3.7501 39.5794 3 35.8083 3 32C3 28.1917 3.75011 24.4206 5.2075 20.9022C6.66489 17.3837 8.80101 14.1868 11.4939 11.4939C14.1868 8.80099 17.3838 6.66487 20.9022 5.20749C24.4206 3.7501 28.1917 3 32 3L32 3Z"
+                                    stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <path
+                                    d="M32 3C36.5778 3 41.0906 4.08374 45.1692 6.16256C49.2477 8.24138 52.7762 11.2562 55.466 14.9605C58.1558 18.6647 59.9304 22.9531 60.6448 27.4748C61.3591 31.9965 60.9928 36.6232 59.5759 40.9762"
+                                    stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"
+                                    class="text-cyan-400">
+
+                                </path>
+                            </svg>
+                            <h1 className='text-5xl mt-7'>Training your model...</h1>
+                            <h2 className='text-2xl mt-7 text-center mx-12'>
+                                This process may take some time. If you prefer not to wait, you can view your trained model in the available models section.
+                            </h2>
+                        </div>
+                    ) : (
+                        <>
+                            {metrics ? (
+                                <ModelEvaluation metrics={metrics} />
+                            ) : (
+                                <div className='flex flex-col items-center justify-center h-[66vh]'>
+                                    <h1 className='text-5xl mt-7 text-red-500'>¡Oops! Something went wrong</h1>
+                                    <h2 className='text-2xl mt-7 text-white text-center mx-12'>
+                                        Please check if you have correctly selected your dataset and if the preprocessing methods chosen are suitable for your dataset.
+                                    </h2>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </>
             }
         </>
     )

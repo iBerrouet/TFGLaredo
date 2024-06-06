@@ -1,7 +1,7 @@
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
-from sklearn.svm import SVC
+from sklearn.svm import SVC, SVR
 
 class ModelStrategy:
     def create_model(self, parameters):
@@ -22,6 +22,18 @@ class SupportVectorMachineClassifierSklearnStrategy(ModelStrategy):
 class KNeighborsClassifierSklearnStrategy(ModelStrategy):
     def create_model(self, parameters):
         return KNeighborsClassifier(**parameters)
+    
+class RandomForestRegressorSklearnStrategy(ModelStrategy):
+    def create_model(self, parameters):
+        return RandomForestRegressor(**parameters)
+
+class DecisionTreeRegressorSklearnStrategy(ModelStrategy):
+    def create_model(self, parameters):
+        return DecisionTreeRegressor(**parameters)
+    
+class SupportVectorMachineRegressionSklearnStrategy(ModelStrategy):
+    def create_model(self, parameters):
+        return SVR(**parameters)
 
 class KNeighborsRegressorSklearnStrategy(ModelStrategy):
     def create_model(self, parameters):
