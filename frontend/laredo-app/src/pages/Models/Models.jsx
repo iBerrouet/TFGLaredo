@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import eyeIcon from '../assets/eyeIcon.png'
-import CustomButton from './CustomButton'
 import { useNavigate } from 'react-router-dom'
-
+import eyeIcon from '@assets/images/eyeIcon.png'
+import CustomButton from '@components/CustomButton'
+import axios from 'axios'
 
 function Models() {
 

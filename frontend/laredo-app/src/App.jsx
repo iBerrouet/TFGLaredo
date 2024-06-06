@@ -1,9 +1,9 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import Home from './components/Home'
-import Models from './components/Models'
-import ModelDetails from './components/ModelDetails'
-import ModelCreation from './components/ModelCreation'
+import Home from '@pages/Home/Home'
+import Models from '@pages/Models/Models'
+import ModelDetails from '@pages/Models/ModelDetails'
+import ModelCreation from '@pages/ModelCreation/ModelCreation'
 
 import './App.css'
 

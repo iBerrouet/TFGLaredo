@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 import { FileUploader } from 'react-drag-drop-files'
 import Papa from 'papaparse'
-import DatasetChecking from './DatasetChecking'
-import ColumnConfigurationPanel from './ColumnConfigurationPanel'
-import TargetIndicator from './TargetIndicator'
-import uploadIcon from '../assets/uploadIcon.svg' 
+import DatasetChecking from '@pages/ModelCreation/DatasetUploading/DatasetChecking'
+import ColumnConfigurationPanel from '@pages/ModelCreation/DatasetUploading/ColumnConfigurationPanel'
+import uploadIcon from '@assets/images/uploadIcon.svg' 
 
 function DatasetUploading({datasetFile, setDatasetFile, columnsDataType, setColumnsDataType, preview, setPreview,
     datasetUploaded, setDatasetUploaded, columns, setColumns, hasHeader, setHasHeader, columnsTypeIndicated,

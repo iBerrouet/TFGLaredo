@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
-import CustomButton from './CustomButton'
 import { useParams, useNavigate } from 'react-router-dom'
-
-
-
+import CustomButton from '@components/CustomButton'
+import axios from 'axios'
 
 function ModelDetails() {
 

@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import CustomButton from './CustomButton'
-import CustomModal from './CustomModal'
-import preprocessingMethods from '../assets/preprocessingMethods.json'
-import { validateAndParseParam } from '../utils/paramsUtils'
-import DropColumnsSelection from './DropColumnsSelection'
+import CustomButton from '@components/CustomButton'
+import CustomModal from '@components/CustomModal'
+import preprocessingMethods from '@assets/data/preprocessingMethods.json'
+import { validateAndParseParam } from '@utils/paramsUtils'
+import DropColumnsSelection from '@pages/ModelCreation/DatasetPreprocessing/DropColumnsSelection'
 
 function DatasetPreprocessing({columns, dropColumns, setDropColumns, selectedMethods, setSelectedMethods, 
     columnsDropSelected, setColumnsDropSelected, onNextStep}) {

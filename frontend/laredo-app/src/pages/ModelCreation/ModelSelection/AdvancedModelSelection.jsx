@@ -1,8 +1,8 @@
 import React, { useState , useEffect } from 'react'
-import algorithmData from '../assets/algorithmParameters.json'
-import CustomButton from './CustomButton'
-import infoIcon from '../assets/infoIcon.svg'
-import { validateAndParseParam } from '../utils/paramsUtils'
+import algorithmData from '@assets/data/algorithmParameters.json'
+import CustomButton from '@components/CustomButton'
+import infoIcon from '@assets/images/infoIcon.svg'
+import { validateAndParseParam } from '@utils/paramsUtils'
 
 function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue, problemType, onNextStep}) {
 
@@ -112,51 +112,53 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                     <div className="flex justify-center items-center mt-6">
                         {algorithm && (
                             <div>
-                            <h2 className='mt-5 text-xl'>Parameters:</h2>
-                            <table className='mt-5 bg-transparent border-white w-full'>
-                                <tbody>
-                                    {Object.keys(algorithmData[problemType][algorithm].parameters).map((parameterName) => {
-                                        const parameterData = algorithmData[problemType][algorithm].parameters[parameterName]
-                                        const defaultValue = parameterData.default
-                                        const description = parameterData.description
-                                        const type = parameterData.type
-                                        const enumValues = parameterData.enum
-                                        return (
-                                            <tr key={parameterName}>
-                                                <td  className='text-left border-0 border-b-2 border-gray-800 px-2 py-2'>{parameterName}</td>
-                                                <td className='flex border-0 border-b-2 border-gray-800 py-2'>
-                                                    <input 
-                                                        className='border border-white rounded bg-transparent text-white px-1'
-                                                        type="text" 
-                                                        value={parametersValue[parameterName] ?? defaultValue ?? ''}
-                                                        onChange={(event) => handleParameterChange(parameterName, event)}
-                                                    />
-                                                    <div className='flex flex-col items-center group relative'>
-                                                        <p className='hidden absolute text-white text-xs whitespace-nowrap -top-8 group-hover:block
-                                                                        bg-gray-800 p-1 rounded border border-white text-center'>
-                                                            {description}<br/>
-                                                            Data type: {getTypeLabel(type, enumValues)}
-                                                        </p>
-                                                        <img src={infoIcon} className='ml-1 cursor-pointer' alt='Information icon' />
-                                                    </div>
-                                                </td>
-                                                <td className='text-red-500'>{errors[parameterName]}</td>
-                                            </tr>
-                                        )
-                                    })}
-                                </tbody>
-                            </table>
+                                <h2 className='mt-5 text-xl'>Parameters:</h2>
+                                <table className='mt-5 bg-transparent border-white w-full'>
+                                    <tbody>
+                                        {Object.keys(algorithmData[problemType][algorithm].parameters).map((parameterName) => {
+                                            const parameterData = algorithmData[problemType][algorithm].parameters[parameterName]
+                                            const defaultValue = parameterData.default
+                                            const description = parameterData.description
+                                            const type = parameterData.type
+                                            const enumValues = parameterData.enum
+                                            return (
+                                                <tr key={parameterName}>
+                                                    <td  className='text-left border-0 border-b-2 border-gray-800 px-2 py-2'>{parameterName}</td>
+                                                    <td className='flex border-0 border-b-2 border-gray-800 py-2'>
+                                                        <input 
+                                                            className='border border-white rounded bg-transparent text-white px-1'
+                                                            type="text" 
+                                                            value={parametersValue[parameterName] ?? defaultValue ?? ''}
+                                                            onChange={(event) => handleParameterChange(parameterName, event)}
+                                                        />
+                                                        <div className='flex flex-col items-center group relative'>
+                                                            <p className='hidden absolute text-white text-xs whitespace-nowrap -top-8 group-hover:block
+                                                                            bg-gray-800 p-1 rounded border border-white text-center'>
+                                                                {description}<br/>
+                                                                Data type: {getTypeLabel(type, enumValues)}
+                                                            </p>
+                                                            <img src={infoIcon} className='ml-1 cursor-pointer' alt='Information icon' />
+                                                        </div>
+                                                    </td>
+                                                    <td className='text-red-500'>{errors[parameterName]}</td>
+                                                </tr>
+                                            )
+                                        })}
+                                    </tbody>
+                                </table>
                             </div>
                         )}
                     </div>
                 </div>
 
-                <div className='fixed top-1/2 left-1/2 translate-x-1/4 text-right'>
-                    <h2 className='text-5xl font-bold'>Model creation</h2>
-                    <h1 className='text-6xl font-bold'>Advanced</h1>
-                    <strong className='mt-5'>Set the model parameters once the algorithm is chosen.</strong>
-                    <div className="ml-auto mt-6">
-                        <CustomButton className='w-fit text-lg' onClick={handleNextStep}>Train your model</CustomButton>
+                <div className='flex flex-col justify-start text-right mx-auto mt-40'>
+                    <div className='sticky top-1/4 items-end text-right'>                    
+                        <h2 className='text-5xl font-bold'>Model creation</h2>
+                        <h1 className='text-6xl font-bold'>Advanced</h1>
+                        <strong className='mt-5'>Set the model parameters once the algorithm is chosen.</strong>
+                        <div className="ml-auto mt-6">
+                            <CustomButton className='w-fit text-lg' onClick={handleNextStep}>Train your model</CustomButton>
+                        </div>
                     </div>
                 </div>
             </div>

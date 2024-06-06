@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import CustomButton from './CustomButton'
-import DatasetPreprocessing from './DatasetPreprocessing'
-import DatasetUploading from './DatasetUploading'
-import ModelSelection from './ModelSelection'
-import ModelEvaluation from './ModelEvaluation'
+import CustomButton from '@components/CustomButton'
+import DatasetPreprocessing from '@pages/ModelCreation/DatasetPreprocessing/DatasetPreprocessing'
+import DatasetUploading from '@pages/ModelCreation/DatasetUploading/DatasetUploading'
+import ModelSelection from '@pages/ModelCreation/ModelSelection/ModelSelection'
+import ModelEvaluation from '@pages/ModelCreation/ModelEvaluation/ModelEvaluation'
+import algorithmData from '@assets/data/algorithmParameters.json'
 import Papa from 'papaparse'
 import axios from 'axios'
-import algorithmData from '../assets/algorithmParameters.json'
 
 
 const Steps = {

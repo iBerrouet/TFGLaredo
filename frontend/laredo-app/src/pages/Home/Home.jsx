@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
-import CustomButton from './CustomButton'
-import robot from '../assets/robot.png'
+import CustomButton from '@components/CustomButton'
+import robot from '@assets/images/robot.png'
 
 function Home() {
 

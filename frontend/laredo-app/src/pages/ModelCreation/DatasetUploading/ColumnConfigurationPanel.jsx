@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import CustomButton from './CustomButton'
+import CustomButton from '@components/CustomButton'
 
 function ColumnConfigurationPanel({preview, columns, columnsDataType, setColumnsDataType, target, setTarget, onNextStep, onReject}) {
 

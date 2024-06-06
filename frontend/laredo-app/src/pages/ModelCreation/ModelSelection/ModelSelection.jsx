@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import AdvancedModelSelection from './AdvancedModelSelection'
-import BasicModelSelection from './BasicModelSelection'
+import AdvancedModelSelection from '@pages/ModelCreation/ModelSelection/AdvancedModelSelection'
+import BasicModelSelection from '@pages/ModelCreation/ModelSelection/BasicModelSelection'
 
 
 function ModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue, problemType, onNextStep}) {
@@ -9,8 +9,8 @@ function ModelSelection({algorithm, setAlgorithm, parametersValue, setParameters
 
     return(
         <>
-            <div className='flex justify-center items-center mt-12'>
-            <button onClick={() => setShowAdvance(false)} className={ showAdvance 
+            <div className='flex justify-center items-center mt-7'>
+                <button onClick={() => setShowAdvance(false)} className={ showAdvance 
                     ? 'bg-gray-900 hover:bg-transparent hover:text-cyan-400 text-white text-[16px] py-2 w-40 border-2 border-r rounded-l'
                     : 'bg-transparent text-cyan-400 text-[16px] py-2 w-40 border-2 border-r rounded-l'}>
                     Basic
