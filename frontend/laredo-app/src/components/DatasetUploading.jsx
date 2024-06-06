@@ -3,7 +3,6 @@ import { FileUploader } from 'react-drag-drop-files'
 import Papa from 'papaparse'
 import DatasetChecking from './DatasetChecking'
 import ColumnConfigurationPanel from './ColumnConfigurationPanel'
-import TargetIndicator from './TargetIndicator'
 import uploadIcon from '../assets/uploadIcon.svg' 
 
 function DatasetUploading({datasetFile, setDatasetFile, columnsDataType, setColumnsDataType, preview, setPreview,
