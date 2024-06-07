@@ -96,6 +96,7 @@ function ModelCreation() {
                     const response = await callAPI()
                     if (response.status == 200) {
                         setMetrics(response.data)
+                        setIsTraining(false)
                     } else {
                         setMetrics(null)
                         setIsTraining(false)
