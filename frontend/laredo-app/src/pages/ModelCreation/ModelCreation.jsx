@@ -144,7 +144,18 @@ function ModelCreation() {
                 skipEmptyLines: true,
                 dynamicTyping: true,
                 complete: (results) => {
-                    resolve(results.data)
+                    if (!hasHeader) {
+                        const dataWithNumericHeaders = results.data.map((row) => {
+                            const newRow = {}
+                            row.forEach((value, index) => {
+                                newRow[index] = value
+                            });
+                            return newRow
+                        })
+                        resolve(dataWithNumericHeaders)
+                    } else {
+                        resolve(results.data)
+                    }
                 },
                 error: (error) => {
                     reject(error)
