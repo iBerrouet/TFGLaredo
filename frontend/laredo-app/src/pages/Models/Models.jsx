@@ -55,6 +55,7 @@ function Models() {
                 <thead>
                     <tr>
                         <th className='text-white px-24 py-5 border-8 border-slate-950'>Model</th>
+                        <th className='text-white px-24 py-5 border-8 border-slate-950'>Version</th>
                         <th className='text-white px-9 py-5 border-8 border-slate-950'>Creation date</th>
                         <th className='text-white px-9 py-5 border-8 border-slate-950'></th>
                     </tr>
@@ -63,6 +64,7 @@ function Models() {
                     {models.map((model) => (
                         <tr key={model.model_name}>
                             <td className='font-bold px-9 py-5 border-8 border-slate-950'>{model.model_name}</td>
+                            <td className='px-9 py-5 border-8 border-slate-950'>Version {model.version}</td>
                             <td className='px-9 py-5 border-8 border-slate-950'>{model.creation_date}</td>
                             <td className='px-9 py-5 border-8 border-slate-950'>
                                 <div className='flex flex-col items-center group relative'>

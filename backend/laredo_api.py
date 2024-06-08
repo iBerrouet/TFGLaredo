@@ -27,26 +27,37 @@ def hello():
 @app.route("/models", methods=["GET"])
 def get_models():
     registered_models = mlflow.search_registered_models()
+
+    if not registered_models:
+        return jsonify({"error": "No models found"}), 404
+
     filtered_models = [{
-        'model_id': model.latest_versions[0].version,
+        'version': model.latest_versions[0].version,
         'model_name': model.latest_versions[0].name,
-        'creation_time': model.creation_timestamp,
+        'creation_time': model.latest_versions[0].creation_timestamp,
     } for model in registered_models]
-    return jsonify(filtered_models), 200
+
+    sorted_models = sorted(filtered_models, key=lambda x: x['creation_time'], reverse=True)
+
+    return jsonify(sorted_models), 200
 
 
 @app.route("/models/<model_name>", methods=["GET"])
 def get_model(model_name):
     model = mlflow.search_registered_models(filter_string=f"name='{model_name}'")
+
+    if not model:
+            return jsonify({"error": "Model not found"}), 404
+
     run_id = model[0].latest_versions[0].run_id
     run = mlflow.get_run(run_id)
     estimator_uri = run.info.artifact_uri + "/estimator.html"
 
-    html = mlflow.artifacts.load_text(estimator_uri)
+    estimator = mlflow.artifacts.load_text(estimator_uri)
     dataset = run.inputs.dataset_inputs[0].dataset.schema
 
     response_data = {
-        "html_content": html,
+        "estimator": estimator,
         "metrics" : run.data.metrics,
         "dataset" : dataset,
     }
