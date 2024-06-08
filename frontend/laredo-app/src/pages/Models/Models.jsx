@@ -56,7 +56,6 @@ function Models() {
                     <tr>
                         <th className='text-white px-24 py-5 border-8 border-slate-950'>Model</th>
                         <th className='text-white px-9 py-5 border-8 border-slate-950'>Creation date</th>
-                        <th className='text-white px-9 py-5 border-8 border-slate-950'>Development stage</th>
                         <th className='text-white px-9 py-5 border-8 border-slate-950'></th>
                     </tr>
                 </thead>
@@ -65,7 +64,6 @@ function Models() {
                         <tr key={model.model_name}>
                             <td className='font-bold px-9 py-5 border-8 border-slate-950'>{model.model_name}</td>
                             <td className='px-9 py-5 border-8 border-slate-950'>{model.creation_date}</td>
-                            <td className='px-9 py-5 border-8 border-slate-950'>{model.development_stage}</td>
                             <td className='px-9 py-5 border-8 border-slate-950'>
                                 <div className='flex flex-col items-center group relative'>
                                     <p className='hidden absolute text-white text-xs whitespace-nowrap -top-5 group-hover:block'>

@@ -31,7 +31,6 @@ def get_models():
         'model_id': model.latest_versions[0].version,
         'model_name': model.latest_versions[0].name,
         'creation_time': model.creation_timestamp,
-        'development_stage': model.latest_versions[0].current_stage
     } for model in registered_models]
     return jsonify(filtered_models), 200
 
