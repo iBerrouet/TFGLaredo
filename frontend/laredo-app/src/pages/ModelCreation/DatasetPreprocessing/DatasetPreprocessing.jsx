@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import CustomButton from '@components/CustomButton'
 import CustomModal from '@components/CustomModal'
 import preprocessingMethods from '@assets/data/preprocessingMethods.json'
+import helpIcon from '@assets/images/helpIcon.svg'
 import { validateAndParseParam } from '@utils/paramsUtils'
 import DropColumnsSelection from '@pages/ModelCreation/DatasetPreprocessing/DropColumnsSelection'
 
@@ -103,12 +104,17 @@ function DatasetPreprocessing({columns, dropColumns, setDropColumns, selectedMet
                                         <td className='bg-gray-800 text-white font-bold px-5 py-1' colSpan='2'>{category.replace(/_/g, ' ')}</td>
                                     </tr>
                                     {Object.entries(preprocessingMethods[category].methods).map(([method, methodData]) => (
-                                        <tr key={method}>
+                                        <tr key={method} className='bg-gray-800 hover:bg-transparent cursor-pointer'>
+                                            <td className='pl-3'>
+                                                <a href={methodData.url} target='_blank' rel='noopener noreferrer'>
+                                                    <img src={helpIcon} alt="help icon" className='inline-block' />
+                                                </a>
+                                            </td>
                                             <td
-                                                className='px-5 py-1 bg-gray-800 hover:bg-transparent cursor-pointer'
+                                                className='p-1'
                                                 onClick={() => handleCellClick(category, method, methodData.params)}
                                             >
-                                                {method}
+                                                <span>{method}</span>
                                             </td>
                                         </tr>
                                     ))}
