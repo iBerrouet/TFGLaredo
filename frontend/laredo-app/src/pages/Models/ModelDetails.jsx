@@ -6,7 +6,7 @@ import axios from 'axios'
 function ModelDetails() {
 
     const { modelName } = useParams()
-    const [htmlContent, setHtmlContent] = useState('');
+    const [pipeline, setPipeline] = useState('');
     const [metrics, setMetrics] = useState(null)
     const [dataset, setDataset] = useState(null)
 
@@ -35,7 +35,7 @@ function ModelDetails() {
 
             setMetrics(response.data.metrics)
             setDataset(JSON.parse(response.data.dataset))
-            setHtmlContent(response.data.html_content);
+            setPipeline(response.data.estimator);
         
         } catch (error) {
             console.error('Error fetching data:', error)
@@ -62,7 +62,7 @@ function ModelDetails() {
                 <h1 className='text-7xl font-bold text-center mt-12'>Model Details</h1>
                 <h2 className='text-5xl font-bold text-center mt-1'>{modelName}</h2>
 
-                <div className='mt-12' dangerouslySetInnerHTML={{ __html: htmlContent }} />
+                <div className='mt-12' dangerouslySetInnerHTML={{ __html: pipeline }} />
 
                 <div className='flex items-center mt-12 w-full'>
                     <div className='flex flex-col items-center w-1/2'>
