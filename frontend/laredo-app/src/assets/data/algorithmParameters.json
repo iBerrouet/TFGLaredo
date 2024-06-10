@@ -281,8 +281,8 @@
         "criterion": {
           "description": "Function to measure the quality of a split.",
           "type": "string",
-          "enum": ["gini", "entropy", "log_loss"],
-          "default": "gini"
+          "enum": ["squared_error", "absolute_error", "friedman_mse", "poisson"],
+          "default": "squared_error"
         },
         "max_depth": {
           "description": "Maximum depth of the tree.",
@@ -306,9 +306,9 @@
         },
         "max_features": {
           "description": "Number of features to consider when looking for the best split.",
-          "type": ["string", "integer", "null"],
+          "type": ["string", "integer", "float", "null"],
           "enum": ["sqrt", "log2", null],
-          "default": "sqrt"
+          "default": "1.0"
         },
         "random_state": {
           "description": "Seed of the random number generator.",
@@ -324,13 +324,7 @@
           "description": "A node will be split if this split induces a decrease of the impurity greater than or equal to this value.",
           "type": "float",
           "default": 0.0
-        },
-        "class_weight": {
-          "description": "Weights associated with classes.",
-          "type": ["null", "string", "object", "array"],
-          "enum": ["balanced", "balanced_subsample", null],
-          "default": null
-        },    
+        },  
         "ccp_alpha": {
           "description": "Complexity parameter used for Minimal Cost-Complexity Pruning.",
           "type": "float",
@@ -376,8 +370,8 @@
         "criterion": {
           "description": "Function to measure the quality of a split.",
           "type": "string",
-          "enum": ["gini", "entropy", "log_loss"],
-          "default": "gini"
+          "enum": ["squared_error", "absolute_error", "friedman_mse", "poisson"],
+          "default": "squared_error"
         },
         "splitter": {
           "description": "The strategy used to choose the split at each node.",
@@ -426,12 +420,6 @@
           "type": "float",
           "default": 0.0
         },
-        "class_weight": {
-          "description": "Weights associated with classes in the form {class_label: weight}.",
-          "type": ["null", "string", "object", "array"],
-          "enum": ["balanced"],
-          "default": null
-        },
         "ccp_alpha": {
           "description": "Complexity parameter used for Minimal Cost-Complexity Pruning.",
           "type": "float",
@@ -476,11 +464,6 @@
           "type": "boolean",
           "default": true
         },
-        "probability": {
-          "description": "Whether to enable probability estimates.",
-          "type": "boolean",
-          "default": false
-        },
         "tol": {
           "description": "Tolerance for stopping criterion.",
           "type": "float",
@@ -491,12 +474,6 @@
           "type": "float",
           "default": 200
         },
-        "class_weight": {
-          "description": "Weights associated with classes in the form {class_label: weight}.",
-          "type": ["null", "object", "string"],
-          "enum": ["balanced", null],
-          "default": null
-        },
         "verbose": {
           "description": "Enable verbose output.",
           "type": "boolean",
@@ -506,22 +483,6 @@
           "description": "Hard limit on iterations within solver.",
           "type": "integer",
           "default": -1
-        },
-        "decision_function_shape": {
-          "description": "Whether to return one-vs-rest ('ovr') or one-vs-one ('ovo') decision function.",
-          "type": "string",
-          "enum": ["ovo", "ovr"],
-          "default": "ovr"
-        },
-        "break_ties": {
-          "description": "Whether to break ties in decision_function output.",
-          "type": "boolean",
-          "default": false
-        },
-        "random_state": {
-          "description": "Seed of the random number generator.",
-          "type": ["integer", "null"],
-          "default": null
         }
       }
     },
