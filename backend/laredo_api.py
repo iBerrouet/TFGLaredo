@@ -69,6 +69,16 @@ def train_model():
 
     data = request.json
 
+    required_params = [
+        'modelName', 'problemType', 'datasetJSON', 'columnsDataType',
+        'target', 'preprocessingMethods', 'algorithm', 'strategy', 'parametersValue'
+    ]
+
+    missing_params = [param for param in required_params if param not in data]
+
+    if missing_params:
+        return jsonify({'error': 'Missing parameters', 'missing': missing_params}), 400
+
     model_name = data.get('modelName')
     problem_type = data.get('problemType')
     dataset_json = data.get('datasetJSON')
@@ -99,7 +109,7 @@ def train_model():
                 step = strategy_class().get_step({})            
             steps.append(step)
         else:
-            return jsonify({"message": f"Invalid strategy {strategy_name}"}), 400
+            return jsonify({"error": f"Invalid strategy {strategy_name}"}), 409
         
 
     x = dataset.drop(columns=[target])
@@ -110,7 +120,7 @@ def train_model():
 
     strategy_class = globals().get(strategy)
     if strategy_class is None:
-        return jsonify({"message": "Invalid strategy"}), 400
+        return jsonify({"error": "Invalid strategy"}), 409
 
 
     with mlflow.start_run():
@@ -170,6 +180,10 @@ def get_column_types():
     data = request.json
 
     dataset_json = data.get('datasetJSON')
+
+    if not dataset_json:
+        return jsonify({"message": "Missing dataset"}), 400
+    
     dataset = pd.DataFrame.from_dict(dataset_json)
 
     column_types = dataset.dtypes.apply(lambda x: x.name).to_dict()
