@@ -147,7 +147,7 @@ def train_model():
         mlflow.sklearn.log_model(sk_model=model, artifact_path="model", registered_model_name=model_name)
         mlflow.log_text(estimator_html_repr(pipeline), "estimator.html")
 
-    return jsonify(metrics), 200
+    return jsonify(metrics), 201
 
 
 def get_metrics(problem_type, x_test, y_test, predictions):
