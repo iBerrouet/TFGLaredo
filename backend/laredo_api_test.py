@@ -1,5 +1,5 @@
 import unittest
-from flask import jsonify
+from flask import json, jsonify
 from laredo_api import app
 
 class TestLaredoAPI(unittest.TestCase):
@@ -8,6 +8,21 @@ class TestLaredoAPI(unittest.TestCase):
         self.app = app
         self.client = self.app.test_client()
         self.app.testing = True
+
+    def test_get_models_success(self):
+        response = self.client.get('/models')
+
+        self.assertEqual(response.status_code, 200)
+
+        data = json.loads(response.data)
+
+        self.assertIsInstance(data, list)
+        self.assertGreater(len(data), 0)
+
+        for model in data:
+            self.assertIn('version', model)
+            self.assertIn('model_name', model)
+            self.assertIn('creation_time', model)
 
     def test_missing_params(self):
         data = {
@@ -79,8 +94,7 @@ class TestLaredoAPI(unittest.TestCase):
         }
 
         response = self.client.post('/models', json=data)
-        print(response.json) 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertIn('accuracy', response.json)
 
     def test_successful_request_regressor(self):
@@ -101,7 +115,7 @@ class TestLaredoAPI(unittest.TestCase):
         }
 
         response = self.client.post('/models', json=data)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         self.assertIn('r2_score', response.json)
 
     def test_get_model_not_found(self):
@@ -113,6 +127,8 @@ class TestLaredoAPI(unittest.TestCase):
         response = self.client.get('/models/knn_pipeline')
         self.assertEqual(response.status_code, 200)
         self.assertIn('metrics', response.json)
+        self.assertIn('dataset', response.json)
+        self.assertIn('estimator', response.json)
 
     def test_get_column_types_missing_dataset(self):
         response = self.client.post('/column-types', json={})
