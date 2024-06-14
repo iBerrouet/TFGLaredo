@@ -18,10 +18,9 @@ class TestTestnavigationsuccess():
   def teardown_method(self, method):
     self.driver.quit()
   
-  def test_testnavigationsuccess(self):
+  def test_model_navigation(self):
     self.driver.get("http://localhost:5173/")
     self.driver.set_window_size(1552, 840)
-    assert self.driver.find_element(By.CSS_SELECTOR, ".undefined").text == "Create a model"
     assert self.driver.find_element(By.CSS_SELECTOR, ".ml-4").text == "Show available models"
     self.driver.find_element(By.CSS_SELECTOR, ".ml-4").click()
     WebDriverWait(self.driver, 30).until(expected_conditions.text_to_be_present_in_element((By.CSS_SELECTOR, "tr:nth-child(3) > .font-bold"), "rfc_pipeline"))
@@ -35,6 +34,11 @@ class TestTestnavigationsuccess():
     assert self.driver.find_element(By.CSS_SELECTOR, ".mt-1").text == "rfc_pipeline"
     assert self.driver.find_element(By.CSS_SELECTOR, ".flex:nth-child(1) tr:nth-child(1) > .font-bold").text == "accuracy"
     assert self.driver.find_element(By.CSS_SELECTOR, "tr:nth-child(18) > .font-bold").text == "sensor_15"
+
+  def test_create_model(self):
+    self.driver.get("http://localhost:5173/")
+    self.driver.set_window_size(1552, 840)
+    assert self.driver.find_element(By.CSS_SELECTOR, ".undefined").text == "Create a model"
     self.driver.find_element(By.CSS_SELECTOR, ".hover\\3A bg-transparent:nth-child(1)").click()
     self.driver.find_element(By.ID, "modelName").click()
     self.driver.find_element(By.ID, "modelName").send_keys("selenium")
@@ -79,4 +83,3 @@ class TestTestnavigationsuccess():
     assert self.driver.find_element(By.CSS_SELECTOR, "tr:nth-child(1) > .text-left").text == "n_estimators"
     self.driver.find_element(By.CSS_SELECTOR, ".px-8:nth-child(1)").click()
     assert self.driver.find_element(By.CSS_SELECTOR, ".text-5xl").text == "Training your model..."
-  
