@@ -98,7 +98,7 @@ function ModelCreation() {
                 setActiveButton(Steps.Evaluation)
                 try {
                     const response = await callAPI()
-                    if (response.status == 200) {
+                    if (response.status == 201) {
                         setMetrics(response.data)
                         setIsTraining(false)
                     } else {
