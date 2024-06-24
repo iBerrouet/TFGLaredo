@@ -18,7 +18,8 @@ app = Flask(__name__)
 CORS(app)
 api = Api(app=app)
 
-mlflow.set_tracking_uri("http://localhost:5000")
+mlflow.set_tracking_uri("http://52.191.49.103:5000")
+mlflow.set_experiment("laredo")
 
 @app.route("/")
 def hello():
