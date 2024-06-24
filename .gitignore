@@ -25,3 +25,6 @@ dist-ssr
 
 # Python cache directories
 __pycache__/
+
+# Github directory
+.github/
