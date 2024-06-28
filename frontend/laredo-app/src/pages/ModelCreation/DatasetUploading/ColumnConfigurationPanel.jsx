@@ -11,7 +11,10 @@ function ColumnConfigurationPanel({preview, columns, columnsDataType, setColumns
     const fetchData = async () => {
         try {
             const datasetJSON = preview
-            const response = await axios.post('http://localhost:5050/column-types', {
+            const apiIp = import.meta.env.VITE_API_IP
+            const apiPort = import.meta.env.VITE_API_PORT
+            const apiUrl = `http://${apiIp}:${apiPort}/column-types`
+            const response = await axios.post(apiUrl, {
                 datasetJSON
             })
             setColumnsDataType(response.data)

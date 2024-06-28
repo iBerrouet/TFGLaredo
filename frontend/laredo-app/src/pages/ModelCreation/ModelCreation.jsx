@@ -122,7 +122,12 @@ function ModelCreation() {
     const callAPI = async() => {
         const datasetJSON = await convertDatasetToJSON(datasetFile)
         const strategy = algorithmData[problemType][algorithm].strategy
-        const response = await axios.post('http://localhost:5050/models', {
+        
+        const apiIp = import.meta.env.VITE_API_IP
+        const apiPort = import.meta.env.VITE_API_PORT
+        const apiUrl = `http://${apiIp}:${apiPort}/models`
+
+        const response = await axios.post(apiUrl, {
             modelName,
             problemType,
             datasetJSON,

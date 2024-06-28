@@ -1,3 +1,4 @@
+import os
 from sklearn.preprocessing import LabelEncoder
 from sklearn.base import estimator_html_repr
 from sklearn.pipeline import Pipeline
@@ -18,7 +19,9 @@ app = Flask(__name__)
 CORS(app)
 api = Api(app=app)
 
-mlflow.set_tracking_uri("http://52.191.49.103:5000")
+ip = os.environ['TRACKING_URI_IP']
+port = os.environ['TRACKING_URI_PORT']
+mlflow.set_tracking_uri(f"http://{ip}:{port}")
 mlflow.set_experiment("laredo")
 
 @app.route("/")

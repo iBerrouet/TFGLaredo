@@ -31,7 +31,11 @@ function ModelDetails() {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get(`http://localhost:5050/models/${modelName}`)
+            const apiIp = import.meta.env.VITE_API_IP
+            const apiPort = import.meta.env.VITE_API_PORT
+            const apiUrl = `http://${apiIp}:${apiPort}/models/${modelName}`
+
+            const response = await axios.get(apiUrl)
 
             setMetrics(response.data.metrics)
             setDataset(JSON.parse(response.data.dataset))

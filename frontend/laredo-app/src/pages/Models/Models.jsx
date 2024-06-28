@@ -16,7 +16,11 @@ function Models() {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:5050/models');
+            const apiIp = import.meta.env.VITE_API_IP
+            const apiPort = import.meta.env.VITE_API_PORT
+            const apiUrl = `http://${apiIp}:${apiPort}/models`
+
+            const response = await axios.get(apiUrl)
             const formattedData = response.data.map(model => ({
                 ...model,
                 creation_date: new Date(model.creation_time).toLocaleDateString()
