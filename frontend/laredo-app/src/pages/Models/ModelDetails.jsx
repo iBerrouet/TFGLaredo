@@ -6,9 +6,11 @@ import axios from 'axios'
 function ModelDetails() {
 
     const { modelName } = useParams()
-    const [pipeline, setPipeline] = useState('');
+    const [pipeline, setPipeline] = useState('')
     const [metrics, setMetrics] = useState(null)
     const [dataset, setDataset] = useState(null)
+    const apiIp = import.meta.env.VITE_API_IP
+    const apiPort = import.meta.env.VITE_API_PORT
 
     const navigate = useNavigate()
 
@@ -31,8 +33,6 @@ function ModelDetails() {
 
     const fetchData = async () => {
         try {
-            const apiIp = import.meta.env.VITE_API_IP
-            const apiPort = import.meta.env.VITE_API_PORT
             const apiUrl = `http://${apiIp}:${apiPort}/models/${modelName}`
 
             const response = await axios.get(apiUrl)
@@ -47,6 +47,15 @@ function ModelDetails() {
 
     }
 
+    const deployModel = async () => {
+        try {
+            const apiUrl = `http://${apiIp}:${apiPort}/models/${modelName}/deploy`
+            const response = await axios.post(apiUrl)        
+
+        } catch (error) {
+            console.error('Error deploying model:', error)
+        }
+    }
 
     return(
         <>
@@ -114,7 +123,7 @@ function ModelDetails() {
                     </div>
                 </div>
                 
-                <CustomButton className='text-5xl my-20'>Deploy</CustomButton>
+                <CustomButton className='text-5xl my-20' onClick={deployModel}>Deploy</CustomButton>
 
             </div>
 

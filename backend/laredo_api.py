@@ -13,6 +13,9 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import f1_score, mean_squared_error, recall_score, silhouette_score, r2_score, accuracy_score
 from sklearn.model_selection import train_test_split
+import jinja2
+from kubernetes import client, config
+import yaml
 
 
 app = Flask(__name__)
@@ -51,7 +54,7 @@ def get_model(model_name):
     model = mlflow.search_registered_models(filter_string=f"name='{model_name}'")
 
     if not model:
-            return jsonify({"error": "Model not found"}), 404
+        return jsonify({"error": "Model not found"}), 404
 
     run_id = model[0].latest_versions[0].run_id
     run = mlflow.get_run(run_id)
@@ -178,6 +181,36 @@ def get_metrics(problem_type, x_test, y_test, predictions):
         
     return metrics
 
+@app.route("/models/<model_name>/deploy", methods=["POST"])
+def model_deploy(model_name):
+    templateLoader = jinja2.FileSystemLoader(searchpath="./")
+    templateEnv = jinja2.Environment(loader=templateLoader)
+    TEMPLATE_FILE = "languageWrapper_template.jinja"
+    template = templateEnv.get_template(TEMPLATE_FILE)
+
+    data = {
+        "deployment_name": model_name,
+        "model_name": model_name,
+        "replicas": 1,
+        "tracking_uri_ip": ip,
+        "tracking_uri_port": port,
+        "is_k8s": True
+    }
+
+    outputText = template.render(data)
+    dep = yaml.safe_load(outputText)
+
+    config.load_kube_config()
+    v1 = client.CustomObjectsApi()
+
+    resp = v1.create_namespaced_custom_object(
+        group="machinelearning.seldon.io",
+        version="v1",
+        plural="seldondeployments",
+        body=dep,
+        namespace="laredo")
+
+    return jsonify(), 201
 
 @app.route("/column-types" , methods=["POST"])
 def get_column_types():
