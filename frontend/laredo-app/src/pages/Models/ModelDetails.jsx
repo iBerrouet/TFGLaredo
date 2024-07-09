@@ -9,8 +9,8 @@ function ModelDetails() {
     const [pipeline, setPipeline] = useState('')
     const [metrics, setMetrics] = useState(null)
     const [dataset, setDataset] = useState(null)
-    const apiIp = import.meta.env.VITE_API_IP
-    const apiPort = import.meta.env.VITE_API_PORT
+    //const apiIp = import.meta.env.VITE_API_IP
+    //const apiPort = import.meta.env.VITE_API_PORT
 
     const navigate = useNavigate()
 
@@ -33,7 +33,8 @@ function ModelDetails() {
 
     const fetchData = async () => {
         try {
-            const apiUrl = `http://${apiIp}:${apiPort}/models/${modelName}`
+            const apiUrl = `/api/models/${modelName}`
+            // const apiUrl = `http://${apiIp}:${apiPort}/models/${modelName}`
 
             const response = await axios.get(apiUrl)
 
@@ -49,7 +50,7 @@ function ModelDetails() {
 
     const deployModel = async () => {
         try {
-            const apiUrl = `http://${apiIp}:${apiPort}/models/${modelName}/deploy`
+            const apiUrl = `/api/models/${modelName}/deploy`
             const response = await axios.post(apiUrl)        
 
         } catch (error) {

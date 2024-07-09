@@ -4,6 +4,8 @@ import eyeIcon from '@assets/images/eyeIcon.png'
 import CustomButton from '@components/CustomButton'
 import axios from 'axios'
 
+
+
 function Models() {
 
     const [models, setModels] = useState([])
@@ -16,10 +18,14 @@ function Models() {
 
     const fetchData = async () => {
         try {
-            const apiIp = import.meta.env.VITE_API_IP
-            const apiPort = import.meta.env.VITE_API_PORT
-            const apiUrl = `http://${apiIp}:${apiPort}/models`
-
+            
+            //const apiIp = import.meta.env.VITE_API_IP
+            //const apiPort = import.meta.env.VITE_API_PORT
+            //const apiUrl = `http://${apiIp}:${apiPort}/models`
+            const apiUrl = `/api/models`
+            console.log('************************************')
+            console.log('apiUrl:', apiUrl)
+            console.log('************************************')
             const response = await axios.get(apiUrl)
             const formattedData = response.data.map(model => ({
                 ...model,
