@@ -5,7 +5,8 @@ backend:
   replicaCount: 1
   namespace: laredo
   image:
-    repository: ghcr.io/dintenr/laredo-backend
+    # repository: ghcr.io/dintenr/laredo-backend
+    repository: laredo/backend
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: 0.0.2
@@ -43,13 +44,14 @@ backend:
     name: laredo-backend
     type: ClusterIP
     port: 5050
-  mlflow_tracking_uri_ip: '127.0.0.1'
+  mlflow_tracking_uri_ip: mlflow-service
   mlflow_tracking_uri_port: '5000'
 frontend:
   replicaCount: 1
   namespace: laredo
   image:
-    repository: ghcr.io/dintenr/laredo-frontend
+    # repository: ghcr.io/dintenr/laredo-frontend
+    repository: laredo/frontend
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: 0.0.2

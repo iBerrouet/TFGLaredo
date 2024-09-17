@@ -25,7 +25,6 @@ api = Api(app=app)
 ip = os.environ['TRACKING_URI_IP']
 port = os.environ['TRACKING_URI_PORT']
 mlflow.set_tracking_uri(f"http://{ip}:{port}")
-mlflow.set_experiment("laredo")
 
 @app.route("/")
 def hello():
@@ -232,6 +231,69 @@ def model_deploy(model_name):
         namespace="laredo")
 
     return jsonify(), 201
+
+def delete_deployment(model_name):
+    '''
+    Delete a deployment with the given model name
+    Args:
+        model_name: str
+    '''
+    config.load_kube_config()
+
+    v1 = client.CustomObjectsApi()
+
+    resp = v1.delete_namespaced_custom_object(
+        group="machinelearning.seldon.io",
+        version="v1",
+        plural="seldondeployments",
+        name=f"laredo-server-{model_name}", 
+        namespace="laredo")
+
+
+    print("Deployment deleted.")
+
+
+def get_deployments():
+    '''
+    Get all the deployments in the laredo namespace
+    Returns:
+        List of deployments
+    '''
+    config.load_kube_config()
+
+    print("Listing pods with their IPs:")
+
+    v1 = client.CustomObjectsApi()
+
+    deployments = v1.list_namespaced_custom_object(
+        group="machinelearning.seldon.io",
+        version="v1",
+        plural="seldondeployments",
+        namespace="laredo")
+
+
+    deployments = deployments["items"]
+    #print("deployments: ", len(deployments))
+    return deployments
+
+
+def search_deployment(model_name):
+    '''
+    Search for a deployment with the given model name
+    Args:
+        model_name: str
+    Returns:
+        True if the deployment exists, False otherwise
+    '''
+    deployments = get_deployments()
+
+
+    for deployment in deployments:
+        if deployment["metadata"]["name"] == f"laredo-server-{model_name}":
+            return True
+
+
+    return False
 
 @app.route("/column-types" , methods=["POST"])
 def get_column_types():
