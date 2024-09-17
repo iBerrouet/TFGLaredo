@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import CustomButton from '@components/CustomButton'
+import CustomModal from '@components/CustomModal'
+import checkIcon from '@assets/images/checkIcon.svg'
+import errorIcon from '@assets/images/cancelIcon.svg'
+
+
 import axios from 'axios'
 
 function ModelDetails() {
@@ -9,6 +14,8 @@ function ModelDetails() {
     const [pipeline, setPipeline] = useState('')
     const [metrics, setMetrics] = useState(null)
     const [dataset, setDataset] = useState(null)
+    const [showModal, setShowModal] = useState(false)
+    const [isSuccess, setIsSuccess] = useState(false)
     //const apiIp = import.meta.env.VITE_API_IP
     //const apiPort = import.meta.env.VITE_API_PORT
 
@@ -51,11 +58,26 @@ function ModelDetails() {
     const deployModel = async () => {
         try {
             const apiUrl = `/api/models/${modelName}/deploy`
-            const response = await axios.post(apiUrl)        
+            const response = await axios.post(apiUrl) 
+            
+            if (response.status == 201) {
+                setIsSuccess(true)
+            } else {
+                setIsSuccess(false)
+            }
 
+            openModal()
         } catch (error) {
             console.error('Error deploying model:', error)
         }
+    }
+
+    const openModal = () => {
+        setShowModal(true)
+    }
+
+    const closeModal = () => {
+        setShowModal(false)
     }
 
     return(
@@ -128,6 +150,25 @@ function ModelDetails() {
 
             </div>
 
+            <CustomModal isOpen={showModal} onClose={closeModal}>
+                <div className='flex flex-col items-center justify-center'>
+
+                    {isSuccess ? (
+                        <div className='flex flex-col items-center justify-center'>
+                            <h2 className='text-5xl text-white font-semibold text-center'>Model deployed <br/>successfully!</h2>
+                            <img src={checkIcon} className='mt-5 mb-5' alt='Check icon' width='100'/>
+                        </div>
+                    ) : (
+                        <div className='flex flex-col items-center justify-center'>
+                            <h2 className='text-5xl text-red-500 font-semibold text-center'>Error deploying model</h2>
+                            <img src={errorIcon} className='mt-5 mb-5' alt='Error icon' width='100'/>
+                        </div>
+                    )}
+
+                    <CustomButton onClick={closeModal}>OK</CustomButton>
+                </div>
+
+            </CustomModal>
         </>
     )
 }
