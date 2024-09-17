@@ -62,10 +62,13 @@ def get_model(model_name):
     estimator = mlflow.artifacts.load_text(estimator_uri)
     dataset = run.inputs.dataset_inputs[0].dataset.schema
 
+    isDeployed =  search_deployment(model_name)
+
     response_data = {
         "estimator": estimator,
         "metrics" : run.data.metrics,
         "dataset" : dataset,
+        "isDeployed" : isDeployed
     }
 
     return jsonify(response_data), 200
@@ -217,9 +220,8 @@ def model_deploy(model_name):
         try:
             config.load_incluster_config()
         except config.config_exception.ConfigException:
-            raise config.config_exception.ConfigException(
-                "Failed to load both kube-config file and in-cluster configuration."
-            )
+            return jsonify({"error": "Failed to load both kube-config file and in-cluster configuration."}), 500
+
 
     v1 = client.CustomObjectsApi()
 
@@ -232,13 +234,20 @@ def model_deploy(model_name):
 
     return jsonify(), 201
 
+@app.route("/models/<model_name>/deploy", methods=["DELETE"])
 def delete_deployment(model_name):
     '''
     Delete a deployment with the given model name
     Args:
         model_name: str
     '''
-    config.load_kube_config()
+    try:
+        config.load_kube_config()
+    except config.config_exception.ConfigException:
+        try:
+            config.load_incluster_config()
+        except config.config_exception.ConfigException:
+            return jsonify({"error": "Failed to load both kube-config file and in-cluster configuration."}), 500
 
     v1 = client.CustomObjectsApi()
 
@@ -252,6 +261,8 @@ def delete_deployment(model_name):
 
     print("Deployment deleted.")
 
+    return jsonify(), 204
+
 
 def get_deployments():
     '''
@@ -259,7 +270,15 @@ def get_deployments():
     Returns:
         List of deployments
     '''
-    config.load_kube_config()
+    try:
+        config.load_kube_config()
+    except config.config_exception.ConfigException:
+        try:
+            config.load_incluster_config()
+        except config.config_exception.ConfigException:
+            raise config.config_exception.ConfigException(
+                "Failed to load both kube-config file and in-cluster configuration."
+            )
 
     print("Listing pods with their IPs:")
 
