@@ -20,20 +20,6 @@ function ModelDetails() {
     //const apiIp = import.meta.env.VITE_API_IP
     //const apiPort = import.meta.env.VITE_API_PORT
 
-    const navigate = useNavigate()
-
-    const goHome = () => {
-        navigate('/')
-    }
-
-    const goModels = () => {
-        navigate('/models')
-    }
-
-    const goModelCreation = () => {
-        navigate('/model-creation')
-    }
-
     useEffect(() => {
         window.scrollTo(0, 0)
         fetchData()
@@ -49,12 +35,24 @@ function ModelDetails() {
             setMetrics(response.data.metrics)
             setDataset(JSON.parse(response.data.dataset))
             setPipeline(response.data.estimator)
-            setIsDeployed(response.data.isDeployed)
-        
+            setIsDeployed(response.data.is_deployed)
         } catch (error) {
             console.error('Error fetching data:', error)
         }
+    }
 
+    const navigate = useNavigate()
+
+    const goHome = () => {
+        navigate('/')
+    }
+
+    const goModels = () => {
+        navigate('/models')
+    }
+
+    const goModelCreation = () => {
+        navigate('/model-creation')
     }
 
     const deployModel = async () => {
@@ -80,12 +78,17 @@ function ModelDetails() {
             const apiUrl = `/api/models/${modelName}/deploy`
             const response = await axios.delete(apiUrl) 
             
-            setIsDeployed(false)
+            if (response.status == 204) {
+                setIsSuccess(true)
+                setIsDeployed(false)
+            } else {
+                setIsSuccess(false)
+            }
 
             openModal()
 
         } catch (error) {
-            console.error('Error deploying model:', error)
+            console.error('Error undeploying model:', error)
         }
     }
 
@@ -182,16 +185,25 @@ function ModelDetails() {
                             </div>
                         ) : (
                             <div className='flex flex-col items-center justify-center'>
-                            <h2 className='text-5xl text-white font-semibold text-center'>Model undeployed <br/>successfully!</h2>
-                            <img src={checkIcon} className='mt-5 mb-5' alt='Check icon' width='100'/>
-                        </div>
+                                <h2 className='text-5xl text-white font-semibold text-center'>Model undeployed <br/>successfully!</h2>
+                                <img src={checkIcon} className='mt-5 mb-5' alt='Check icon' width='100'/>
+                            </div>
                         )}
                         </>
                     ) : (
-                        <div className='flex flex-col items-center justify-center'>
-                            <h2 className='text-5xl text-red-500 font-semibold text-center'>Error deploying model</h2>
-                            <img src={errorIcon} className='mt-5 mb-5' alt='Error icon' width='100'/>
-                        </div>
+                        <>
+                        {isDeployed ? ( 
+                            <div className='flex flex-col items-center justify-center'>
+                                <h2 className='text-5xl text-red-500 font-semibold text-center'>Error undeploying model</h2>
+                                <img src={errorIcon} className='mt-5 mb-5' alt='Error icon' width='100'/>
+                            </div>
+                        ) : (
+                            <div className='flex flex-col items-center justify-center'>
+                                <h2 className='text-5xl text-red-500 font-semibold text-center'>Error deploying model</h2>
+                                <img src={errorIcon} className='mt-5 mb-5' alt='Error icon' width='100'/>
+                            </div>
+                        )}
+                        </>
                     )}
 
                     <CustomButton onClick={closeModal}>OK</CustomButton>

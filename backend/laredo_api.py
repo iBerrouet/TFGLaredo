@@ -41,6 +41,7 @@ def get_models():
         'version': model.latest_versions[0].version,
         'model_name': model.latest_versions[0].name,
         'creation_time': model.latest_versions[0].creation_timestamp,
+        'is_deployed' : search_deployment(model.latest_versions[0].name)
     } for model in registered_models]
 
     sorted_models = sorted(filtered_models, key=lambda x: x['creation_time'], reverse=True)
@@ -62,13 +63,13 @@ def get_model(model_name):
     estimator = mlflow.artifacts.load_text(estimator_uri)
     dataset = run.inputs.dataset_inputs[0].dataset.schema
 
-    isDeployed =  search_deployment(model_name)
+    is_deployed =  search_deployment(model_name)
 
     response_data = {
         "estimator": estimator,
         "metrics" : run.data.metrics,
         "dataset" : dataset,
-        "isDeployed" : isDeployed
+        "is_deployed" : is_deployed
     }
 
     return jsonify(response_data), 200
