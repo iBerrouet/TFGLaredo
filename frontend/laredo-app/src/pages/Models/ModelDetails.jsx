@@ -1,14 +1,45 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import CustomButton from '@components/CustomButton'
+import CustomModal from '@components/CustomModal'
+import checkIcon from '@assets/images/checkIcon.svg'
+import errorIcon from '@assets/images/cancelIcon.svg'
+
+
 import axios from 'axios'
 
 function ModelDetails() {
 
     const { modelName } = useParams()
-    const [pipeline, setPipeline] = useState('');
+    const [pipeline, setPipeline] = useState('')
     const [metrics, setMetrics] = useState(null)
     const [dataset, setDataset] = useState(null)
+    const [showModal, setShowModal] = useState(false)
+    const [isSuccess, setIsSuccess] = useState(false)
+    const [isDeployed, setIsDeployed] = useState(false)
+    //const apiIp = import.meta.env.VITE_API_IP
+    //const apiPort = import.meta.env.VITE_API_PORT
+
+    useEffect(() => {
+        window.scrollTo(0, 0)
+        fetchData()
+    }, [])
+
+    const fetchData = async () => {
+        try {
+            const apiUrl = `/api/models/${modelName}`
+            // const apiUrl = `http://${apiIp}:${apiPort}/models/${modelName}`
+
+            const response = await axios.get(apiUrl)
+
+            setMetrics(response.data.metrics)
+            setDataset(JSON.parse(response.data.dataset))
+            setPipeline(response.data.estimator)
+            setIsDeployed(response.data.is_deployed)
+        } catch (error) {
+            console.error('Error fetching data:', error)
+        }
+    }
 
     const navigate = useNavigate()
 
@@ -24,25 +55,50 @@ function ModelDetails() {
         navigate('/model-creation')
     }
 
-    useEffect(() => {
-        window.scrollTo(0, 0)
-        fetchData()
-    }, [])
-
-    const fetchData = async () => {
+    const deployModel = async () => {
         try {
-            const response = await axios.get(`http://localhost:5050/models/${modelName}`)
+            const apiUrl = `/api/models/${modelName}/deploy`
+            const response = await axios.post(apiUrl) 
+            
+            if (response.status == 201) {
+                setIsSuccess(true)
+                setIsDeployed(true)
+            } else {
+                setIsSuccess(false)
+            }
 
-            setMetrics(response.data.metrics)
-            setDataset(JSON.parse(response.data.dataset))
-            setPipeline(response.data.estimator);
-        
+            openModal()
         } catch (error) {
-            console.error('Error fetching data:', error)
+            console.error('Error deploying model:', error)
         }
-
     }
 
+    const undeployModel = async () => {
+        try {
+            const apiUrl = `/api/models/${modelName}/deploy`
+            const response = await axios.delete(apiUrl) 
+            
+            if (response.status == 204) {
+                setIsSuccess(true)
+                setIsDeployed(false)
+            } else {
+                setIsSuccess(false)
+            }
+
+            openModal()
+
+        } catch (error) {
+            console.error('Error undeploying model:', error)
+        }
+    }
+
+    const openModal = () => {
+        setShowModal(true)
+    }
+
+    const closeModal = () => {
+        setShowModal(false)
+    }
 
     return(
         <>
@@ -110,10 +166,50 @@ function ModelDetails() {
                     </div>
                 </div>
                 
-                <CustomButton className='text-5xl my-20'>Deploy</CustomButton>
+                {isDeployed ? (
+                    <CustomButton className='text-5xl my-20' onClick={undeployModel}>Undeploy</CustomButton>
+                ) : (
+                    <CustomButton className='text-5xl my-20' onClick={deployModel}>Deploy</CustomButton>
+                )}
 
             </div>
 
+            <CustomModal isOpen={showModal} onClose={closeModal}>
+                <div className='flex flex-col items-center justify-center'>
+                    {isSuccess ? (
+                        <>
+                        {isDeployed ? (
+                            <div className='flex flex-col items-center justify-center'>
+                                <h2 className='text-5xl text-white font-semibold text-center'>Model deployed <br/>successfully!</h2>
+                                <img src={checkIcon} className='mt-5 mb-5' alt='Check icon' width='100'/>
+                            </div>
+                        ) : (
+                            <div className='flex flex-col items-center justify-center'>
+                                <h2 className='text-5xl text-white font-semibold text-center'>Model undeployed <br/>successfully!</h2>
+                                <img src={checkIcon} className='mt-5 mb-5' alt='Check icon' width='100'/>
+                            </div>
+                        )}
+                        </>
+                    ) : (
+                        <>
+                        {isDeployed ? ( 
+                            <div className='flex flex-col items-center justify-center'>
+                                <h2 className='text-5xl text-red-500 font-semibold text-center'>Error undeploying model</h2>
+                                <img src={errorIcon} className='mt-5 mb-5' alt='Error icon' width='100'/>
+                            </div>
+                        ) : (
+                            <div className='flex flex-col items-center justify-center'>
+                                <h2 className='text-5xl text-red-500 font-semibold text-center'>Error deploying model</h2>
+                                <img src={errorIcon} className='mt-5 mb-5' alt='Error icon' width='100'/>
+                            </div>
+                        )}
+                        </>
+                    )}
+
+                    <CustomButton onClick={closeModal}>OK</CustomButton>
+                </div>
+
+            </CustomModal>
         </>
     )
 }

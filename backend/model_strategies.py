@@ -31,7 +31,7 @@ class DecisionTreeRegressorSklearnStrategy(ModelStrategy):
     def create_model(self, parameters):
         return DecisionTreeRegressor(**parameters)
     
-class SupportVectorMachineRegressionSklearnStrategy(ModelStrategy):
+class SupportVectorRegressionSklearnStrategy(ModelStrategy):
     def create_model(self, parameters):
         return SVR(**parameters)
 

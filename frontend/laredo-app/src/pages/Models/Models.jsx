@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import eyeIcon from '@assets/images/eyeIcon.png'
 import CustomButton from '@components/CustomButton'
 import axios from 'axios'
+import affirmationIcon from '@assets/images/affirmationIcon.svg'
+import negationIcon from '@assets/images/negationIcon.svg'
+
 
 function Models() {
 
@@ -16,7 +19,12 @@ function Models() {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:5050/models');
+            
+            //const apiIp = import.meta.env.VITE_API_IP
+            //const apiPort = import.meta.env.VITE_API_PORT
+            //const apiUrl = `http://${apiIp}:${apiPort}/models`
+            const apiUrl = `/api/models`
+            const response = await axios.get(apiUrl)
             const formattedData = response.data.map(model => ({
                 ...model,
                 creation_date: new Date(model.creation_time).toLocaleDateString()
@@ -51,12 +59,13 @@ function Models() {
 
             <p className='text-lg text-center mt-6'>Currently, the repository has these models available. If you want more information click on the icon.</p>
 
-            <table className='mx-auto mt-8 bg-gray-800 text-center'>
+            <table className='mx-auto mt-8 bg-gray-800 text-center items-center'>
                 <thead>
                     <tr>
                         <th className='text-white px-24 py-5 border-8 border-slate-950'>Model</th>
                         <th className='text-white px-24 py-5 border-8 border-slate-950'>Version</th>
                         <th className='text-white px-9 py-5 border-8 border-slate-950'>Creation date</th>
+                        <th className='text-white px-9 py-5 border-8 border-slate-950'>Is deployed?</th>
                         <th className='text-white px-9 py-5 border-8 border-slate-950'></th>
                     </tr>
                 </thead>
@@ -66,6 +75,17 @@ function Models() {
                             <td className='font-bold px-9 py-5 border-8 border-slate-950'>{model.model_name}</td>
                             <td className='px-9 py-5 border-8 border-slate-950'>Version {model.version}</td>
                             <td className='px-9 py-5 border-8 border-slate-950'>{model.creation_date}</td>
+                            <td className='px-9 py-5 border-8 border-slate-950'>
+                                {model.is_deployed ? (
+                                    <div className='flex justify-center items-center'>
+                                        <img src={affirmationIcon} alt='Affirmation icon' width='30'/>
+                                    </div>
+                                ) : (
+                                    <div className='flex justify-center items-center'>
+                                        <img src={negationIcon} alt='Negation icon' width='30'/>
+                                    </div>
+                                )}
+                                </td>
                             <td className='px-9 py-5 border-8 border-slate-950'>
                                 <div className='flex flex-col items-center group relative'>
                                     <p className='hidden absolute text-white text-xs whitespace-nowrap -top-5 group-hover:block'>

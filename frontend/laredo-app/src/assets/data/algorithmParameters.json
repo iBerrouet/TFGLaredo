@@ -308,7 +308,7 @@
           "description": "Number of features to consider when looking for the best split.",
           "type": ["string", "integer", "float", "null"],
           "enum": ["sqrt", "log2", null],
-          "default": "1.0"
+          "default": 1.0
         },
         "random_state": {
           "description": "Seed of the random number generator.",

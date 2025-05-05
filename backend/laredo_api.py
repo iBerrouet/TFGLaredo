@@ -1,3 +1,4 @@
+import os
 from sklearn.preprocessing import LabelEncoder
 from sklearn.base import estimator_html_repr
 from sklearn.pipeline import Pipeline
@@ -12,14 +13,18 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import f1_score, mean_squared_error, recall_score, silhouette_score, r2_score, accuracy_score
 from sklearn.model_selection import train_test_split
+import jinja2
+from kubernetes import client, config
+import yaml
 
 
 app = Flask(__name__)
 CORS(app)
 api = Api(app=app)
 
-mlflow.set_tracking_uri("http://52.191.49.103:5000")
-mlflow.set_experiment("laredo")
+ip = os.environ['TRACKING_URI_IP']
+port = os.environ['TRACKING_URI_PORT']
+mlflow.set_tracking_uri(f"http://{ip}:{port}")
 
 @app.route("/")
 def hello():
@@ -36,6 +41,7 @@ def get_models():
         'version': model.latest_versions[0].version,
         'model_name': model.latest_versions[0].name,
         'creation_time': model.latest_versions[0].creation_timestamp,
+        'is_deployed' : search_deployment(model.latest_versions[0].name)
     } for model in registered_models]
 
     sorted_models = sorted(filtered_models, key=lambda x: x['creation_time'], reverse=True)
@@ -48,7 +54,7 @@ def get_model(model_name):
     model = mlflow.search_registered_models(filter_string=f"name='{model_name}'")
 
     if not model:
-            return jsonify({"error": "Model not found"}), 404
+        return jsonify({"error": "Model not found"}), 404
 
     run_id = model[0].latest_versions[0].run_id
     run = mlflow.get_run(run_id)
@@ -57,10 +63,13 @@ def get_model(model_name):
     estimator = mlflow.artifacts.load_text(estimator_uri)
     dataset = run.inputs.dataset_inputs[0].dataset.schema
 
+    is_deployed =  search_deployment(model_name)
+
     response_data = {
         "estimator": estimator,
         "metrics" : run.data.metrics,
         "dataset" : dataset,
+        "is_deployed" : is_deployed
     }
 
     return jsonify(response_data), 200
@@ -123,7 +132,6 @@ def train_model():
     if strategy_class is None:
         return jsonify({"error": "Invalid strategy"}), 409
 
-
     with mlflow.start_run():
 
         x_train_mlflow = mlflow.data.from_pandas(x_train)
@@ -175,6 +183,137 @@ def get_metrics(problem_type, x_test, y_test, predictions):
         
     return metrics
 
+@app.route("/models/<model_name>/deploy", methods=["POST"])
+def model_deploy(model_name):
+    templateLoader = jinja2.FileSystemLoader(searchpath="./")
+    templateEnv = jinja2.Environment(loader=templateLoader)
+    TEMPLATE_FILE = "languageWrapper_template.jinja"
+    template = templateEnv.get_template(TEMPLATE_FILE)
+
+    data = {
+        "deployment_name": model_name,
+        "model_name": model_name,
+        "replicas": 1,
+        "tracking_uri_ip": ip,
+        "tracking_uri_port": port,
+        "is_k8s": True
+    }
+
+    outputText = template.render(data)
+    dep = yaml.safe_load(outputText)
+
+    # config.load_kube_config()
+
+    try:
+        config.load_kube_config()
+    except config.config_exception.ConfigException:
+        # `load_kube_config` assumes a local kube-config file, and fails if not
+        # present, raising:
+        #
+        #     kubernetes.config.config_exception.ConfigException: Invalid
+        #     kube-config file. No configuration found.
+        #
+        # Since running a parsl driver script on a kubernetes cluster is a common
+        # pattern to enable worker-interchange communication, this enables an
+        # in-cluster config to be loaded if a kube-config file isn't found.
+        #
+        # Based on: https://github.com/kubernetes-client/python/issues/1005
+        try:
+            config.load_incluster_config()
+        except config.config_exception.ConfigException:
+            return jsonify({"error": "Failed to load both kube-config file and in-cluster configuration."}), 500
+
+
+    v1 = client.CustomObjectsApi()
+
+    resp = v1.create_namespaced_custom_object(
+        group="machinelearning.seldon.io",
+        version="v1",
+        plural="seldondeployments",
+        body=dep,
+        namespace="laredo")
+
+    return jsonify(), 201
+
+@app.route("/models/<model_name>/deploy", methods=["DELETE"])
+def delete_deployment(model_name):
+    '''
+    Delete a deployment with the given model name
+    Args:
+        model_name: str
+    '''
+    try:
+        config.load_kube_config()
+    except config.config_exception.ConfigException:
+        try:
+            config.load_incluster_config()
+        except config.config_exception.ConfigException:
+            return jsonify({"error": "Failed to load both kube-config file and in-cluster configuration."}), 500
+
+    v1 = client.CustomObjectsApi()
+
+    resp = v1.delete_namespaced_custom_object(
+        group="machinelearning.seldon.io",
+        version="v1",
+        plural="seldondeployments",
+        name=f"laredo-server-{model_name}", 
+        namespace="laredo")
+
+
+    print("Deployment deleted.")
+
+    return jsonify(), 204
+
+
+def get_deployments():
+    '''
+    Get all the deployments in the laredo namespace
+    Returns:
+        List of deployments
+    '''
+    try:
+        config.load_kube_config()
+    except config.config_exception.ConfigException:
+        try:
+            config.load_incluster_config()
+        except config.config_exception.ConfigException:
+            raise config.config_exception.ConfigException(
+                "Failed to load both kube-config file and in-cluster configuration."
+            )
+
+    print("Listing pods with their IPs:")
+
+    v1 = client.CustomObjectsApi()
+
+    deployments = v1.list_namespaced_custom_object(
+        group="machinelearning.seldon.io",
+        version="v1",
+        plural="seldondeployments",
+        namespace="laredo")
+
+
+    deployments = deployments["items"]
+    #print("deployments: ", len(deployments))
+    return deployments
+
+
+def search_deployment(model_name):
+    '''
+    Search for a deployment with the given model name
+    Args:
+        model_name: str
+    Returns:
+        True if the deployment exists, False otherwise
+    '''
+    deployments = get_deployments()
+
+
+    for deployment in deployments:
+        if deployment["metadata"]["name"] == f"laredo-server-{model_name}":
+            return True
+
+
+    return False
 
 @app.route("/column-types" , methods=["POST"])
 def get_column_types():

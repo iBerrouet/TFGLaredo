@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import CustomButton from '@components/CustomButton'
 import robot from '@assets/images/robot.png'
-
 function Home() {
 
   const navigate = useNavigate()
