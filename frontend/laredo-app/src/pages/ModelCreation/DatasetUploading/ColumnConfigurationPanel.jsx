@@ -87,7 +87,7 @@ function ColumnConfigurationPanel({preview, columns, columnsDataType, setColumns
                                         <label htmlFor={column}>{column}</label>
                                     </td>
                                     <td>
-                                        <select className='text-white rounded border border-white bg-gray-800 my-2 py-1 w-fit'
+                                        <select className='text-white rounded-sm border border-white bg-gray-800 my-2 py-1 w-fit'
                                                 value={columnsDataType[column]}
                                                 onChange={(event) => handleDataTypeChange(column, event)}
                                         >

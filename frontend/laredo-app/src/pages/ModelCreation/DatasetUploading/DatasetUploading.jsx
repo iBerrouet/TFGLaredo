@@ -88,7 +88,7 @@ function DatasetUploading({datasetFile, setDatasetFile, columnsDataType, setColu
                                     <label htmlFor='checkbox' className='text-white text-lg'>Header included</label>
                                 </div>
 
-                                <div className='flex-grow mt-6'>
+                                <div className='grow mt-6'>
                                     <FileUploader handleChange={handleChange} name="file" types={['csv']} dropMessageStyle={{ marginRight: 'auto', marginLeft: 'auto', width: '91.666667%' }} hoverTitle={" "}>
                                         <div className='flex flex-col justify-center items-center border-2 border-dashed rounded-md border-cyan-400 cursor-pointer h-full w-11/12 mx-auto bg-gray-800'>
                                             <img src={uploadIcon} alt='Upload file icon' className='w-20 h-20'/>

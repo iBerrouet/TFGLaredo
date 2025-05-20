@@ -186,7 +186,7 @@ function ModelCreation() {
                         
                         <input 
                             id="modelName"
-                            className='border border-white rounded bg-gray-800 text-lg text-white p-1 h-9 w-64'
+                            className='border border-white rounded-sm bg-gray-800 text-lg text-white p-1 h-9 w-64'
                             type="text" 
                             placeholder="Enter your model's name..."
                             value={modelName}
@@ -197,7 +197,7 @@ function ModelCreation() {
                         <label htmlFor="problemType" className="text-2xl text-white mb-1 mt-8">Problem type</label>
                         <select 
                             id="problemType" 
-                            className='text-lg text-white rounded border border-white bg-gray-800 p-1 h-9 w-64'
+                            className='text-lg text-white rounded-sm border border-white bg-gray-800 p-1 h-9 w-64'
                             value={problemType}
                             onChange={(event) => setProblemType(event.target.value)}
                         >
