@@ -5,8 +5,8 @@ backend:
   replicaCount: 1
   namespace: laredo
   image:
-    # repository: ghcr.io/dintenr/laredo-backend
-    repository: laredo/backend
+    repository: ghcr.io/dintenr/laredo-backend
+    # repository: laredo/backend
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: 0.0.2
@@ -50,11 +50,11 @@ frontend:
   replicaCount: 1
   namespace: laredo
   image:
-    # repository: ghcr.io/dintenr/laredo-frontend
-    repository: laredo/frontend
+    repository: ghcr.io/dintenr/laredo-frontend
+    # repository: laredo/frontend
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: 0.0.2
+    tag: 0.1.0
 
   imagePullSecrets: []
   nameOverride: ""
@@ -86,10 +86,53 @@ frontend:
     # runAsUser: 1000
 
   service:
-    type: LoadBalancer
+    type: ClusterIP
     port: 80
 
+chatbotBackend:
+  replicaCount: 1
+  namespace: laredo
+  image:
+    repository: ghcr.io/dintenr/laredo-chatbot-backend
+    # repository: laredo/chatbot-backend
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: 0.1.0
 
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+
+  serviceAccount:
+    create: true
+    automount: true
+    annotations: {}
+    name: ""
+
+  podAnnotations: {}
+  podLabels: {}
+
+  podSecurityContext: {}
+    # fsGroup: 2000
+
+  securityContext: {}
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+  service:
+    name: laredo-chatbot-backend
+    type: ClusterIP
+    port: 20000
+
+  api_keys:
+    GOOGLE_API_KEY: "your-google-api-key"
+    LANGSMITH_API_KEY: "your-langsmith-api-key"
+    LANGSMITH_TRACING_V2: "true"
+    LANGSMITH_PROJECT: "chatbot"
 
 ingress:
   enabled: false
