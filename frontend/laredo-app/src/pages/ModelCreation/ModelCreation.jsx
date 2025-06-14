@@ -52,7 +52,7 @@ function ModelCreation() {
     const navigate = useNavigate()
 
     const activeButtonStyle = 'bg-transparent text-cyan-400 font-bold text-lg py-2 w-40'
-    const inactiveButtonStyle = 'bg-gray-900 hover:bg-transparent hover:text-cyan-400 text-white text-lg  py-2 w-40'
+    const inactiveButtonStyle = 'bg-gray-900 hover:bg-transparent hover:text-cyan-400 hover:cursor-pointer text-white text-lg py-2 w-40'
 
     useEffect(() => {
         const uniqueProblemTypes = Array.from(new Set(Object.keys(algorithmData)))

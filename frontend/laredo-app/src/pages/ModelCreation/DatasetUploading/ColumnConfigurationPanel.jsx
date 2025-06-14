@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 import CustomButton from '@components/CustomButton'
 
@@ -109,7 +109,8 @@ function ColumnConfigurationPanel({preview, columns, columnsDataType, setColumns
                                             id={column}
                                             value={column}
                                             name={'target'}
-                                            onClick={() => handleTargetChange(column)}
+                                            checked={target === column}
+                                            onChange={() => handleTargetChange(column)}
                                         />
                                     </td>
                                 </tr>
