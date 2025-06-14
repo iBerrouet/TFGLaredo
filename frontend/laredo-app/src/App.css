@@ -1,4 +1,4 @@
-@tailwind base;
+@import "tailwindcss";
 
 @layer base {
   html {
@@ -9,6 +9,3 @@
     @apply text-white;
   }
 }
-
-@tailwind components;
-@tailwind utilities;

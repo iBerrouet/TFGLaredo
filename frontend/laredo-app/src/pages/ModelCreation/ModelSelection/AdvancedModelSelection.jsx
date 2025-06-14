@@ -95,7 +95,7 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                     <div className='flex justify-center items-center mt-12'>
 
                         <strong className='mr-4 text-2xl'>Algorithm:</strong>
-                        <select className='text-white rounded border border-white bg-gray-800 py-1 text-xl w-fit' 
+                        <select className='text-white rounded-sm border border-white bg-gray-800 py-1 text-xl w-fit' 
                             value={algorithm} onChange={handleSelectAlgorithm}>
 
                             <option value="">Select an algorithm...</option>
@@ -126,7 +126,7 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                                                     <td  className='text-left border-0 border-b-2 border-gray-800 px-2 py-2'>{parameterName}</td>
                                                     <td className='flex border-0 border-b-2 border-gray-800 py-2'>
                                                         <input 
-                                                            className='border border-white rounded bg-transparent text-white px-1'
+                                                            className='border border-white rounded-sm bg-transparent text-white px-1'
                                                             type="text" 
                                                             value={parametersValue[parameterName] ?? defaultValue ?? ''}
                                                             onChange={(event) => handleParameterChange(parameterName, event)}

@@ -8,6 +8,7 @@ import ModelEvaluation from '@pages/ModelCreation/ModelEvaluation/ModelEvaluatio
 import algorithmData from '@assets/data/algorithmParameters.json'
 import Papa from 'papaparse'
 import axios from 'axios'
+import { ChatbotWidget } from "laredocmind";
 
 
 const Steps = {
@@ -172,6 +173,7 @@ function ModelCreation() {
 
     return(
         <>
+            <ChatbotWidget apiUrl="http://localhost:20000" />
             <header className='bg-gray-800 h-20 flex items-center'>
                 <strong className='text-3xl font-bold italic text-white ml-10 cursor-pointer' onClick={goHome}>LAREDO</strong>
                 <CustomButton className='ml-auto mr-10' onClick={goModels}>Show available models</CustomButton>
@@ -186,7 +188,7 @@ function ModelCreation() {
                         
                         <input 
                             id="modelName"
-                            className='border border-white rounded bg-gray-800 text-lg text-white p-1 h-9 w-64'
+                            className='border border-white rounded-sm bg-gray-800 text-lg text-white p-1 h-9 w-64'
                             type="text" 
                             placeholder="Enter your model's name..."
                             value={modelName}
@@ -197,7 +199,7 @@ function ModelCreation() {
                         <label htmlFor="problemType" className="text-2xl text-white mb-1 mt-8">Problem type</label>
                         <select 
                             id="problemType" 
-                            className='text-lg text-white rounded border border-white bg-gray-800 p-1 h-9 w-64'
+                            className='text-lg text-white rounded-sm border border-white bg-gray-800 p-1 h-9 w-64'
                             value={problemType}
                             onChange={(event) => setProblemType(event.target.value)}
                         >
