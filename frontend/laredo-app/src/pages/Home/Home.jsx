@@ -16,8 +16,8 @@ function Home() {
   return (
     <div className='grid h-screen w-screen grid-cols-3'>
       <div className='col-span-2 flex flex-col justify-center text-left mx-auto h-full'>
-        <h1 className='text-[200px] font-bold italic text-white -mt-24'>LAREDO</h1>
-        <p className='text-[40px] text-cyan-400 -mt-4'>
+        <h1 className='text-[14rem] text text font-bold italic text-white -mt-24'>LAREDO</h1>
+        <p className='text-[2.5rem] text-cyan-400 -mt-4'>
           Predict the future with confidence: <br/>
           Create and Apply Predictive Models intuitively.
         </p>
