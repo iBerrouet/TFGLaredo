@@ -44,6 +44,8 @@ backend:
     name: laredo-backend
     type: ClusterIP
     port: 5050
+    
+  deploy_mlflow: true
   mlflow_tracking_uri_ip: mlflow-service
   mlflow_tracking_uri_port: '5000'
 frontend:
