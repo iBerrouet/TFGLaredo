@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import { FileUploader } from 'react-drag-drop-files'
 import Papa from 'papaparse'
 import DatasetChecking from '@pages/ModelCreation/DatasetUploading/DatasetChecking'
@@ -18,26 +17,28 @@ function DatasetUploading({datasetFile, setDatasetFile, columnsDataType, setColu
             preview: 6,
             complete: function (results) {
                 setPreview(results.data)
+                let columns_aux;
                 if (hasHeader) {
-                    const columns = results.meta.fields
-                    setColumns(columns);
+                    columns_aux = results.meta.fields
+                    setColumns(columns_aux);
                     const initialColumnsDataType = {};
-                    columns.forEach(column => {
+                    columns_aux.forEach(column => {
                         initialColumnsDataType[column] = ''
                     })
                     setColumnsDataType(initialColumnsDataType)
                 } else {
-                    const columns = []
+                    columns_aux = []
                     for (let i = 0; i < results.data[0].length; i++) {
-                        columns.push(`${i}`)
+                        columns_aux.push(`${i}`)
                     }
-                    setColumns(columns)
+                    setColumns(columns_aux)
                     const initialColumnsDataType = {}
-                    columns.forEach(column => {
+                    columns_aux.forEach(column => {
                         initialColumnsDataType[column] = ''
                     })
                     setColumnsDataType(initialColumnsDataType)
                 }
+                setTarget(columns_aux[columns_aux.length - 1])
             },
         })
     }
