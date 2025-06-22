@@ -3,6 +3,7 @@ import CustomButton from '@components/CustomButton'
 import CustomModal from '@components/CustomModal'
 import preprocessingMethods from '@assets/data/preprocessingMethods.json'
 import helpIcon from '@assets/images/helpIcon.svg'
+import deleteIcon from '@assets/images/deleteIcon.svg'
 import { validateAndParseParam } from '@utils/paramsUtils'
 import DropColumnsSelection from '@pages/ModelCreation/DatasetPreprocessing/DropColumnsSelection'
 
@@ -27,6 +28,14 @@ function DatasetPreprocessing({columns, dropColumns, setDropColumns, selectedMet
     const handleOnCancel = () => {
         setSelectedMethods({})
         setColumnsDropSelected(false)
+    }
+
+    const onDelete = (method) => {
+        setSelectedMethods(prev => {
+            const updated = { ...prev };
+            delete updated[method];
+            return updated;
+        });
     }
 
     const handleCellClick = (category, method, params) => {
@@ -135,7 +144,10 @@ function DatasetPreprocessing({columns, dropColumns, setDropColumns, selectedMet
                                     delete paramsWithoutStrategy.strategy
                                     return (
                                         <tr key={index}>
-                                            <td className='px-5 py-1'>{method} {JSON.stringify(paramsWithoutStrategy)}</td>
+                                            <td className='flex px-5 py-1'>
+                                                {method} {JSON.stringify(paramsWithoutStrategy)}
+                                                <img className='ml-auto cursor-pointer' src={deleteIcon} onClick={() => onDelete(method)} alt='Delete' />
+                                            </td>
                                         </tr>
                                     )
                                 })}
