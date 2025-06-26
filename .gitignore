@@ -28,3 +28,9 @@ __pycache__/
 
 # Github directory
 .github/
+
+# Packaged charts
+*.tgz
+
+# Autogluon generated files
+AutogluonModels/

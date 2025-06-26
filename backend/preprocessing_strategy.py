@@ -63,3 +63,7 @@ class FfillStrategy(PreprocessingStrategy):
 class BfillStrategy(PreprocessingStrategy):
     def get_step(self, params):
         return ("Bfill", BfillTransformer())
+
+class TabularToWindowStrategy(PreprocessingStrategy):
+    def get_step(self, params):
+        return ("TabularToWindow", TabularToWindowTransformer(**params))
