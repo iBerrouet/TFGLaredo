@@ -8,7 +8,7 @@ import ModelEvaluation from '@pages/ModelCreation/ModelEvaluation/ModelEvaluatio
 import algorithmData from '@assets/data/algorithmParameters.json'
 import Papa from 'papaparse'
 import axios from 'axios'
-import { ChatbotWidget } from "laredocmind";
+
 
 
 const Steps = {
@@ -173,7 +173,8 @@ function ModelCreation() {
 
     return(
         <>
-            <ChatbotWidget apiUrl="http://localhost:20000" />
+            {/* <ChatbotWidget apiUrl="http://localhost:20000" /> */}
+            {/* <ChatbotWidget apiUrl="/chatbot" /> */}
             <header className='bg-gray-800 h-20 flex items-center'>
                 <strong className='text-3xl font-bold italic text-white ml-10 cursor-pointer' onClick={goHome}>LAREDO</strong>
                 <CustomButton className='ml-auto mr-10' onClick={goModels}>Show available models</CustomButton>

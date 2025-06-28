@@ -23,3 +23,5 @@ spec:
         env:
         - name: BACKEND_HOST
           value: {{ .Values.backend.service.name }}.{{ .Values.backend.namespace }}.svc.cluster.local:{{ .Values.backend.service.port }}
+        - name: CHATBOT_HOST
+          value: {{ .Values.chatbotBackend.service.name }}.{{ .Values.chatbotBackend.namespace }}.svc.cluster.local:{{ .Values.chatbotBackend.service.port }}

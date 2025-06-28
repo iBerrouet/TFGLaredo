@@ -16,6 +16,9 @@ from sklearn.model_selection import train_test_split
 import jinja2
 from kubernetes import client, config
 import yaml
+from autogluon.tabular import TabularDataset, TabularPredictor
+from utils import autogluon_stack_to_sklearn_voting_classifier, AutogluonModelMlflowWrapper
+
 
 
 app = Flask(__name__)
@@ -25,6 +28,7 @@ api = Api(app=app)
 ip = os.environ['TRACKING_URI_IP']
 port = os.environ['TRACKING_URI_PORT']
 mlflow.set_tracking_uri(f"http://{ip}:{port}")
+# mlflow.set_tracking_uri(f"http://localhost:5000") # For local testing
 
 @app.route("/")
 def hello():
@@ -73,7 +77,77 @@ def get_model(model_name):
     }
 
     return jsonify(response_data), 200
-    
+
+@app.route('/models/easy', methods=['POST']) # Cambiar endpoint a /models con query params para diferenciar entre easy y normal
+def train_model_easy():
+    # Read params
+    data = request.json
+
+    required_params = [
+        'modelName', 'problemType', 'datasetJSON', 'columnsDataType',
+        'target', 'preset', 'evalMetric'
+    ]
+
+    missing_params = [param for param in required_params if param not in data]
+
+    if missing_params:
+        return jsonify({'error': 'Missing parameters', 'missing': missing_params}), 400
+
+    model_name = data.get('modelName')
+    problem_type = data.get('problemType') # Tienen nombres diferentes a los usados en la api: binary, multiclass, regression, cluster
+    dataset_json = data.get('datasetJSON')
+    target = data.get('target')
+    columns_data_type = data.get('columnsDataType')
+    preset = data.get('preset') # medium_quality, good_quality, high_quality, best_quality
+    eval_metric = data.get('evalMetric') # incluir en un desplegable para escoger las que correspondan a cada tipo de problema
+    # Posible campo a incluir: time_limit, para limitar el tiempo de entrenamiento en segundos
+
+    dataset = pd.DataFrame.from_dict(dataset_json)
+    dataset = dataset.astype(columns_data_type)
+
+    x = dataset.drop(columns=[target])
+    y = dataset[target]
+
+    #train val split
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2) 
+
+    predictor = TabularPredictor(
+        label=target,
+        problem_type=problem_type,
+        eval_metric=eval_metric,
+    )
+
+    with mlflow.start_run():
+
+        x_train_mlflow = mlflow.data.from_pandas(x_train)
+        x_test_mlflow = mlflow.data.from_pandas(x_test)
+
+        mlflow.log_input(x_train_mlflow, context="train")
+        mlflow.log_input(x_test_mlflow, context="test")
+
+        
+        model = predictor.fit(
+            # train_data=TabularDataset(x_train.join(y_train)),
+            train_data=TabularDataset(x.join(y)),
+            presets=preset,
+            time_limit=60*60,  # 1 hour
+        )
+        algorithm = model._trainer.model_best
+        parameters_value = model._trainer.load_model(algorithm).get_params()
+        predictions = model.predict(x_test)
+        # predictions = model.predict(x)
+        mlflow.log_param("preset", preset)
+        mlflow.log_param("algorithm", algorithm)
+        mlflow.log_params(parameters_value)
+        metrics = get_metrics(problem_type, x_test, y_test, predictions)
+        # metrics = get_metrics("regressor", x, y, predictions)
+        mlflow.log_metrics(metrics)
+        mlflow.pyfunc.log_model(python_model=AutogluonModelMlflowWrapper(model), artifact_path="model", registered_model_name=model_name)
+        pipeline = autogluon_stack_to_sklearn_voting_classifier(model) # Nueva funcion para convertir el modelo de autogluon a un pipeline de sklearn y generar el html
+        mlflow.log_text(estimator_html_repr(pipeline), "estimator.html")
+
+    return jsonify(metrics), 201
+
 @app.route('/models', methods=['POST'])
 def train_model():
 
