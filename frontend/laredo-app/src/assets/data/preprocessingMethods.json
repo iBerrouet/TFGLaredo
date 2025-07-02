@@ -39,10 +39,22 @@
     "methods": {
       "selectkbest": {
         "strategy": "SelectKBestStrategy",
+        "params": {
+          "k": {
+            "type": "integer",
+            "description": "Number of top features to select"
+          }
+        },
         "url": "https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.SelectKBest.html"
       },
       "pca": {
         "strategy": "PCAStrategy",
+        "params": {
+          "n_components": {
+            "type": "integer",
+            "description": "Number of components to keep"
+          }
+        },
         "url": "https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html"
       }
     }
