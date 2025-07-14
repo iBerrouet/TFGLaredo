@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CustomButton from '@components/CustomButton'
 import DatasetPreprocessing from '@pages/ModelCreation/DatasetPreprocessing/DatasetPreprocessing'
@@ -18,6 +18,11 @@ const Steps = {
     Evaluation: 'Evaluation'
 }
 
+const CreationTypes = {
+    Basic : 'BASIC',
+    Advanced : 'ADVANCED'
+}
+
 
 function ModelCreation() {
     const [activeButton, setActiveButton] = useState('')
@@ -34,6 +39,7 @@ function ModelCreation() {
     const [dropColumns, setDropColumns] = useState([])
     const [preprocessingMethods, setPreprocessingMethods] = useState({})
 
+    const creationType = useRef("")
     const [algorithm, setAlgorithm] = useState("")
     const [parametersValue, setParametersValue] = useState({})
 
@@ -130,15 +136,18 @@ function ModelCreation() {
         const apiUrl = `/api/models`
 
         const response = await axios.post(apiUrl, {
-            modelName,
-            problemType,
-            datasetJSON,
-            columnsDataType,
-            target,
-            preprocessingMethods,
-            algorithm,
-            strategy,
-            parametersValue
+            'creationType' : creationType.current,
+            'params' : {
+                modelName,
+                problemType,
+                datasetJSON,
+                columnsDataType,
+                target,
+                preprocessingMethods,
+                algorithm,
+                strategy,
+                parametersValue
+            }
         })
 
         return response
@@ -279,7 +288,9 @@ function ModelCreation() {
                 />
             }
             {activeButton === Steps.Algorithm && 
-                <ModelSelection 
+                <ModelSelection
+                    CreationTypes={CreationTypes}
+                    creationType={creationType} 
                     algorithm={algorithm}
                     setAlgorithm={setAlgorithm}
                     parametersValue={parametersValue}

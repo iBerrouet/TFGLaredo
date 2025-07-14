@@ -1,23 +1,16 @@
 import os
-from sklearn.preprocessing import LabelEncoder
-from sklearn.base import estimator_html_repr
-from sklearn.pipeline import Pipeline
+from creation_types import *
 from preprocessing_strategy import *
 from model_strategies import *
 import pandas as pd
 from flask import Flask, jsonify, request, request
-import mlflow
 from flask_restful import Api
 from flask_cors import CORS
-import numpy as np
 import pandas as pd
-from sklearn.metrics import f1_score, mean_squared_error, recall_score, silhouette_score, r2_score, accuracy_score
-from sklearn.model_selection import train_test_split
 import jinja2
 from kubernetes import client, config
 import yaml
-from autogluon.tabular import TabularDataset, TabularPredictor
-from utils import autogluon_stack_to_sklearn_voting_classifier, AutogluonModelMlflowWrapper
+from utils import ValidationError
 
 
 
@@ -29,6 +22,11 @@ ip = os.environ['TRACKING_URI_IP']
 port = os.environ['TRACKING_URI_PORT']
 mlflow.set_tracking_uri(f"http://{ip}:{port}")
 # mlflow.set_tracking_uri(f"http://localhost:5000") # For local testing
+
+CREATION_TYPE = {
+    "BASIC": ModelBasicCreation,
+    "ADVANCED": ModelAdvancedCreation
+}
 
 @app.route("/")
 def hello():
@@ -78,184 +76,24 @@ def get_model(model_name):
 
     return jsonify(response_data), 200
 
-@app.route('/models/easy', methods=['POST']) # Cambiar endpoint a /models con query params para diferenciar entre easy y normal
-def train_model_easy():
-    # Read params
-    data = request.json
-
-    required_params = [
-        'modelName', 'problemType', 'datasetJSON', 'columnsDataType',
-        'target', 'preset', 'evalMetric'
-    ]
-
-    missing_params = [param for param in required_params if param not in data]
-
-    if missing_params:
-        return jsonify({'error': 'Missing parameters', 'missing': missing_params}), 400
-
-    model_name = data.get('modelName')
-    problem_type = data.get('problemType') # Tienen nombres diferentes a los usados en la api: binary, multiclass, regression, cluster
-    dataset_json = data.get('datasetJSON')
-    target = data.get('target')
-    columns_data_type = data.get('columnsDataType')
-    preset = data.get('preset') # medium_quality, good_quality, high_quality, best_quality
-    eval_metric = data.get('evalMetric') # incluir en un desplegable para escoger las que correspondan a cada tipo de problema
-    # Posible campo a incluir: time_limit, para limitar el tiempo de entrenamiento en segundos
-
-    dataset = pd.DataFrame.from_dict(dataset_json)
-    dataset = dataset.astype(columns_data_type)
-
-    x = dataset.drop(columns=[target])
-    y = dataset[target]
-
-    #train val split
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2) 
-
-    predictor = TabularPredictor(
-        label=target,
-        problem_type=problem_type,
-        eval_metric=eval_metric,
-    )
-
-    with mlflow.start_run():
-
-        x_train_mlflow = mlflow.data.from_pandas(x_train)
-        x_test_mlflow = mlflow.data.from_pandas(x_test)
-
-        mlflow.log_input(x_train_mlflow, context="train")
-        mlflow.log_input(x_test_mlflow, context="test")
-
-        
-        model = predictor.fit(
-            # train_data=TabularDataset(x_train.join(y_train)),
-            train_data=TabularDataset(x.join(y)),
-            presets=preset,
-            time_limit=60*60,  # 1 hour
-        )
-        algorithm = model._trainer.model_best
-        parameters_value = model._trainer.load_model(algorithm).get_params()
-        predictions = model.predict(x_test)
-        # predictions = model.predict(x)
-        mlflow.log_param("preset", preset)
-        mlflow.log_param("algorithm", algorithm)
-        mlflow.log_params(parameters_value)
-        metrics = get_metrics(problem_type, x_test, y_test, predictions)
-        # metrics = get_metrics("regressor", x, y, predictions)
-        mlflow.log_metrics(metrics)
-        mlflow.pyfunc.log_model(python_model=AutogluonModelMlflowWrapper(model), artifact_path="model", registered_model_name=model_name)
-        pipeline = autogluon_stack_to_sklearn_voting_classifier(model) # Nueva funcion para convertir el modelo de autogluon a un pipeline de sklearn y generar el html
-        mlflow.log_text(estimator_html_repr(pipeline), "estimator.html")
-
-    return jsonify(metrics), 201
-
 @app.route('/models', methods=['POST'])
 def train_model():
-
     data = request.json
 
-    required_params = [
-        'modelName', 'problemType', 'datasetJSON', 'columnsDataType',
-        'target', 'preprocessingMethods', 'algorithm', 'strategy', 'parametersValue'
-    ]
+    type_str : str = data.get('creationType')
+    params = data.get("params", {})
+    model_creation_type = CREATION_TYPE.get(type_str.upper())
+    
+    if model_creation_type is None:
+        return jsonify({
+            "error": f"Invalid creation type '{type_str}'. Must be one of: {list(CREATION_TYPE.keys())}" 
+        }), 400
 
-    missing_params = [param for param in required_params if param not in data]
-
-    if missing_params:
-        return jsonify({'error': 'Missing parameters', 'missing': missing_params}), 400
-
-    model_name = data.get('modelName')
-    problem_type = data.get('problemType')
-    dataset_json = data.get('datasetJSON')
-    columns_data_type = data.get('columnsDataType')
-    target = data.get('target')
-    preprocessing_methods = data.get('preprocessingMethods')
-    algorithm = data.get('algorithm')
-    strategy = data.get('strategy')
-    parameters_value = data.get('parametersValue')
-
-    dataset = pd.DataFrame.from_dict(dataset_json)
-    dataset = dataset.astype(columns_data_type)
-
-    if dataset[target].dtype == "object":
-        label_encoder = LabelEncoder()
-        dataset[target] = label_encoder.fit_transform(dataset[target])
-
-
-    steps = []
-
-    for method, method_data in preprocessing_methods.items():
-        strategy_name = preprocessing_methods[method]['strategy']
-        strategy_class = globals().get(strategy_name) 
-        if strategy_class != None:
-            if 'params' in method_data:
-                step = strategy_class().get_step(method_data['params'])
-            else:
-                step = strategy_class().get_step({})            
-            steps.append(step)
-        else:
-            return jsonify({"error": f"Invalid strategy {strategy_name}"}), 409
-        
-
-    x = dataset.drop(columns=[target])
-    y = dataset[target]
-
-    #kfold cross validation
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2)
-
-    strategy_class = globals().get(strategy)
-    if strategy_class is None:
-        return jsonify({"error": "Invalid strategy"}), 409
-
-    with mlflow.start_run():
-
-        x_train_mlflow = mlflow.data.from_pandas(x_train)
-        x_test_mlflow = mlflow.data.from_pandas(x_test)
-
-        mlflow.log_input(x_train_mlflow, context="train")
-        mlflow.log_input(x_test_mlflow, context="test")
-
-
-        model = strategy_class().create_model(parameters_value)
-
-        
-        steps.append(("model", model))
-        pipeline = Pipeline(steps)        
-        pipeline.fit(x_train, y_train)
-        predictions = pipeline.predict(x_test)
-
-        mlflow.log_param("algorithm", algorithm)
-        mlflow.log_params(parameters_value)
-        metrics = get_metrics(problem_type, x_test, y_test, predictions)
-        mlflow.log_metrics(metrics)
-        mlflow.sklearn.log_model(sk_model=model, artifact_path="model", registered_model_name=model_name)
-        mlflow.log_text(estimator_html_repr(pipeline), "estimator.html")
+    model_creator = model_creation_type(**params)
+    metrics = model_creator.create()
 
     return jsonify(metrics), 201
 
-
-def get_metrics(problem_type, x_test, y_test, predictions):
-    metrics = {}
-    if problem_type == "classifier":
-        accuracy = accuracy_score(y_test, predictions)
-        tpr = recall_score(y_test, predictions, average='macro')
-        fpr = 1 - recall_score(y_test, predictions, average='macro')
-        f1 = f1_score(y_test, predictions, average='macro')
-        metrics['accuracy'] = accuracy
-        metrics['tpr'] = tpr
-        metrics['fpr'] = fpr
-        metrics['f1_score'] = f1
-    elif problem_type == "cluster":
-        silhouette_score_value = silhouette_score(x_test, predictions)
-        metrics['silhouette_score'] = silhouette_score_value
-    elif problem_type == "regressor":
-        mse = mean_squared_error(y_test, predictions)
-        rmse = np.sqrt(mse)
-        r2 = r2_score(y_test, predictions)
-        metrics['mean_squared_error'] = mse
-        metrics['root_mean_squared_error'] = rmse
-        metrics['r2_score'] = r2
-        
-    return metrics
 
 @app.route("/models/<model_name>/deploy", methods=["POST"])
 def model_deploy(model_name):
@@ -333,9 +171,6 @@ def delete_deployment(model_name):
         name=f"laredo-server-{model_name}", 
         namespace="laredo")
 
-
-    print("Deployment deleted.")
-
     return jsonify(), 204
 
 
@@ -354,8 +189,6 @@ def get_deployments():
             raise config.config_exception.ConfigException(
                 "Failed to load both kube-config file and in-cluster configuration."
             )
-
-    print("Listing pods with their IPs:")
 
     v1 = client.CustomObjectsApi()
 
@@ -403,6 +236,13 @@ def get_column_types():
     column_types = dataset.dtypes.apply(lambda x: x.name).to_dict()
     
     return jsonify(column_types), 200
+
+
+@app.errorhandler(ValidationError)
+def handle_validation_error(e: ValidationError):
+    response = jsonify({"error": e.message})
+    response.status_code = e.status_code
+    return response
 
 if __name__ == "__main__":
     app.run(port=5050, debug=True)

@@ -4,7 +4,7 @@ import CustomButton from '@components/CustomButton'
 import infoIcon from '@assets/images/infoIcon.svg'
 import { validateAndParseParam } from '@utils/paramsUtils'
 
-function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue, problemType, onNextStep}) {
+function AdvancedModelSelection({CreationTypes, creationType, algorithm, setAlgorithm, parametersValue, setParametersValue, problemType, onNextStep}) {
 
     const [errors, setErrors] = useState({})
 
@@ -84,6 +84,7 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
 
         if (isValid) {
             setParametersValue(parsedParametersValue)
+            creationType.current = CreationTypes.Advanced
             onNextStep()
         }
     }
@@ -95,13 +96,13 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                     <div className='flex justify-center items-center mt-12'>
 
                         <strong className='mr-4 text-2xl'>Algorithm:</strong>
-                        <select className='text-white rounded-sm border border-white bg-gray-800 py-1 text-xl w-fit' 
+                        <select className='cursor-pointer text-white rounded-sm border border-white bg-gray-800 py-1 text-xl w-fit' 
                             value={algorithm} onChange={handleSelectAlgorithm}>
 
-                            <option value="">Select an algorithm...</option>
+                            <option value="" className='cursor-pointer'>Select an algorithm...</option>
                                 
                             {Object.keys(algorithmData[problemType]).map((algorithmName) => (
-                                <option key={algorithmName} value={algorithmName}>
+                                <option className='cursor-pointer' key={algorithmName} value={algorithmName}>
                                     {algorithmName}
                                 </option>
                             ))}

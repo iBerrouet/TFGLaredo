@@ -8,8 +8,7 @@ class FfillTransformer(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         df = pd.DataFrame(X)
-        df.ffill()
-        df.bfill()
+        df = df.ffill().bfill()
         X = np.array(df)
         return X
 
@@ -19,8 +18,7 @@ class BfillTransformer(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         df = pd.DataFrame(X)
-        df.bfill()
-        df.ffill()
+        df = df.bfill().ffill()
         X = np.array(df)
         return X
     
