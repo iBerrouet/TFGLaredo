@@ -4,7 +4,7 @@ import CustomButton from '@components/CustomButton'
 import infoIcon from '@assets/images/infoIcon.svg'
 import { validateAndParseParam } from '@utils/paramsUtils'
 
-function AdvancedModelSelection({CreationTypes, creationType, algorithm, setAlgorithm, parametersValue, setParametersValue, problemType, onNextStep}) {
+function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue, problemType, onNextStep}) {
 
     const [errors, setErrors] = useState({})
 
@@ -84,7 +84,6 @@ function AdvancedModelSelection({CreationTypes, creationType, algorithm, setAlgo
 
         if (isValid) {
             setParametersValue(parsedParametersValue)
-            creationType.current = CreationTypes.Advanced
             onNextStep()
         }
     }
@@ -99,7 +98,7 @@ function AdvancedModelSelection({CreationTypes, creationType, algorithm, setAlgo
                         <select className='cursor-pointer text-white rounded-sm border border-white bg-gray-800 py-1 text-xl w-fit' 
                             value={algorithm} onChange={handleSelectAlgorithm}>
 
-                            <option value="" className='cursor-pointer'>Select an algorithm...</option>
+                            <option value="" className='cursor-pointer' disabled>Select an algorithm...</option>
                                 
                             {Object.keys(algorithmData[problemType]).map((algorithmName) => (
                                 <option className='cursor-pointer' key={algorithmName} value={algorithmName}>
@@ -114,7 +113,7 @@ function AdvancedModelSelection({CreationTypes, creationType, algorithm, setAlgo
                         {algorithm && (
                             <div>
                                 <h2 className='mt-5 text-xl'>Parameters:</h2>
-                                <table className='mt-5 bg-transparent border-white w-full'>
+                                <table className='my-5 bg-transparent border-white w-full'>
                                     <tbody>
                                         {Object.keys(algorithmData[problemType][algorithm].parameters).map((parameterName) => {
                                             const parameterData = algorithmData[problemType][algorithm].parameters[parameterName]

@@ -58,12 +58,10 @@ class ModelCreation():
 class ModelBasicCreation(ModelCreation):
     required_params = [
         'modelName', 'problemType', 'datasetJSON', 'columnsDataType',
-        'target', 'preset', 'evalMetric'
+        'target', 'preset', 'evalMetric', 'timeLimit'
     ]
 
     def create(self):
-
-        time_limit = self.get("timeLimit") if self.get("timeLimit") is not None else 60*60
 
         dataset = pd.DataFrame.from_dict(self.datasetJSON)
         dataset = dataset.astype(self.columnsDataType)
@@ -72,7 +70,6 @@ class ModelBasicCreation(ModelCreation):
         x = dataset.drop(columns=[self.target])
         y = dataset[self.target]
 
-        #train val split
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2) 
 
         predictor = TabularPredictor(
@@ -90,32 +87,55 @@ class ModelBasicCreation(ModelCreation):
             mlflow.log_input(x_test_mlflow, context="test")
             
             model = predictor.fit(
-                # train_data=TabularDataset(x_train.join(y_train)),
                 train_data=TabularDataset(x.join(y)),
                 presets=self.preset,
-                time_limit=time_limit
+                time_limit=self.timeLimit
             )
             algorithm = model._trainer.model_best
             parameters_value = model._trainer.load_model(algorithm).get_params()
             predictions = model.predict(x_test)
-            # predictions = model.predict(x)
             mlflow.log_param("preset", self.preset)
             mlflow.log_param("algorithm", algorithm)
             mlflow.log_params(parameters_value)
             metrics = self.get_metrics(self.problemType, x_test, y_test, predictions)
-            # metrics = get_metrics("regressor", x, y, predictions)
             mlflow.log_metrics(metrics)
             mlflow.pyfunc.log_model(python_model=AutogluonModelMlflowWrapper(model), artifact_path="model", registered_model_name=self.modelName)
-            pipeline = autogluon_stack_to_sklearn_voting_classifier(model) # Nueva funcion para convertir el modelo de autogluon a un pipeline de sklearn y generar el html
+            pipeline = autogluon_stack_to_sklearn_voting_classifier(model)
             mlflow.log_text(estimator_html_repr(pipeline), "estimator.html")
+        
+        return metrics
 
+
+    def get_metrics(self, problem_type, x_test, y_test, predictions):
+        metrics = {}
+        if problem_type == "binary" or problem_type == 'multiclass':
+            accuracy = accuracy_score(y_test, predictions)
+            tpr = recall_score(y_test, predictions, average='macro')
+            fpr = 1 - recall_score(y_test, predictions, average='macro')
+            f1 = f1_score(y_test, predictions, average='macro')
+            metrics['accuracy'] = accuracy
+            metrics['tpr'] = tpr
+            metrics['fpr'] = fpr
+            metrics['f1_score'] = f1
+        elif problem_type == "cluster":
+            silhouette_score_value = silhouette_score(x_test, predictions)
+            metrics['silhouette_score'] = silhouette_score_value
+        elif problem_type == "regressor":
+            mse = mean_squared_error(y_test, predictions)
+            rmse = np.sqrt(mse)
+            r2 = r2_score(y_test, predictions)
+            metrics['mean_squared_error'] = mse
+            metrics['root_mean_squared_error'] = rmse
+            metrics['r2_score'] = r2
+            
+        return metrics
 
 
 
 class ModelAdvancedCreation(ModelCreation):
     required_params = [
         'modelName', 'problemType', 'datasetJSON', 'columnsDataType',
-        'target', 'strategy', 'algorithm', 'evalMetric'
+        'target', 'strategy', 'algorithm'
     ]
 
     def create(self):
