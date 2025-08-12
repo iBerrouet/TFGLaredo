@@ -3,27 +3,13 @@ import AdvancedModelSelection from '@pages/ModelCreation/ModelSelection/Advanced
 import BasicModelSelection from '@pages/ModelCreation/ModelSelection/BasicModelSelection'
 
 
-function ModelSelection({algorithm, setAlgorithm, parametersValue, setParametersValue, problemType, onNextStep}) {
+function ModelSelection({CreationTypes, creationType, problemTypeEvalMetrics, evalMetric, setEvalMetric, preset, setPreset, timeLimit, setTimeLimit, algorithm, setAlgorithm, parametersValue, setParametersValue, problemType, onNextStep}) {
 
     const [showAdvance, setShowAdvance] = useState(false)
 
     return(
         <>
-            <div className='flex justify-center items-center mt-7'>
-                <button onClick={() => setShowAdvance(false)} className={ showAdvance 
-                    ? 'bg-gray-900 hover:bg-transparent hover:text-cyan-400 text-white text-[16px] py-2 w-40 border-2 border-r rounded-l'
-                    : 'bg-transparent text-cyan-400 text-[16px] py-2 w-40 border-2 border-r rounded-l'}>
-                    Basic
-                </button>
-                <button onClick={() => setShowAdvance(true)} className={showAdvance 
-                    ? 'bg-transparent text-cyan-400 text-[16px] py-2 w-40 border-2 border-l rounded-r'
-                    : 'bg-gray-900 hover:bg-transparent hover:text-cyan-400 text-white text-[16px] py-2 w-40 border-2 border-l rounded-r'}>
-                    Advanced
-                </button>
-
-            </div>
-
-            {showAdvance ? 
+            {creationType == CreationTypes.Advanced ? 
                 <AdvancedModelSelection 
                     algorithm={algorithm}
                     setAlgorithm={setAlgorithm}
@@ -33,7 +19,16 @@ function ModelSelection({algorithm, setAlgorithm, parametersValue, setParameters
                     onNextStep={onNextStep}
                 /> 
                 : 
-                <BasicModelSelection />
+                <BasicModelSelection 
+                    problemTypeEvalMetrics={problemTypeEvalMetrics}
+                    evalMetric={evalMetric} 
+                    setEvalMetric={setEvalMetric} 
+                    preset={preset} 
+                    setPreset={setPreset} 
+                    timeLimit={timeLimit} 
+                    setTimeLimit={setTimeLimit}
+                    onNextStep={onNextStep}
+                />
             }
         </>
     )

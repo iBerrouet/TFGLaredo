@@ -95,13 +95,13 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                     <div className='flex justify-center items-center mt-12'>
 
                         <strong className='mr-4 text-2xl'>Algorithm:</strong>
-                        <select className='text-white rounded-sm border border-white bg-gray-800 py-1 text-xl w-fit' 
+                        <select className='cursor-pointer text-white rounded-sm border border-white bg-gray-800 py-1 text-xl w-fit' 
                             value={algorithm} onChange={handleSelectAlgorithm}>
 
-                            <option value="">Select an algorithm...</option>
+                            <option value="" className='cursor-pointer' disabled>Select an algorithm...</option>
                                 
                             {Object.keys(algorithmData[problemType]).map((algorithmName) => (
-                                <option key={algorithmName} value={algorithmName}>
+                                <option className='cursor-pointer' key={algorithmName} value={algorithmName}>
                                     {algorithmName}
                                 </option>
                             ))}
@@ -113,7 +113,7 @@ function AdvancedModelSelection({algorithm, setAlgorithm, parametersValue, setPa
                         {algorithm && (
                             <div>
                                 <h2 className='mt-5 text-xl'>Parameters:</h2>
-                                <table className='mt-5 bg-transparent border-white w-full'>
+                                <table className='my-5 bg-transparent border-white w-full'>
                                     <tbody>
                                         {Object.keys(algorithmData[problemType][algorithm].parameters).map((parameterName) => {
                                             const parameterData = algorithmData[problemType][algorithm].parameters[parameterName]

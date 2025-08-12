@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CustomButton from '@components/CustomButton'
 import DatasetPreprocessing from '@pages/ModelCreation/DatasetPreprocessing/DatasetPreprocessing'
@@ -18,9 +18,25 @@ const Steps = {
     Evaluation: 'Evaluation'
 }
 
+const CreationTypes = {
+    Basic : 'BASIC',
+    Advanced : 'ADVANCED'
+}
+
+const BasicProblemTypesEvalMetrics = {
+    binary: ['accuracy', 'balanced_accuracy', 'log_loss', 'f1', 'f1_macro', 'f1_micro', 'f1_weighted', 'roc_auc', 'roc_auc_ovo', 'roc_auc_ovo_macro', 'roc_auc_ovo_weighted', 'roc_auc_ovr', 'roc_auc_ovr_macro', 'roc_auc_ovr_micro', 'roc_auc_ovr_weighted', 'average_precision', 'precision', 'precision_macro', 'precision_micro', 'precision_weighted', 'recall', 'recall_macro', 'recall_micro', 'recall_weighted', 'mcc', 'pac_score'],
+    multiclass: ['accuracy', 'balanced_accuracy', 'log_loss', 'f1', 'f1_macro', 'f1_micro', 'f1_weighted', 'roc_auc', 'roc_auc_ovo', 'roc_auc_ovo_macro', 'roc_auc_ovo_weighted', 'roc_auc_ovr', 'roc_auc_ovr_macro', 'roc_auc_ovr_micro', 'roc_auc_ovr_weighted', 'average_precision', 'precision', 'precision_macro', 'precision_micro', 'precision_weighted', 'recall', 'recall_macro', 'recall_micro', 'recall_weighted', 'mcc', 'pac_score'],
+    regression: ['root_mean_squared_error', 'mean_squared_error', 'mean_absolute_error', 'median_absolute_error', 'mean_absolute_percentage_error', 'r2', 'symmetric_mean_absolute_percentage_error'],
+    cluster: []
+}
+
 
 function ModelCreation() {
-    const [activeButton, setActiveButton] = useState('')
+
+    const [problemTypes, setProblemTypes] = useState([])
+    const [problemType, setProblemType] = useState("")
+    const [modelName, setModelName] = useState("")
+
     const [datasetFile, setDatasetFile] = useState(null)
     const [columnsDataType, setColumnsDataType] = useState({})
     const [preview, setPreview] = useState([])
@@ -34,20 +50,22 @@ function ModelCreation() {
     const [dropColumns, setDropColumns] = useState([])
     const [preprocessingMethods, setPreprocessingMethods] = useState({})
 
+    const [creationType, setCreationType] = useState(CreationTypes.Basic)
     const [algorithm, setAlgorithm] = useState("")
     const [parametersValue, setParametersValue] = useState({})
-
-    const [modelName, setModelName] = useState("")
-    const [modelNameError, setModelNameError] = useState("")
-    const [problemType, setProblemType] = useState("")
-    const [problemTypeError, setProblemTypeError] = useState("")
-    const [hasStarted, setHasStarted] = useState(false)
-    const [problemTypes, setProblemTypes] = useState([])
-
-    const [isTraining, setIsTraining] = useState(false)
+    const [evalMetric, setEvalMetric] = useState('')
+    const [preset, setPreset] = useState('')
+    const [timeLimit, setTimeLimit] = useState(3600)
 
     const [metrics, setMetrics] = useState({})
 
+    const [modelNameError, setModelNameError] = useState("")
+    const [problemTypeError, setProblemTypeError] = useState("")
+
+    const [activeButton, setActiveButton] = useState('')
+
+    const [hasStarted, setHasStarted] = useState(false)
+    const [isTraining, setIsTraining] = useState(false)
 
     const navigate = useNavigate()
 
@@ -55,9 +73,14 @@ function ModelCreation() {
     const inactiveButtonStyle = 'bg-gray-900 hover:bg-transparent hover:text-cyan-400 hover:cursor-pointer text-white text-lg py-2 w-40'
 
     useEffect(() => {
-        const uniqueProblemTypes = Array.from(new Set(Object.keys(algorithmData)))
-        setProblemTypes(uniqueProblemTypes)
-    }, [])
+        if (creationType == CreationTypes.Advanced) {
+            const uniqueProblemTypes = Array.from(new Set(Object.keys(algorithmData)))
+            setProblemTypes(uniqueProblemTypes)
+        } else if (creationType == CreationTypes.Basic) {
+            const uniqueProblemTypes = Array.from(new Set(Object.keys(BasicProblemTypesEvalMetrics)))
+            setProblemTypes(uniqueProblemTypes)
+        }
+    }, [creationType])
 
     const goHome = () => {
         navigate('/')
@@ -89,11 +112,15 @@ function ModelCreation() {
     const handleNextStep = async () => {
         switch (activeButton) {
             case Steps.Dataset:
-                setActiveButton(Steps.Preprocessing);
-                break;
+                if (creationType == CreationTypes.Advanced) {
+                    setActiveButton(Steps.Preprocessing)
+                } else if (creationType == CreationTypes.Basic) {
+                    setActiveButton(Steps.Algorithm)
+                }
+                break
             case Steps.Preprocessing:
-                setActiveButton(Steps.Algorithm);
-                break;
+                setActiveButton(Steps.Algorithm)
+                break
             case Steps.Algorithm:
                 setIsTraining(true)
                 setActiveButton(Steps.Evaluation)
@@ -122,23 +149,40 @@ function ModelCreation() {
     
     const callAPI = async() => {
         const datasetJSON = await convertDatasetToJSON(datasetFile)
-        const strategy = algorithmData[problemType][algorithm].strategy
         
         // const apiIp = import.meta.env.VITE_API_IP
         // const apiPort = import.meta.env.VITE_API_PORT
         // const apiUrl = `http://${apiIp}:${apiPort}/models`
         const apiUrl = `/api/models`
-
-        const response = await axios.post(apiUrl, {
+        let params = {
             modelName,
             problemType,
             datasetJSON,
             columnsDataType,
             target,
             preprocessingMethods,
-            algorithm,
-            strategy,
             parametersValue
+        }
+
+        if (creationType == CreationTypes.Basic) {
+            params = {
+                ...params,
+                evalMetric,
+                preset,
+                timeLimit
+            }
+        } else if (creationType == CreationTypes.Advanced) {
+            let strategy = algorithmData[problemType][algorithm].strategy
+            params = {
+                ...params,
+                strategy,
+                algorithm
+            }
+        }
+        
+        const response = await axios.post(apiUrl, {
+            creationType,
+            params
         })
 
         return response
@@ -182,14 +226,26 @@ function ModelCreation() {
             { !hasStarted ?
                 <div className='flex flex-col items-center justify-center'>
                     <h1 className='text-7xl font-bold text-center mt-12'>Welcome to model creation</h1>
-                    <p className='text-xl text-center mt-6'>Start by defining your model's name and selecting its problem type</p>
-                    <div className="flex flex-col items-start justify-center mt-12">
-                        
-                        <label htmlFor="modelName" className="text-2xl text-white mb-1">Name</label>
-                        
+                    <p className='text-xl text-center mt-6'>Start by defining your model's creation type, name and selecting its problem type</p>
+                    <div className="flex flex-col items-start justify-center mt-12 w-min">
+                        <label className="text-2xl text-white mb-1">Creation type:</label>
+                        <div className='flex justify-center items-center'>
+                            <button onClick={() => setCreationType(CreationTypes.Basic)} className={`border rounded-l-3xl border-white ${creationType == CreationTypes.Basic 
+                                ? activeButtonStyle 
+                                : inactiveButtonStyle}`}>
+                                Basic
+                            </button>
+                            <button onClick={() => setCreationType(CreationTypes.Advanced)} className={`border rounded-r-3xl border-white ${creationType == CreationTypes.Advanced 
+                                ? activeButtonStyle 
+                                : inactiveButtonStyle}`}>
+                                Advanced
+                            </button>
+                        </div>
+
+                        <label htmlFor="modelName" className="text-2xl text-white mb-1 mt-8">Name:</label>
                         <input 
                             id="modelName"
-                            className='border border-white rounded-sm bg-gray-800 text-lg text-white p-1 h-9 w-64'
+                            className='border border-white rounded-sm bg-gray-800 text-lg text-white p-1 h-9 w-full'
                             type="text" 
                             placeholder="Enter your model's name..."
                             value={modelName}
@@ -197,10 +253,10 @@ function ModelCreation() {
                         />
                         {modelNameError && <p className="text-red-500 mt-2">{modelNameError}</p>}
 
-                        <label htmlFor="problemType" className="text-2xl text-white mb-1 mt-8">Problem type</label>
+                        <label htmlFor="problemType" className="text-2xl text-white mb-1 mt-8">Problem type:</label>
                         <select 
                             id="problemType" 
-                            className='text-lg text-white rounded-sm border border-white bg-gray-800 p-1 h-9 w-64'
+                            className='text-lg text-white rounded-sm border border-white bg-gray-800 p-1 h-9 w-full'
                             value={problemType}
                             onChange={(event) => setProblemType(event.target.value)}
                         >
@@ -224,12 +280,14 @@ function ModelCreation() {
                             onClick={() => handleActive(Steps.Dataset)}>
                             {Steps.Dataset}
                         </button>
-                        <button className={`flex-1 border-2 border-l-0 ${activeButton === Steps.Preprocessing 
-                            ? activeButtonStyle 
-                            : inactiveButtonStyle}`}
-                            onClick={() => handleActive(Steps.Preprocessing)}>
-                            {Steps.Preprocessing}
-                        </button>
+                        { creationType != CreationTypes.Basic && (
+                            <button className={`flex-1 border-2 border-l-0 ${activeButton === Steps.Preprocessing 
+                                ? activeButtonStyle 
+                                : inactiveButtonStyle}`}
+                                onClick={() => handleActive(Steps.Preprocessing)}>
+                                {Steps.Preprocessing}
+                            </button>
+                        )}
                         <button className={`flex-1 border-2 border-l-0 ${activeButton === Steps.Algorithm 
                             ? activeButtonStyle 
                             : inactiveButtonStyle}`}
@@ -279,7 +337,16 @@ function ModelCreation() {
                 />
             }
             {activeButton === Steps.Algorithm && 
-                <ModelSelection 
+                <ModelSelection
+                    CreationTypes={CreationTypes}
+                    creationType={creationType} 
+                    problemTypeEvalMetrics={BasicProblemTypesEvalMetrics[problemType]}
+                    evalMetric={evalMetric}
+                    setEvalMetric={setEvalMetric}
+                    preset={preset}
+                    setPreset={setPreset}
+                    timeLimit={timeLimit}
+                    setTimeLimit={setTimeLimit}
                     algorithm={algorithm}
                     setAlgorithm={setAlgorithm}
                     parametersValue={parametersValue}

@@ -21,8 +21,8 @@ def extract_layers_as_nested_dict(model_str):
     stack = [(0, root)]
 
     for line in lines:
-        print(line)
-        print(root)
+        #print(line)
+        #print(root)
         if not line.strip():
             continue
 
@@ -32,9 +32,9 @@ def extract_layers_as_nested_dict(model_str):
         # Match a layer line: (name): description
         match = re.match(r'(\(?\w+\)?):\s+(.+)', content)
         
-        print(match)
+        #print(match)
         if match:
-            print(f"Match found: {match.groups()}")
+            #print(f"Match found: {match.groups()}")
             name, desc = match.groups()
             node = {}
             # Adjust the stack to the current indentation level
@@ -91,7 +91,7 @@ class RenamedPipeline(Pipeline):
     def __init__(self, steps, memory=None, verbose=False, class_name="RenamedPipeline"):
         super().__init__(steps, memory=memory, verbose=verbose)
         self.class_name = class_name
-        print(f"Pipeline initialized with class name: {self.class_name}")
+        #print(f"Pipeline initialized with class name: {self.class_name}")
 
     def __repr__(self):
         self.__class__.__name__ = self.class_name
@@ -106,8 +106,8 @@ def rename_estimator(estimator, new_class_name):
 
 def map_layer_desc_to_sklearn(name, desc):
         match = re.match(r'^(\w+)\((.*)\)$', desc)
-        print(f"Processing description: {desc}")
-        print(f"Match result: {match}")
+        #print(f"Processing description: {desc}")
+        #print(f"Match result: {match}")
         if match:
             # If the description matches a function call pattern, extract the class name
             class_name, desc = match.groups()
@@ -126,10 +126,10 @@ def nested_dict_to_pipeline(nested_dict, prefix='', pipeline_name=''):
         if isinstance(value, dict):
             if '_desc' in value and any(k != '_desc' for k in value):
                 # Nested block
-                print(f"Nested block found for layer: {layer_name}")
+                #print(f"Nested block found for layer: {layer_name}")
                 if '_desc' in value:
                     inner_pipeline_name = value['_desc']
-                    print(f"Setting pipeline name to: {pipeline_name}")
+                    #print(f"Setting pipeline name to: {pipeline_name}")
                 sub_pipeline = nested_dict_to_pipeline(value, prefix=layer_name, pipeline_name=inner_pipeline_name[:-1])
                 steps.append((layer_name, sub_pipeline))
             else:
@@ -302,3 +302,9 @@ class AutogluonModelMlflowWrapper(mlflow.pyfunc.PythonModel):
                     features.append(sample)
                     labels.append(y[i])
         return np.array(features), np.array(labels)
+    
+class ValidationError(Exception):
+    def __init__(self, message, status_code):
+        super().__init__(message)
+        self.status_code = status_code
+        self.message = message
