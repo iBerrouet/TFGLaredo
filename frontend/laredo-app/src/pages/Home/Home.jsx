@@ -16,7 +16,7 @@ function Home() {
   }
 
   return (
-    <div className='grid h-screen w-screen grid-cols-3'>
+    <div className='grid h-screen w-screen grid-cols-3 min-w-[1350px] min-h-[720px]'>
       <div className='col-span-2 flex flex-col h-full'>
         <div className='flex flex-col justify-center mx-auto grow-6'>
           <h1 className='text-[14rem] text text font-bold italic text-white -mt-24'>LAREDO</h1>
